@@ -21,6 +21,8 @@ public class MemoController {
     public String setFile(@RequestBody Memo memo) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
+//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/java/"+filename); //
+//        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename); //
         OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
