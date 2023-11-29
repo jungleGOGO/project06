@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" data-name="vs/editor/editor.main" th:href="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.css}"/>
     <script>var require = {paths: {'vs': '../node_modules/monaco-editor/min/vs'}};</script>
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/loader.js}"></script>
@@ -14,13 +15,22 @@
     <style>
         #monaco { min-height:300px; }
     </style>
+    <style>
+        .file_name {
+            cursor: pointer;
+            text-decoration: underline;
+            color: blue;
+        }
+    </style>
 </head>
 <body>
     <h2>메인</h2>
-    <div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
         <h2>온라인 코드 에디터</h2>
         <div class="form-wrap">
-            <select name="language" id="language" onchange="changeLanuage()">
+            <select name="language" id="language" onchange="changeLanguage()">
                 <option value="java" selected>JAVA</option>
                 <option value="javascript">Javascript</option>
                 <option value="html">HTML</option>
@@ -31,19 +41,91 @@
         <pre id="monaco"></pre>
         <div class="form-wrap">
             <input type="text" name="filename" id="filename">
+            <input type="hidden" name="downloadName" id="downloadName">
             <button type="button" id="btn1" class="btn btn-primary">저장</button>
+            <button type="button" id="saveBtn" class="btn btn-primary">다운로드</button>
         </div>
         <div class="form-wrap">
             <input type="text" name="filename2" id="filename2">
             <button type="button" id="btn2" class="btn btn-primary">불러오기</button>
         </div>
     </div>
+            <div class="col-md-2">
+        <h3>저장된 파일들</h3>
+<!--                <ul>-->
+<!--                    <li th:each="file : ${fileList}">-->
+<!--                        <span class="file_name" th:text="${file}"></span>-->
+<!--                    </li>-->
+<!--                </ul>-->
+                <div id="fileListContainer"></div>
+    </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        // 클래스 이름이 "file_name"인 모든 요소를 선택합니다.
+        const fileListContainer = document.querySelector('#fileListContainer');
+        const filename2Input = document.getElementById('filename2');
+        const filename3Input = document.getElementById('downloadName');
+        fileListContainer.addEventListener('dblclick', (event) => {
+            const targetElement = event.target;
+            if (targetElement.classList.contains('file_name')) {
+                // 파일 경로에서 파일명만 추출하여 filename2Input에 설정
+                const filePath = targetElement.textContent;
+                const fileName = filePath.split('\\').pop();
+                filename2Input.value = fileName;
+                filename3Input.value = fileName;
+
+                let filename2 = document.getElementById("filename2").value;
+                console.log(filename2)
+
+                axios.post("/api/test2", null, {
+                    params: {
+                        filename2: filename2
+                    }
+                })  // 객체 형태로 전달
+                    .then((response) => {
+                        console.log(response.data);
+                        monaco_test.setValue(response.data.toString());// Monaco 에디터 내용 설정
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        });
+    </script>
+    <script th:inline="javascript">
+        document.getElementById("saveBtn").addEventListener("click", () => {
+            var viewLinesElements = document.getElementsByClassName("view-line");
+            var allTextValues = [];
+
+            for (var i = 0; i < viewLinesElements.length; i++) {
+                var viewLinesElement = viewLinesElements[i];
+                var textValue = viewLinesElement.textContent;
+                allTextValues.push(textValue);
+            }
+            var textToSave = allTextValues.join('\n');
+
+            var blob = new Blob([textToSave], { type: "text/plain" });
+
+            var a = document.createElement("a");
+            a.style.display = "none";
+            a.href = window.URL.createObjectURL(blob);
+            a.download = document.getElementById('downloadName').value; // 사용자가 원하는 파일명 지정
+
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+        });
+    </script>
+
 
     <script th:inline="javascript">
         function setEditor(inputValue, inputLanguage){
             return {
                 value: inputValue,
-                language: "html",    // 언어
+                language: inputLanguage,    // 언어
                 theme: "vs-dark",   // 테마
                 lineNumbers: 'on',  // 줄 번호
                 glyphMargin: false, // 체크 이미지 넣을 공간이 생김
@@ -61,48 +143,74 @@
             }
         }
         /*<![CDATA[*/
-        const monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor([[${value}]], [[${language}]]));
+        let monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor([[${value}]], [[${language}]]));
         $('#monaco').height((monaco_test.getModel().getLineCount() * 19) + 10); // 19 = 줄 높이, 10 = 세로 스크롤 높이
         /*]]>*/
     </script>
-    <script>
-        function changeLanuage(){
 
+    <script th:inline="javascript">
+        function changeLanguage() {
+            var selectBox = document.getElementById('language');
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            console.log(selectedValue);
+
+            // 언어를 변경하기 전에 에디터의 현재 내용을 가져와서 저장
+            var currentContent = monaco_test.getValue();
+
+            // 에디터를 제거하고 새로운 언어로 다시 생성
+            monaco_test.dispose();
+            monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor(currentContent, selectedValue));
+
+            // 새로운 에디터로 기존 내용을 설정
+            monaco_test.setValue(currentContent);
+
+            // 기존 내용을 설정한 후에는 언어를 변경하도록 호출
+            monaco_test.setLanguage(selectedValue);
         }
     </script>
-    <script>
-    document.getElementById("btn1").addEventListener("click", () => {
-        let filename = document.getElementById("filename").value;
-        let monaco =  monaco_test.getValue();
-        console.log(filename);
-        console.log(monaco);
-        let memo = { 'filename':filename, 'monaco': monaco };
-        axios.post("/api/test1", memo).then((response) => {
-            console.log(response.data);
-        })
-        .catch((error) => {
-           console.log(error);
-        });
-    })
-    </script>
-    <script>
-        document.getElementById("btn2").addEventListener("click", () => {
-            let filename2 = document.getElementById("filename2").value;
-            console.log(filename2)
 
-            axios.post("/api/test2", null, {
-                params: {
-                    filename2: filename2
-                }
-            })  // 객체 형태로 전달
-                .then((response) => {
+    <script th:inline="javascript" defer>
+        // 페이지 로드 시에 실행되도록
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기 파일 목록 불러오기
+            loadFileList();
+
+            // 저장 버튼 클릭 시 파일을 저장하고 목록을 다시 불러옴
+            document.getElementById("btn1").addEventListener("click", function() {
+                let filename = document.getElementById("filename").value;
+                let monaco =  monaco_test.getValue();
+                console.log(filename);
+                console.log(monaco);
+                let memo = { 'filename': filename, 'monaco': monaco };
+                axios.post("/api/test1", memo).then((response) => {
                     console.log(response.data);
-                    monaco_test.setValue(response.data);  // Monaco 에디터 내용 설정
-                })
-                .catch((error) => {
+                    // 저장 후 파일 목록 다시 불러오기
+                    loadFileList();
+                }).catch((error) => {
                     console.log(error);
                 });
-        })
+            });
+
+            function loadFileList() {
+                // 파일 목록 불러오기
+                axios.get(`/fileList`).then(response => {
+                    const fileList = response.data;
+                    console.log(fileList); // Handle the fileList as needed
+                    const fileListContainer = document.querySelector('#fileListContainer');
+                    // 기존의 파일 목록을 제거
+                    fileListContainer.innerHTML = '';
+                    // 새로운 파일 목록 추가
+                    fileList.forEach(file => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('file_name');
+                        listItem.textContent = file;
+                        fileListContainer.appendChild(listItem);
+                    });
+                }).catch(error => {
+                    console.error('Error fetching file list:', error);
+                });
+            }
+        });
     </script>
 </body>
 </html>

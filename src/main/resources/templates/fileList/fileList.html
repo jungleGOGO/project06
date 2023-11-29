@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="col-md-2">
+  <h3>저장된 파일들</h3>
+  <ul>
+    <!-- 파일 목록을 리스트로 표시 -->
+    <li th:each="file : ${fileList}">
+      <span class="file_name" th:text="${file}"></span>
+    </li>
+  </ul>
+</div>
+</html>
