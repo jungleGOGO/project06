@@ -3,13 +3,9 @@ package com.tcoding.team36.ctrl;
 import com.tcoding.team36.domain.Memo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 @Controller
 @Slf4j
@@ -28,7 +24,32 @@ public class MemoController {
         file.write(bt);
         file.close();
         log.info("filename : "+filename);
-        log.info("conetenz : "+monaco);
+        log.info("content : "+monaco);
         return filename;
+    }
+
+    @PostMapping("/test2")
+    @ResponseBody
+    public String getFile(@RequestParam("filename2") String filename2) throws IOException {
+        // 파일 경로
+        String filePath = "D:\\hk\\project\\file\\" + filename2;
+
+        // 파일 내용을 읽어오는 메서드 호출
+        String fileContent = readFile(filePath);
+        System.out.println(fileContent);
+        log.info("filename : " + filename2);
+        return fileContent;
+    }
+
+    // 파일 내용을 읽어오는 메서드
+    private String readFile(String filePath) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            return content.toString();
+        }
     }
 }
