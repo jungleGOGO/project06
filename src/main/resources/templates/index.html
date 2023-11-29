@@ -24,13 +24,14 @@
             <option value="javascript">Javascript</option>
             <option value="html">HTML</option>
             <option value="css">CSS</option>
-            <option value="java">java</option>
         </select>
     </div>
     <pre id="monaco"></pre>
     <div class="form-wrap">
         <input type="text" name="filename" id="filename">
-        <button type="button" id="btn1" class="btn btn-primary">저장</button>
+        <div id="fileExplorer" style="float: left;"></div>
+
+        <button type="button" id="saveBtn" class="btn btn-primary">저장</button>
     </div>
 </div>
 
@@ -39,8 +40,8 @@
 
     function setEditorOptions(inputValue, inputLanguage) {
         return {
-            value: inputValue,
-            language: inputLanguage,
+            value: inputValue,          //처음에 표시되는 내용
+            language: inputLanguage,    //언어 종류
             theme: "vs-dark",
             lineNumbers: 'on',
             glyphMargin: false,
@@ -79,10 +80,22 @@
     }
 
 
-
-    document.getElementById("btn1").addEventListener("click", () => {
+    //
+    // document.getElementById("btn1").addEventListener("click", () => {
+    //     var viewLinesElements = document.getElementsByClassName("view-line");
+    //
+    //     var allTextValues = [];
+    //
+    //     for (var i = 0; i < viewLinesElements.length; i++) {
+    //         var viewLinesElement = viewLinesElements[i];
+    //         var textValue = viewLinesElement.textContent;
+    //         allTextValues.push(textValue);
+    //     }
+    //
+    //     console.log(allTextValues);
+    // })
+    document.getElementById("saveBtn").addEventListener("click", () => {
         var viewLinesElements = document.getElementsByClassName("view-line");
-
         var allTextValues = [];
 
         for (var i = 0; i < viewLinesElements.length; i++) {
@@ -90,9 +103,22 @@
             var textValue = viewLinesElement.textContent;
             allTextValues.push(textValue);
         }
+        var textToSave = allTextValues.join('\n');
 
-        console.log(allTextValues);
-    })
+        var blob = new Blob([textToSave], { type: "text/plain" });
+
+        var a = document.createElement("a");
+        a.style.display = "none";
+        a.href = window.URL.createObjectURL(blob);
+        a.download = document.getElementById('filename').value; // 사용자가 원하는 파일명 지정
+
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
+    });
+
 
 </script>
 </body>
