@@ -1,4 +1,4 @@
-package com.tcoding.team36.domain;
+package com.team36.domain;
 
 import lombok.Data;
 

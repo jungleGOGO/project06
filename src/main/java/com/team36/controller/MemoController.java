@@ -1,6 +1,6 @@
-package com.tcoding.team36.ctrl;
+package com.team36.controller;
 
-import com.tcoding.team36.domain.Memo;
+import com.team36.domain.Memo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
