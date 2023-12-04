@@ -52,12 +52,9 @@ public class MemberController {
 
         if(bindingResult.hasErrors()){
           model.addAttribute("memberJoinDTO", memberJoinDTO);
-
-        System.out.println("끝??");
-        return "member/join";
+          return "member/join";
         }
         memberService.join(memberJoinDTO);
-        System.out.println("여기>>");
         return "redirect:/";
 
     }

@@ -14,6 +14,7 @@ public class Community extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cno;
+    @Column(nullable = false)
     private String title;
     private String content;
     private String author;

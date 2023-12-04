@@ -33,8 +33,8 @@ public class MemberSecurityDTO extends User {
     public Map<String, Object> getAttributes() {
         return this.getProps();
     }
-    public int getName() {
-        return this.mid;
+    public String getName() {
+        return this.mname;
     }
 
 }

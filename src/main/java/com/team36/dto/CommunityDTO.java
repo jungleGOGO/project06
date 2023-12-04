@@ -19,6 +19,6 @@ public class CommunityDTO {
     private String author;
     @Builder.Default
     private int cnt = 0;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }

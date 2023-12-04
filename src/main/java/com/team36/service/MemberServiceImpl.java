@@ -45,4 +45,5 @@ public class MemberServiceImpl implements MemberService{
     public Member existByEmail(String email) {
         return memberRepository.existsMemberByEmail(email);
     }
+
 }
