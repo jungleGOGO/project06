@@ -17,9 +17,9 @@ public class MemoController {
     public String setFile(@RequestBody Memo memo) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
-//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/java/"+filename); //
+        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/user1/"+filename); //
 //        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename); //
-        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
+//        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
         file.close();
@@ -32,7 +32,8 @@ public class MemoController {
     @ResponseBody
     public String getFile(@RequestParam("filename2") String filename2) throws IOException {
         // 파일 경로
-        String filePath = "D:\\hk\\project\\file\\" + filename2;
+        String filePath = "/Users/juncheol/Desktop/storage/user1/" + filename2;
+//        String filePath = "D:\\hk\\project\\file\\" + filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
