@@ -43,7 +43,8 @@ for (const editor of [jsEditor, cssEditor, htmlEditor]) {
   });
 }
 
-runButtonEl.addEventListener("click", () => {
+// 컴파일 함수 정의
+function compileCode() {
   const htmlCode = htmlCodeEl.value;
   const cssCode = cssCodeEl.value;
   const jsCode = jsCodeEl.value;
@@ -53,10 +54,33 @@ runButtonEl.addEventListener("click", () => {
   codeEl.write(htmlCode);
   codeEl.write(`<script>${jsCode}</script>`);
   codeEl.close();
-});
+}
 
-clearButtonEl.addEventListener("click", () => {
-  htmlEditor.setValue("");
-  cssEditor.setValue("");
-  jsEditor.setValue("");
-});
+for (const editor of [jsEditor, cssEditor, htmlEditor]) {
+  editor.on("keyup", () => {
+    compileCode();
+  });
+
+
+  runButtonEl.addEventListener("click", () => {
+    const htmlCode = htmlCodeEl.value;
+    const cssCode = cssCodeEl.value;
+    const jsCode = jsCodeEl.value;
+
+    codeEl.open();
+    codeEl.write(`<style>${cssCode}</style>`);
+    codeEl.write(htmlCode);
+    codeEl.write(`<script>${jsCode}</script>`);
+    codeEl.close();
+  });
+
+  clearButtonEl.addEventListener("click", () => {
+    htmlEditor.setValue("");
+    cssEditor.setValue("");
+    jsEditor.setValue("");
+  });
+}
+
+
+
+
