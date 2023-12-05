@@ -1,6 +1,11 @@
 package com.tcoding.team36.ctrl;
 
 import com.tcoding.team36.domain.FileNode;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +25,8 @@ import java.util.TreeMap;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 public class HomeController {
@@ -32,6 +39,10 @@ public class HomeController {
 @GetMapping("/fileList")
 @ResponseBody
 public FileNode fileList() throws Exception {
+
+        //유저 아이디와 프로젝트명 전달 받아서 처리 필요
+        String userName = "";
+        String projectName = "";
     String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
     String targetDirectoryPath = rootDirectoryPath + "/user1";
     FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
@@ -71,6 +82,7 @@ public FileNode fileList() throws Exception {
         parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
     });
 
+    System.out.println(root);
     return root;
 }
 
@@ -94,6 +106,39 @@ public FileNode fileList() throws Exception {
             }
         }
         return current;
+    }
+    @GetMapping("/download-zip")
+    public ResponseEntity<Resource> downloadZip() throws IOException {
+        String sourceDirPath = "/Users/juncheol/Desktop/storage/user1/dir1"; // 압축할 폴더 경로
+        String zipFilePath = "/Users/juncheol/Desktop/storage/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+//        String targetDirectoryPath = rootDirectoryPath + "/user1";
+        compressToZip(sourceDirPath, zipFilePath);
+
+        Resource fileSystemResource = new FileSystemResource(zipFilePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(fileSystemResource);
+    }
+
+    private void compressToZip(String sourceDir, String outputFile) throws IOException {
+        Path zipPath = Files.createFile(Paths.get(outputFile));
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipPath))) {
+            Path pp = Paths.get(sourceDir);
+            Files.walk(pp)
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
+                        try {
+                            zs.putNextEntry(zipEntry);
+                            Files.copy(path, zs);
+                            zs.closeEntry();
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
+                    });
+        }
     }
 
 
