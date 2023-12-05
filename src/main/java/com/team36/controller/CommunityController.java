@@ -75,5 +75,13 @@ public class CommunityController {
 
     }
 
+    @GetMapping("/detail")
+    public String CommunityDetail(@RequestParam("cno")Long cno, Model model){
+        CommunityDTO communityDTO = communityService.detail(cno);
+        log.info(communityDTO);
+        model.addAttribute("detail", communityDTO);
+        return "community/communityDetail";
+    }
+
 
 }

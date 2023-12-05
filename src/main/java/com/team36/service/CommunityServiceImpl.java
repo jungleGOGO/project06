@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -28,6 +30,15 @@ public class CommunityServiceImpl implements CommunityService{
     public Long communityAdd(CommunityDTO communityDTO) {
         Community community =  modelMapper.map(communityDTO, Community.class);
         return communityRepository.save(community).getCno();
+    }
+
+    @Override
+    public CommunityDTO detail(Long cno) {
+
+        Optional<Community> result = communityRepository.findById(cno);
+        Community community = result.orElseThrow();
+        CommunityDTO communityDTO = modelMapper.map(community, CommunityDTO.class);
+        return communityDTO;
     }
 
     @Override

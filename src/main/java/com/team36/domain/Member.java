@@ -23,6 +23,8 @@ public class Member extends BaseEntity {
 
     private String mname;
 
+    private String nickname;
+
     @Column(unique = true)
     private String email;
 
