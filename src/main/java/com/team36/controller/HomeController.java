@@ -36,6 +36,11 @@ public class HomeController {
         return "index"; // Thymeleaf 템플릿 파일의 이름을 반환합니다.
     }
 
+    @GetMapping("/editor")
+    public String getEditor() throws Exception{
+        return "editor";
+    }
+
 @GetMapping("/fileList")
 @ResponseBody
 public FileNode fileList() throws Exception {
