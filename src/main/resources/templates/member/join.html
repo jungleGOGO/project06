@@ -6,6 +6,7 @@
     <title>회원가입</title>
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         .fieldError { color : red;}
     </style>
@@ -27,8 +28,15 @@
 
                     <div class="input-group mb-3">
                         <label th:for="email">이메일</label>
-                        <input type="email" th:field="*{email}" class="form-control">
+                        <input type="email" th:field="*{email}" id="memail" class="form-control">
                         <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">Incorrect data</p>
+                    </div>
+
+                    <button class="btn btn-outline-primary" type="button" id="checkEmail">인증번호</button>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="memailconfirmTxt">인증번호 입력</span>
+                        <input type="text" class="form-control" id="memailconfirm">
+                        <p th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="fieldError">Incorrect data</p>
                     </div>
 
 
@@ -57,6 +65,67 @@
             console.log(errorMessage);
         }
     });
+</script>
+
+
+<script th:inline="javascript">
+    var emconfirmchk = false; // 이메일 인증
+    var $memail = $("#memail");
+    var $checkEmail = $("#checkEmail"); // 인증번호 발송 버튼
+    var $memailconfirm = $("#memailconfirm"); // 인증번호 확인input
+    var $memailconfirmTxt = $("#memailconfirmTxt"); // 인증번호 확인 txt
+    // 이메일 인증번호
+    $checkEmail.click(function() {
+        $.ajax({
+            type : "POST",
+            url : "/emailConfirm",
+            data : {
+                "email" : $memail.val()
+            },
+            success : function(data){
+                alert("해당 이메일로 인증번호 발송이 완료되었습니다. \n 확인부탁드립니다.")
+                console.log("data : "+data);
+                chkEmailConfirm(data, $memailconfirm, $memailconfirmTxt);
+            }
+        })
+    })
+    // 이메일 인증번호 체크 함수
+    function chkEmailConfirm(data, $memailconfirm, $memailconfirmTxt){
+        $memailconfirm.on("keyup", function(){
+            if (data != $memailconfirm.val()) {
+                emconfirmchk = false;
+                $memailconfirmTxt.html("<span id='emconfirmchk'>인증번호가 잘못되었습니다</span>")
+                $("#emconfirmchk").css({
+                    "color" : "#FA3E3E",
+                    "font-weight" : "bold",
+                    "font-size" : "10px"
+                });
+            } else {
+                emconfirmchk = true;
+                $memailconfirmTxt.html("<span id='emconfirmchk'>인증번호 확인 완료</span>")
+                $("#emconfirmchk").css({
+                    "color" : "#0D6EFD",
+                    "font-weight" : "bold",
+                    "font-size" : "10px"
+                });
+            }
+
+            // 회원가입 버튼 활성/비활성화 여부 확인
+            checkSignUpButton();
+        });
+    }
+
+    function checkSignUpButton() {
+        var $signUpButton = $(".submitBtn");
+        if (emconfirmchk) {
+            // 모든 조건이 충족되면 회원가입 버튼 활성화
+            $signUpButton.prop("disabled", false);
+        } else {
+            // 어떤 조건이라도 충족되지 않으면 회원가입 버튼 비활성화
+            $signUpButton.prop("disabled", true);
+        }
+    }
+
 </script>
 </body>
 </html>

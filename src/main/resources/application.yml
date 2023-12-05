@@ -46,14 +46,18 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: beubeuvv@gmail.com
-    password: chunjae123!
+    password: equd qvhk vpqm gqmi
     properties:
       mail:
         smtp:
           auth: true
+          connection timeout: 5000
           timeout: 5000
+          write timeout: 5000
           starttls:
             enable: true
+            required: true
+      auth-code-expiration-millis: 1800000
 
 logging:
   level:
