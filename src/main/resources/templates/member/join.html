@@ -35,7 +35,7 @@
                     <button class="btn btn-outline-primary" type="button" id="checkEmail">인증번호</button>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="memailconfirmTxt">인증번호 입력</span>
-                        <input type="text" class="form-control" id="memailconfirm">
+                        <input type="text"th:field="*{code}" class="form-control" id="memailconfirm">
                         <p th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="fieldError">Incorrect data</p>
                     </div>
 
