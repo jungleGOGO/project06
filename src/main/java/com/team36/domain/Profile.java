@@ -1,8 +1,6 @@
 package com.team36.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -13,15 +11,18 @@ import lombok.*;
 @Builder
 public class Profile extends BaseEntity{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int pno;
     @Column(nullable = false)
     private int mid;
-    @Column(length = 255, nullable = true)
-    private String memberImg;
-    @Column(length = 255, nullable = true)
+    @Builder.Default
+    private String memberImg = "basic.jpg";
+
     private String intro;
-    @Column(length = 255, nullable = true)
+
     private String gitLink1;
 
+    private String gitLink2;
 
+    private String gitLink3;
 }

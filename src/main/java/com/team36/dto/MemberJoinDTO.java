@@ -34,6 +34,9 @@ public class MemberJoinDTO {
     @Email(message = "이메일 형식으로 입력해주세요.")
     private String email;
 
+    @NotBlank(message = "인증번호를 입력해주세요")
+    private String code;
+
     @ColumnDefault("0")
     private int active;
 
