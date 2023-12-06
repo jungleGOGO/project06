@@ -21,7 +21,7 @@
 
     <title>메인</title>
     <style>
-        #monaco { min-height:300px; }
+        #monaco { min-height:70vh; }
     </style>
     <style>
         .file_name {
@@ -35,8 +35,22 @@
         }
 
         #left-pane, #right-pane {
-            overflow: auto;  /* For scrollable content */
+            overflow: scroll;  /* For scrollable content */
         }
+        #left-pane {
+            overflow-x: auto;
+            position: relative;
+            background-color: #eeeeee;
+        }
+
+        #left-pane #tree {
+            min-width: 300px; /* 내부 컨텐츠의 최소 너비 */
+        }
+        #tree a {
+            text-decoration: none;
+            color: black;
+        }
+
         .split {
             display: flex;
             flex-direction: row;
@@ -71,7 +85,7 @@
             </div>
             <div id="split-container">
                 <div id="left-pane">
-                    <div id="tree"></div>
+                    <div id="tree" style=""></div>
                 </div>
                 <div id="right-pane" style="margin-left: 10px; width: 800px; z-index: 0">
                     <pre id="monaco"></pre>
@@ -82,57 +96,63 @@
                 <input type="hidden" name="downloadName" id="downloadName">
                 <button type="button" id="btn1" class="btn btn-primary">저장</button>
                 <button type="button" id="saveBtn" class="btn btn-primary">다운로드</button>
+                <button type="button" id="saveZip" class="btn btn-primary">ZIP 다운로드</button>
             </div>
             <div class="form-wrap">
                 <input type="text" name="filename2" id="filename2">
-                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>
+                <!--                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>-->
             </div>
-            <button type="button" id="btn3" class="btn btn-primary">트리 새로고침</button>
         </div>
+
         <th:block sec:authorize="isAnonymous()">
             <a th:href="@{/login}" class="nav-item nav-link">로그인</a>
             <a th:href="@{/join}" class="nav-item nav-link">회원가입</a>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
             <a th:href="@{/logout}" class="nav-item nav-link">로그아웃</a>
-            <a th:href="@{/mypage}" class="nav-item nav-link">마이페이지</a>
+            <a th:href="@{/member/mypage}" class="nav-item nav-link">마이페이지</a>
         </th:block>
     </div>
 
 </div>
-
+<script>
+    document.getElementById('saveZip').addEventListener('click', function() {
+        window.location.href = '/download-zip';
+    });
+</script>
 
 <script th:inline="javascript">
+
     // 클래스 이름이 "file_name"인 모든 요소를 선택합니다.
-    const fileListContainer = document.querySelector('#fileListContainer');
-    const filename2Input = document.getElementById('filename2');
-    const filename3Input = document.getElementById('downloadName');
-    fileListContainer.addEventListener('dblclick', (event) => {
-        const targetElement = event.target;
-        if (targetElement.classList.contains('file_name')) {
-            // 파일 경로에서 파일명만 추출하여 filename2Input에 설정
-            const filePath = targetElement.textContent;
-            const fileName = filePath.split('/').pop();
-            filename2Input.value = fileName;
-            filename3Input.value = fileName;
-
-            let filename2 = document.getElementById("filename2").value;
-            console.log(filename2)
-
-            axios.post("/api/test2", null, {
-                params: {
-                    filename2: filename2
-                }
-            })  // 객체 형태로 전달
-                .then((response) => {
-                    console.log(response.data);
-                    monaco_test.setValue(response.data.toString());// Monaco 에디터 내용 설정
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        }
-    });
+    // const fileListContainer = document.querySelector('#fileListContainer');
+    // const filename2Input = document.getElementById('filename2');
+    // const filename3Input = document.getElementById('downloadName');
+    // fileListContainer.addEventListener('dblclick', (event) => {
+    //     const targetElement = event.target;
+    //     if (targetElement.classList.contains('file_name')) {
+    //         // 파일 경로에서 파일명만 추출하여 filename2Input에 설정
+    //         const filePath = targetElement.textContent;
+    //         const fileName = filePath.split('/').pop();
+    //         filename2Input.value = fileName;
+    //         filename3Input.value = fileName;
+    //
+    //         let filename2 = document.getElementById("filename2").value;
+    //         console.log(filename2)
+    //
+    //         axios.post("/api/test2", null, {
+    //             params: {
+    //                 filename2: filename2
+    //             }
+    //         })  // 객체 형태로 전달
+    //             .then((response) => {
+    //                 console.log(response.data);
+    //                 monaco_test.setValue(response.data.toString());// Monaco 에디터 내용 설정
+    //             })
+    //             .catch((error) => {
+    //                 console.log(error);
+    //             });
+    //     }
+    // });
 </script>
 <!--파일로 저장 -->
 <script th:inline="javascript">
@@ -267,17 +287,19 @@
             if ($('#left-pane').find('#tree').length === 0) {
                 $('#left-pane').append('<div id="tree"></div>');
             }
-
+            console.log(fileList);
             // 새로운 파일 목록으로 트리뷰 재구성
             $('#tree').tree({
                 primaryKey: 'id',
                 uiLibrary: 'materialdesign',
                 dataSource: transformToTreeViewFormat(fileList),
+
                 imageUrlField: 'flagUrl'
             });
 
             // 트리 재구성 후 상태 복원
             restoreTreeState();
+            treeEvent();
         }).catch(error => {
             console.error('Error fetching file list:', error);
         });
@@ -295,6 +317,7 @@
         var node = {
             id: nodeId,
             text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
+            flagUrl: fileNode.flagUrl,
             children: []
         };
 
@@ -305,12 +328,76 @@
 
         treeData.push(node);
     }
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const treeArea = document.querySelector('#tree');
+    //
+    //     treeArea.addEventListener('click', function(event) {
+    //         if (event.target.tagName === 'A') {
+    //             event.preventDefault(); // 클릭에 의한 기본 동작(링크 이동)을 방지합니다.
+    //         }
+    //     });
+    //
+    //     treeArea.addEventListener('dblclick', function(event) {
+    //         if (event.target.tagName === 'A') {
+    //             console.log('더블클릭된 링크:', event.target.href); // 콘솔에 링크 출력
+    //             // 더블클릭에 대한 추가적인 동작을 여기에 구현합니다.
+    //         }
+    //
+    //     });
+    // });
+    // document.addEventListener('DOMContentLoaded', function() {
+    function treeEvent() {
+        const treeArea = document.querySelector('#tree');
+
+        treeArea.addEventListener('click', function(event) {
+            if (event.target.closest('a')) {
+                event.preventDefault();
+            }
+        });
+        treeArea.addEventListener('dblclick', function(event) {
+            const anchor = event.target.closest('a');
+            if (anchor) {
+                const filename = anchor.getAttribute('href'); // 파일명 추출
+                console.log("filename")
+                console.log(filename)
+                axios.post('/api/test2', null, {
+                    params: { filename2: filename }
+                })
+                    .then(response => {
+                        const fileContent = response.data;
+                        monaco_test.setValue(fileContent); // 에디터에 내용 설정
+                    })
+                    .catch(error => console.error('Error fetching file content:', error));
+            }
+        });
+        treeArea.addEventListener('dblclick', function(event) {
+            const anchor = event.target.closest('a');
+            if (anchor) {
+                const wrapper = anchor.closest('[data-role="wrapper"]');
+                const expander = wrapper.querySelector('[data-role="expander"]');
+                const childUl = wrapper.parentElement.querySelector('ul');
+
+                if (expander && childUl) {
+                    const currentMode = expander.getAttribute('data-mode');
+                    if (currentMode === 'open') {
+                        expander.setAttribute('data-mode', 'close');
+                        childUl.style.display = 'none';
+                    } else {
+                        expander.setAttribute('data-mode', 'open');
+                        childUl.style.display = 'block';
+                    }
+                }
+            }
+        });
+
+    }
+
 </script>
 
 <script>
     Split(['#left-pane', '#right-pane'], {
         sizes: [25, 75],
-        minSize: 100
+        minSize: 200
     });
 </script>
 

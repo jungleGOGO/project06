@@ -35,7 +35,11 @@
                     <button class="btn btn-outline-primary" type="button" id="checkEmail">인증번호</button>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="memailconfirmTxt">인증번호 입력</span>
+<<<<<<< HEAD
                         <input type="text"th:field="*{code}" class="form-control" id="memailconfirm">
+=======
+                        <input type="text" th:field="*{code}" class="form-control" id="memailconfirm">
+>>>>>>> 54a64d766f2da0d79ffdb6167088957202154384
                         <p th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="fieldError">Incorrect data</p>
                     </div>
 
@@ -44,6 +48,12 @@
                         <label th:for="mpw">비밀번호</label>
                         <input type="password" th:field="*{mpw}" class="form-control">
                         <p th:if="${#fields.hasErrors('mpw')}" th:errors="*{mpw}" class="fieldError">Incorrect data</p>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <label th:for="passwordConfirm">비밀번호 확인</label>
+                        <input type="password" th:field="*{passwordConfirm}" class="form-control">
+                        <p th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="fieldError">Incorrect data</p>
                     </div>
 
                     <div class="my-4">

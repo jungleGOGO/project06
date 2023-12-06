@@ -4,6 +4,7 @@ import com.team36.constant.MemberRole;
 import com.team36.domain.Member;
 import com.team36.dto.MemberJoinDTO;
 import com.team36.repository.MemberRepository;
+import com.team36.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,8 @@ public class MemberServiceImpl implements MemberService{
 
     private final PasswordEncoder passwordEncoder;
 
+    private final ProfileRepository profileRepository;
+
     @Override
     public void join(MemberJoinDTO memberJoinDTO) {
 
@@ -39,10 +42,20 @@ public class MemberServiceImpl implements MemberService{
         log.info(member.getRoleSet());
         memberRepository.save(member);
 
+
     }
 
     @Override
     public Member existByEmail(String email) {
         return memberRepository.existsMemberByEmail(email);
+    }
+
+    @Override
+    public void changePw(MemberJoinDTO memberJoinDTO) {
+
+        Optional<Member> result = memberRepository.findById(String.valueOf(memberJoinDTO.getMid()));
+        Member member = result.orElseThrow();
+        member.changePassword(passwordEncoder.encode(memberJoinDTO.getMpw()));
+        memberRepository.save(member);
     }
 }

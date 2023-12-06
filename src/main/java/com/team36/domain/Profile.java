@@ -13,10 +13,13 @@ public class Profile extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int pno;
-    @Column(nullable = false)
-    private int mid;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="mid")
+    private Member member;
+
     @Builder.Default
-    private String memberImg = "basic.jpg";
+    private String memberImg = "basic.png";
 
     private String intro;
 
@@ -25,4 +28,10 @@ public class Profile extends BaseEntity{
     private String gitLink2;
 
     private String gitLink3;
+
+    public void change (String intro, String gitLink1, String gitLink2){
+        this.intro= intro;
+        this.gitLink1=gitLink1;
+        this.gitLink2=gitLink2;
+    }
 }
