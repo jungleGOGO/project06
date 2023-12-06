@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,10 +100,18 @@
             </div>
             <div class="form-wrap">
                 <input type="text" name="filename2" id="filename2">
-<!--                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>-->
+                <!--                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>-->
             </div>
         </div>
 
+        <th:block sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="nav-item nav-link">로그인</a>
+            <a th:href="@{/join}" class="nav-item nav-link">회원가입</a>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}" class="nav-item nav-link">로그아웃</a>
+            <a th:href="@{/member/mypage}" class="nav-item nav-link">마이페이지</a>
+        </th:block>
     </div>
 
 </div>
@@ -385,10 +395,10 @@
 </script>
 
 <script>
-        Split(['#left-pane', '#right-pane'], {
-            sizes: [25, 75],
-            minSize: 200
-        });
+    Split(['#left-pane', '#right-pane'], {
+        sizes: [25, 75],
+        minSize: 200
+    });
 </script>
 
 </body>

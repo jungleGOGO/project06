@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인페이지</title>
+    <title>Online Code Editor</title>
+    <link rel="stylesheet" th:href="@{/static/css/main.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script th:src="@{/static/js/main.js}" defer></script>
+</head>
+<body>
+<header>
+</header>
+<main>
+    <div class="button-container">
+        <input type="text" name="filename" id="filename">
+        <button id="save">저장</button>
+        <button id="repository">불러오기</button>
+    </div>
+    <section class="boxes">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h1>HTML</h1>
+            </div>
+            <textarea data-html><h2>Hello World!</h2></textarea>
+        </div>
+        <div class="editor-container">
+            <div class="editor-header">
+                <h1>CSS</h1>
+                <textarea data-css></textarea>
+            </div>
+        </div>
+        <div class="editor-container">
+            <div class="editor-header">
+                <h1>JS</h1>
+                <textarea data-js></textarea>
+            </div>
+        </div>
+    </section>
+    <div class="button-container">
+        <button id="run">RUN</button>
+        <button id="clear">CLEAR</button>
+    </div>
+    <iframe data-code id="content"></iframe>
+</main>
+<footer>
+</footer>
+<script>
+    document.getElementById("save").addEventListener("click", function (){
+        let filename = document.getElementById("filename").value;
+        var contentElement = document.getElementById('content');
+        var contentDocument = contentElement.contentDocument || contentElement.contentWindow.document;
+        var contentString = contentDocument.documentElement.outerHTML;
+        let code = { 'filename' : filename, 'content' : contentString };
+        console.log(filename);
+        console.log(contentString);
+
+        axios.post("/editor/get", code).then((response) => {
+            console.log("들어감");
+        }).catch((error) => {
+            console.log(error);
+        });
+    });
+
+</script>
+</body>
+</html>

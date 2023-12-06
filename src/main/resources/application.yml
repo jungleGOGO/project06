@@ -1,11 +1,30 @@
 server:
-  port: 8086
+  port: 8089
+
 spring:
+  profiles:
+    active: local
+  thymeleaf:
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+  mvc:
+    servlet:
+      path: /
+    static-path-pattern: /static/**
+    hidden-method:
+      filter:
+        enabled: true
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/tcoding
-    username: root
+    username : root
     password: 1234
+  #    url: jdbc:mariadb://team36.c1oby0nabaqs.ap-northeast-2.rds.amazonaws.com:3306/
+#    username: admin
+#    password: cjswo123!
+
   jpa:
     properties:
       hibernate:
@@ -15,23 +34,32 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MariaDB103Dialect
-  devtools:
-    livereload:
-      enabled: true
-  thymeleaf:
-    cache: false
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 100MB
-
-itemImgLocation: C:/tcoding/item
-uploadPath: file:///C:/tcoding/
+      location: C://upload
+  messages:
+    basename: messages
+    encoding: UTF-8
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: beubeuvv@gmail.com
+    password: equd qvhk vpqm gqmi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connection timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+          starttls:
+            enable: true
+            required: true
+      auth-code-expiration-millis: 1800000
 
 logging:
   level:
     org:
-      hibernate:
-        type:
-          descriptor:
-            sql: trace
+      springframework: info
