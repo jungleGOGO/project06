@@ -1,6 +1,7 @@
 package com.team36.repository;
 
 import com.team36.domain.Member;
+import com.team36.domain.Profile;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

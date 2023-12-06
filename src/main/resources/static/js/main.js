@@ -43,7 +43,6 @@ for (const editor of [jsEditor, cssEditor, htmlEditor]) {
   });
 }
 
-// 컴파일 함수 정의
 function compileCode() {
   const htmlCode = htmlCodeEl.value;
   const cssCode = cssCodeEl.value;
@@ -55,6 +54,7 @@ function compileCode() {
   codeEl.write(`<script>${jsCode}</script>`);
   codeEl.close();
 }
+
 
 for (const editor of [jsEditor, cssEditor, htmlEditor]) {
   editor.on("keyup", () => {

@@ -34,6 +34,9 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Set<MemberRole> roleSet = new HashSet<>();
 
+    @OneToOne(mappedBy = "member")
+    private Profile profile;
+
     public void changePassword(String mpw ){
         this.mpw = mpw;
     }
@@ -41,7 +44,6 @@ public class Member extends BaseEntity {
     public void changeEmail(String email){
         this.email = email;
     }
-
 
     public void addRole(MemberRole memberRole){
         this.roleSet.add(memberRole);
@@ -51,5 +53,6 @@ public class Member extends BaseEntity {
         this.roleSet.clear();
     }
 
+    public void addProfile(Profile profile) { this.profile = profile; }
 
 }

@@ -40,4 +40,7 @@ public class MemberJoinDTO {
     @ColumnDefault("0")
     private int active;
 
+    private String nowPassword;
+    private String passwordConfirm;
+
 }

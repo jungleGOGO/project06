@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호변경</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div>
+    <form th:action="@{/member/changePw}" autocomplete="off" th:object="${memberJoinDTO}" method="post">
+
+        <div class="form-outline mb-1">
+            <p>기존 비밀번호</p>
+            <label th:if="${#fields.hasErrors('nowPassword')}" th:errors="*{nowPassword}">기존 비밀번호</label>
+            <input type="password" th:field="*{nowPassword}" placeholder="현재 사용중인 비밀번호를 입력하세요." class="fieldError" required />
+        </div>
+
+        <div class="form-outline mb-4">
+            <p>변경할 비밀번호</p>
+            <label th:if="${#fields.hasErrors('mpw')}" th:errors="*{mpw}">변경할 비밀번호</label>
+            <input type="password" th:field="*{mpw}" placeholder="8자리 ~ 16자리와 대소문자와 특수문자" class="fieldError"  required />
+        </div>
+        <div class="form-outline mb-4">
+            <p>변경할 비밀번호 확인</p>
+            <label th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">변경할 비밀번호 확인</label>
+            <input type="password" th:field="*{passwordConfirm}" placeholder="비밀번호 확인을 입력하세요." class="fieldError" required />
+        </div>
+
+        <div class="mb-4 text-center" th:if="${exception eq 'error01'}">
+            <div class="col">
+                <p style="color:red">아이디 또는 비밀번호가 올바르지 않거나 가입이 되지 않았습니다.</p>
+            </div>
+        </div>
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">변경</button>
+    </form>
+</div>
+</body>
+</html>
