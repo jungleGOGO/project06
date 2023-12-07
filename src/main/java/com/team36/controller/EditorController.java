@@ -18,10 +18,14 @@ import java.util.stream.Stream;
 
 @Controller
 @Log4j2
-@RequestMapping("/editor")
 public class EditorController {
 
-    @PostMapping("/get")
+    @GetMapping("/editor")
+    public String getEditor() throws Exception{
+        return "editor";
+    }
+
+    @PostMapping("/editor/get")
     @ResponseBody
     public String setFile(@RequestBody Editor editor) throws Exception{
         String filename = editor.getFilename();
@@ -40,7 +44,7 @@ public class EditorController {
         return filename;
     }
 
-    @PostMapping("/test2")
+    @PostMapping("/editor/test2")
     @ResponseBody
     public String getFile(@RequestParam("filename2") String filename2) throws IOException {
         // 파일 경로
@@ -74,7 +78,7 @@ public class EditorController {
     }
 
 
-    @GetMapping("/fileList")
+    @GetMapping("/editor/fileList")
     @ResponseBody
     public FileNode fileList() throws Exception {
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";

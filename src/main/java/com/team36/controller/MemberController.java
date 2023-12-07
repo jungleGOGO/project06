@@ -28,6 +28,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Log4j2
@@ -42,18 +43,16 @@ public class MemberController {
     @Autowired
     private BCryptPasswordEncoder passEncoder;
 
-    @GetMapping("/join")
-    public String joinGET(Model model){
-        log.info("join get...");
+    @GetMapping("/login")
+    public String login(Model model){
         model.addAttribute("memberJoinDTO", new MemberJoinDTO());
-        return "member/join";
+        return "member/login";
     }
 
     @PostMapping("/join")
     public String joinPOST(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult, Model model){
         log.info("join post...");
         log.info(memberJoinDTO);
-
         String email = memberJoinDTO.getEmail();
         Member existEmail = memberService.existByEmail(email);
         System.out.println(existEmail);
@@ -62,7 +61,7 @@ public class MemberController {
                     .rejectValue("email", "error.email", "사용이 불가한 이메일입니다.");
         }
 
-        if(memberJoinDTO.getPasswordConfirm() != memberJoinDTO.getMpw())
+        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw()))
             bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "비밀번호와 비밀번호 확인이 다릅니다.");
 
 
@@ -71,7 +70,7 @@ public class MemberController {
         return "member/join";
         }
         memberService.join(memberJoinDTO);
-        return "redirect:/";
+        return "redirect:/login";
 
     }
 
@@ -88,10 +87,6 @@ public class MemberController {
         return "member/mypage";
     }
 
-    @GetMapping("/login")
-    public String login(){
-        return "member/login";
-    }
 
     @PostMapping("/member/mypage")
     public String mypage (Profile profile, Principal principal){
