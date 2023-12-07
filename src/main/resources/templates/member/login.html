@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="card-body">
+    <th:block th:if="${param.logout != null}">
+        <h1>Logout........</h1>
+    </th:block>
+
+    <form id="registerForm" action="/login" method="post">
+        <div class="input-group mb-3">
+            <span class="input-group-text">이메일</span>
+            <input type="email" name="username"  class="form-control" placeholder="USER ID" required>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">패스워드</span>
+            <input type="password" name="password" class="form-control" placeholder="PASSWORD" required>
+        </div>
+        <div class="input-group mb-3 ">
+            <input class="form-check-input" type="checkbox" name="remember-me">
+            <label class="form-check-label">
+                자동 로그인
+            </label>
+        </div>
+        <div class="my-4">
+            <div class="float-end">
+                <button type="submit" class="btn btn-primary submitBtn">LOGIN</button>
+            </div>
+        </div>
+    </form>
+    <a href="/oauth2/authorization/kakao">KAKAO</a>
+    <button type="button" class="btn btn-link" data-bs-toggle="modal"
+            data-bs-target="#findPw">비밀번호를 잊으셨나요?</button>
+</div><!--end card body-->
+</body>
+
+
+</html>
