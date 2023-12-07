@@ -103,6 +103,7 @@ public FileNode fileList() throws Exception {
 }
 
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
+
         FileNode current = root;
 //        String[] parts = path.split("\\\\");
         String[] parts = path.split("/");
@@ -110,13 +111,16 @@ public FileNode fileList() throws Exception {
             String part = parts[i];
             if (part.isEmpty() || part.equals("user1")) continue;
 
+
             Optional<FileNode> found = current.getChildren().stream()
                     .filter(node -> node.getName().equals(part))
                     .findFirst();
             if (found.isPresent()) {
                 current = found.get();
             } else {
-                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+
+                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
                 current = newNode;
@@ -128,6 +132,7 @@ public FileNode fileList() throws Exception {
     public ResponseEntity<Resource> downloadZip() throws IOException {
         String sourceDirPath = "/Users/juncheol/Desktop/storage/user1/dir1"; // 압축할 폴더 경로
         String zipFilePath = "/Users/juncheol/Desktop/storage/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
+
         compressToZip(sourceDirPath, zipFilePath);
 
         Resource fileSystemResource = new FileSystemResource(zipFilePath);
