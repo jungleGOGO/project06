@@ -43,44 +43,88 @@ for (const editor of [jsEditor, cssEditor, htmlEditor]) {
   });
 }
 
-function compileCode() {
+runButtonEl.addEventListener("click", () => {
   const htmlCode = htmlCodeEl.value;
   const cssCode = cssCodeEl.value;
   const jsCode = jsCodeEl.value;
 
   codeEl.open();
-  codeEl.write(`<style>${cssCode}</style>`);
-  codeEl.write(htmlCode);
-  codeEl.write(`<script>${jsCode}</script>`);
+
+  // CSS 코드 추가 (줄 바꿈 포함)
+  codeEl.write(`\n<head>\n<style>\n${cssCode}\n</style>\n</head>`);
+
+  // HTML 코드 추가 (줄 바꿈 포함)
+  codeEl.write(`\n<body>\n${htmlCode}</body>\n`);
+
+  // JavaScript 코드 추가 (줄 바꿈 포함)
+  codeEl.write(`<script>\n${jsCode}\n</script>\n`);
+
   codeEl.close();
-}
+});
 
 
-for (const editor of [jsEditor, cssEditor, htmlEditor]) {
-  editor.on("keyup", () => {
-    compileCode();
-  });
+const closeChars = new Map([
+  ['{', '}'],
+  ['[', ']'],
+  ['(', ')'],
+  ['<', '>'],
+  ['"', '"'],
+  ["'", "'"]
+]);
+
+htmlCode =  document.querySelector("[data-html]");
+htmlCode.addEventListener('input', function (e) {
+  if (j != 1) {
+    const pos = e.target.selectionStart;
+    const val = [...e.target.value];
+    const char = val.slice(pos - 1, pos)[0];// suppose (
+    const closeChar = closeChars.get(char);
+    if (closeChar) {
+      val.splice(pos, 0, closeChar);
+      e.target.value = val.join('');
+      e.target.selectionEnd = pos;
+    }
+  }
+  j = 0;
+});
+
+cssCode = document.querySelector("[data-css]");
+cssCode.addEventListener('input', function (e) {
+  if (j != 1) {
+    const pos = e.target.selectionStart;
+    const val = [...e.target.value];
+    const char = val.slice(pos - 1, pos)[0];
+    const closeChar = closeChars.get(char);
+    if (closeChar) {
+      val.splice(pos, 0, closeChar);
+      e.target.value = val.join('');
+      e.target.selectionEnd = pos;
+    }
+  }
+  j = 0;
+});
+
+javascriptCode = document.querySelector("[data-js]");
+javascriptCode.addEventListener('input', function (e) {
+  if (j != 1) {
+    const pos = e.target.selectionStart;
+    const val = [...e.target.value];
+
+    const char = val.slice(pos - 1, pos)[0];
+    const closeChar = closeChars.get(char);
+
+    if (closeChar) {
+      val.splice(pos, 0, closeChar);
+      e.target.value = val.join('');
+      e.target.selectionEnd = pos;
+    }
+  }
+  j = 0;
+});
 
 
-  runButtonEl.addEventListener("click", () => {
-    const htmlCode = htmlCodeEl.value;
-    const cssCode = cssCodeEl.value;
-    const jsCode = jsCodeEl.value;
-
-    codeEl.open();
-    codeEl.write(`<style>${cssCode}</style>`);
-    codeEl.write(htmlCode);
-    codeEl.write(`<script>${jsCode}</script>`);
-    codeEl.close();
-  });
-
-  clearButtonEl.addEventListener("click", () => {
-    htmlEditor.setValue("");
-    cssEditor.setValue("");
-    jsEditor.setValue("");
-  });
-}
-
-
-
-
+clearButtonEl.addEventListener("click", () => {
+  htmlEditor.setValue("");
+  cssEditor.setValue("");
+  jsEditor.setValue("");
+});
