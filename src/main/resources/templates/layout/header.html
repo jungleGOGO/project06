@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="header">
+<header id="header" class="d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/static/img/logo/logo.ico}" alt="" class="img-fluid"></a>
+        </div>
+
+        <nav id="navbar" class="navbar">
+            <ul>
+                <li><a class="nav-link scrollto active" th:href="@{/}">Home</a></li>
+                <li><a class="nav-link scrollto" th:href="@{/java/project}">프로젝트</a></li>
+                <li><a class="nav-link scrollto" th:href="@{/editor}" >연습장</a></li>
+                <li><a th:href="@{/member/mypage}" class="btn-get-started scrollto" style="font-weight: bolder">마이페이지</a></li>
+                <li><a th:href="@{/logout}" class="btn-get-started scrollto" style="font-weight: bolder">로그아웃</a></li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+    </div>
+</header>
+</th:block>
+</html>

@@ -1,176 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer-when-downgrade" />
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/split.js/dist/split.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" data-name="vs/editor/editor.main" th:href="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.css}"/>
-    <script>var require = {paths: {'vs': '../node_modules/monaco-editor/min/vs'}};</script>
-    <script th:src="@{/static/node_modules/monaco-editor/min/vs/loader.js}"></script>
-    <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js}"></script>
-    <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.js}"></script>
+    <title>TCODING</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
 
-    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-
-    <title>메인</title>
-    <style>
-        #monaco { min-height:70vh; }
-    </style>
-    <style>
-        .file_name {
-            cursor: pointer;
-            text-decoration: underline;
-            color: blue;
-        }
-        #split-container {
-            display: flex;
-            height: 70vh;  /* Adjust the height as needed */
-        }
-
-        #left-pane, #right-pane {
-            overflow: scroll;  /* For scrollable content */
-        }
-        #left-pane {
-            overflow-x: auto;
-            position: relative;
-            background-color: #eeeeee;
-        }
-
-        #left-pane #tree {
-            min-width: 300px; /* 내부 컨텐츠의 최소 너비 */
-        }
-        #tree a {
-            text-decoration: none;
-            color: black;
-        }
-
-        .split {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .gutter {
-            background-color: #eee;
-            background-repeat: no-repeat;
-            background-position: 50%;
-        }
-
-        .gutter.gutter-horizontal {
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
-            cursor: col-resize;
-        }
-    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" th:href="@{/}">홈</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <th:block sec:authorize="isAnonymous()">
-                <li class="nav-item">
-                    <a th:href="@{/login}" class="nav-link">로그인</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/join}" class="nav-link">회원가입</a>
-                </li>
-            </th:block>
-            <th:block sec:authorize="isAuthenticated()">
-                <li class="nav-item">
-                    <a th:href="@{/logout}" class="nav-link">로그아웃</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/member/mypage}" class="nav-link">마이페이지</a>
-                </li>
-            </th:block>
-        </ul>
-    </div>
-</nav>
-
-<h2>메인</h2>
-<div class="container">
-    <div class="row">
-        <div class="col-md-10">
-            <h2>온라인 코드 에디터</h2>
-            <div class="form-wrap">
-                <select name="language" id="language" onchange="changeLanguage()">
-                    <option value="java" selected>JAVA</option>
-                    <option value="javascript">Javascript</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                    <option value="react">REACT</option>
-                </select>
-            </div>
-            <div id="split-container">
-                <div id="left-pane">
-                    <div id="tree" style=""></div>
-                </div>
-                <div id="right-pane" style="margin-left: 10px; width: 800px; z-index: 0">
-                    <pre id="monaco"></pre>
-                </div>
-            </div>
-            <div class="form-wrap">
-                <hr>
-                <h4>파일 저장</h4>
-                <input type="text" name="filename" id="filename">
-                <input type="hidden" name="downloadName" id="downloadName">
-                <button type="button" id="btn1" class="btn btn-primary">저장</button>
-                <hr>
-                <h4>파일 다운로드</h4>
-                <button type="button" id="saveBtn" class="btn btn-primary">다운로드</button>
-                <button type="button" id="saveZip" class="btn btn-primary">ZIP 다운로드</button>
-                <hr>
-                <input type="text" name="mkdirname" id="mkdirname" placeholder="폴더명">
-                <button type="button" id="mkdir" class="btn btn-primary">폴더 생성</button>
-                선택한 위치 기준으로 생성
-                <hr>
-            </div>
-            <div class="form-wrap">
-
-                <!--                <input type="text" name="filename2" id="filename2">사용 X-->
-                <!--                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>-->
-
-
-            </div>
-            <div class="form-warp">
-                <hr>
-                <h4>JAVA 실행</h4>
-                <button onclick="send_compiler();" style="width: 200px; height: 100px; vertical-align:top;">Run</button>
-                <div style="margin:5px 0 0 20px;">
-                    <div>경과시간: <span id="performance"></span> m/s</div>
-                </div>
-                <div>출력:</div>
-                <div id="output" style="flex:1 1 auto; padding-left:10px;">실행 결과가 여기에 표시됩니다.</div>
-
-            </div>
-        </div>
-
+<section id="hero">
+    <div class="hero-container">
+        <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/static/img/logo/logo.png}" alt=""></a>
+        <h1 data-aos="zoom-in">T코딩입니다</h1>
+        <h2 data-aos="fade-up">웹 브라우저에서 손쉽게 코딩을 해보고 테스트할 수 있는 편리함이 가득해요.</h2>
         <th:block sec:authorize="isAnonymous()">
-            <a th:href="@{/login}" class="nav-item nav-link">로그인</a>
-            <a th:href="@{/join}" class="nav-item nav-link">회원가입</a>
+            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/login}" class="btn-get-started scrollto" style="font-weight: bold">로그인</a>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
-            <a th:href="@{/logout}" class="nav-item nav-link">로그아웃</a>
-            <a th:href="@{/member/mypage}" class="nav-item nav-link">마이페이지</a>
+            <div class="d-inline-flex">
+            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder">프로젝트</a>
+            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+            </div>
+            <div id="logout">
+                <a data-aos="fade-up" data-aos-delay="200" th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket" style="color:#FFEBA7FF;"></i></a>
+            </div>
         </th:block>
     </div>
-
-</div>
-
-</div>
-<script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
-
-
-
+</section>
 </body>
 </html>

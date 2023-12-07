@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="head">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=dege"> <!-- 인터넷익스프로러로 접근시 엣지로 연결되게 함 -->
+    <meta http-equiv="Author" content="T코딩 콘텐츠 제작팀">
+    <meta http-equiv="Publisher" content="T코딩 제작자">
+    <meta http-equiv="Copyright" content="Copyright@tcoding.ed.kr">
+
+    <!-- 검색엔진 최적화(SEO:Search Engeen) -->
+    <meta name="Subject" content="T코딩">
+    <meta name="Keyword" content="T코딩, 코드편집">
+    <meta name="Description" content="T코딩의 코드편집">
+    <meta name="Robots" content="index, follow">
+
+    <!-- 오픈그래프 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="T코딩">
+    <meta property="og:description" content="앞선 생각으로 더 큰 미래의 교육을 준비하는 기업">
+    <meta property="og:image" content="*">
+    <meta property="og:url" content="*">
+
+    <!-- 기타설정 -->
+    <!-- 트위터 -->
+    <meta name="twitter:card" content="picture">
+    <meta name="twitter:title" content="T코딩">
+    <meta name="twitter:description" content="앞선 생각으로 더 큰 미래의 교육을 준비하는 기업">
+    <meta name="twitter:image" content="*">
+
+    <!-- 파비콘 설정 :32X32 자주 사용 -->
+    <!-- 표준 파비콘 -->
+    <link rel="shortcut icon" th:href="@{/static/img/logo/logo.ico}">
+    <!-- 애플 계열 모바일 -->
+    <link rel="apple-touch-ico-precomposed" th:href="@{/static/img/logo/logo_64.png}">
+
+    <!-- 파이어폭스, 오페라 또는 구형 크롬/사파리 -->
+    <link rel="icon" th:href="@{/static/img/logo/logo_32.png}" sizes="32x32">
+    <link rel="icon" th:href="@{/static/img/logo/logo_48.png}" sizes="48x48">
+    <link rel="icon" th:href="@{/static/img/logo/logo_64.png}" sizes="64x64">
+
+
+    <!-- Vendor CSS Files -->
+    <link th:href="@{/static/vendor/aos/aos.css}" rel="stylesheet">
+    <link th:href="@{/static/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/static/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/static/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+    <link th:href="@{/static/vendor/glightbox/css/glightbox.min.css}" rel="stylesheet">
+    <link th:href="@{/static/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link th:href="@{/static/css/style.css}" rel="stylesheet">
+
+    <!-- Vendor JS Files -->
+    <script th:src="@{/static/vendor/aos/aos.js}"></script>
+    <script th:src="@{/static/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/static/vendor/glightbox/js/glightbox.min.js}"></script>
+    <script th:src="@{/static/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/static/vendor/php-email-form/validate.js}"></script>
+    <script th:src="@{/static/vendor/swiper/swiper-bundle.min.js}"></script>
+    <script th:src="@{/static/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/static/vendor/glightbox/js/glightbox.min.js}"></script>
+
+    <!-- Template Main JS File -->
+    <script th:src="@{/static/js/temp.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://kit.fontawesome.com/b22cfe0297.js" crossorigin="anonymous"></script>
+</th:block>
+</html>

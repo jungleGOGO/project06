@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인페이지</title>
+    <title></title>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
@@ -67,8 +67,6 @@
     }
 </style>
 <body>
-<header>
-</header>
 <main>
     <div class="button-container">
         <input type="text" name="filename" id="filename">
@@ -236,7 +234,7 @@
 
         window.URL.revokeObjectURL(a.href);
         document.body.removeChild(a);
-        });
+    });
 </script>
 <script th:inline="javascript">
     function isValidFilename(filename) {
@@ -279,7 +277,7 @@
         }).catch((error) => {
             console.log(error);
         });
-});
+    });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -336,13 +334,14 @@
             }
         });
     }
-        // 페이지 로드 시에 실행되도록
-        function loadFileList() {
-            axios.get('/fileList').then(response => {
-                const fileList = response.data;
-                if ($('#pane').find('#tree').length === 0) {
-                    $('#pane').append('<div id="tree"></div>');
-                }
+    // 페이지 로드 시에 실행되도록
+    function loadFileList() {
+        axios.get('/fileList').then(response => {
+            const fileList = response.data;
+            if ($('#pane').find('#tree').length === 0) {
+                $('#pane').append('<div id="tree"></div>');
+            }
+
 
                 // 새로운 파일 목록으로 트리뷰 재구성
                 $('#tree').tree({
@@ -352,37 +351,37 @@
                     imageUrlField: 'flagUrl'
                 });
 
-                // 트리 재구성 후 상태 복원
-                restoreTreeState();
-                treeEvent();
-            }).catch(error => {
-                console.error('Error fetching file list:', error);
-            });
-        }
+            // 트리 재구성 후 상태 복원
+            restoreTreeState();
+            treeEvent();
+        }).catch(error => {
+            console.error('Error fetching file list:', error);
+        });
+    }
 
-        // FileNode 객체를 트리뷰 형식으로 변환
-        function transformToTreeViewFormat(fileNode) {
-            var treeData = [];
-            convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다.
-            return treeData;
-        }
+    // FileNode 객체를 트리뷰 형식으로 변환
+    function transformToTreeViewFormat(fileNode) {
+        var treeData = [];
+        convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다.
+        return treeData;
+    }
 
-        // FileNode 객체를 트리뷰 노드로 변환
-        function convertNode(fileNode, treeData, nodeId) {
-            var node = {
-                id: nodeId,
-                text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
-                flagUrl: fileNode.flagUrl,
-                children: []
-            };
+    // FileNode 객체를 트리뷰 노드로 변환
+    function convertNode(fileNode, treeData, nodeId) {
+        var node = {
+            id: nodeId,
+            text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
+            flagUrl: fileNode.flagUrl,
+            children: []
+        };
 
-            fileNode.children.forEach(function (child) {
-                convertNode(child, node.children, nodeId + 1);
-                nodeId++;
-            });
+        fileNode.children.forEach(function (child) {
+            convertNode(child, node.children, nodeId + 1);
+            nodeId++;
+        });
 
-            treeData.push(node);
-        }
+        treeData.push(node);
+    }
 
     function setCodeValues(htmlCode, cssCode, jsCode) {
         const htmlCodeEl = document.querySelector("[data-html]");
