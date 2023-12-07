@@ -4,26 +4,28 @@ import com.team36.domain.Editor;
 import com.team36.domain.FileNode;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Controller
 @Log4j2
-@RequestMapping("/editor")
 public class EditorController {
 
-    @PostMapping("/get")
+    @GetMapping("/editor")
+    public String getEditor() throws Exception{
+        return "editor";
+    }
+
+    @PostMapping("/editor/get")
     @ResponseBody
-    public String setFile(@RequestBody Editor editor) throws Exception{
+    public String setFile(@RequestBody Editor editor) throws Exception {
         String filename = editor.getFilename();
         String content = editor.getContent();
         String filePath = "D:\\kimleeho\\savef\\" + filename;
@@ -40,7 +42,7 @@ public class EditorController {
         return filename;
     }
 
-    @PostMapping("/test2")
+    @PostMapping("/editor/test2")
     @ResponseBody
     public String getFile(@RequestParam("filename2") String filename2) throws IOException {
         // 파일 경로
@@ -50,8 +52,8 @@ public class EditorController {
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
-        System.out.println("fileContent : "+fileContent);
-        System.out.println("filePath  : "+filePath);
+        System.out.println("fileContent : " + fileContent);
+        System.out.println("filePath  : " + filePath);
         log.info("filename : " + filename2);
         log.info("filePath : " + filePath);
         return fileContent;
@@ -74,7 +76,7 @@ public class EditorController {
     }
 
 
-    @GetMapping("/fileList")
+    @GetMapping("/editor/fileList")
     @ResponseBody
     public FileNode fileList() throws Exception {
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
@@ -142,7 +144,32 @@ public class EditorController {
         return current;
     }
 
+    @PostMapping("/delete")
+    public String deleteFile(@RequestBody Map<String, String> payload) throws Exception {
+        String filename = payload.get("filename");
+        // 파일 또는 폴더를 삭제할 디렉토리 경로
+        String rootDirectoryPath = "D:\\kimleeho";
+        String filePath = rootDirectoryPath + filename;
 
+        // File 객체 생성
+        File fileToDelete = new File(filePath);
+
+        // 파일 또는 폴더가 존재하는지 확인
+        if (fileToDelete.exists()) {
+            // 디렉토리인 경우 내용물을 먼저 삭제
+            if (fileToDelete.isDirectory()) {
+                FileSystemUtils.deleteRecursively(fileToDelete);
+            } else {
+                // 파일인 경우 바로 삭제
+                fileToDelete.delete();
+            }
+            System.out.println("삭제 성공: " + filePath);
+        } else {
+            System.out.println("삭제할 파일 또는 폴더가 존재하지 않습니다: " + filePath);
+            // 파일 또는 폴더가 존재하지 않을 때의 처리를 추가할 수 있습니다.
+        }
+        return "redirect:/fileList";
+    }
 }
 
 

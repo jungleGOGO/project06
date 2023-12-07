@@ -139,6 +139,7 @@
     return {
     value: inputValue,
     language: inputLanguage,    // 언어
+    fontFamily: "D2Coding",
     theme: "vs-dark",   // 테마
     lineNumbers: 'on',  // 줄 번호
     glyphMargin: false, // 체크 이미지 넣을 공간이 생김
@@ -234,7 +235,7 @@
     });
 
     function loadFileList() {
-    axios.get('/fileList').then(response => {
+    axios.get('/java/fileList').then(response => {
         const fileList = response.data;
         if ($('#left-pane').find('#tree').length === 0) {
             $('#left-pane').append('<div id="tree"></div>');
@@ -356,7 +357,7 @@
 
 /////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
     document.getElementById('saveZip').addEventListener('click', function() {
-        window.location.href = '/download-zip';
+        window.location.href = '/java/download-zip';
     });
 
     Split(['#left-pane', '#right-pane'], {
