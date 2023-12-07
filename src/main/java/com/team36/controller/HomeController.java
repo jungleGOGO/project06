@@ -50,13 +50,13 @@ public FileNode fileList() throws Exception {
         String projectName = "";
 
         // 준철
-        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
-        String targetDirectoryPath = rootDirectoryPath + "/user1";
-        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+//        String targetDirectoryPath = rootDirectoryPath + "/user1";
+//        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
         // 이호
-//        String rootDirectoryPath = "D:\\kimleeho";
-//        String targetDirectoryPath = rootDirectoryPath + "\\savef";
-//        FileNode root = new FileNode("savef", "\\savef");
+        String rootDirectoryPath = "D:\\kimleeho";
+        String targetDirectoryPath = rootDirectoryPath + "\\savef";
+        FileNode root = new FileNode("savef", "\\savef");
         // 현경
 //        String rootDirectoryPath = "D:\\hk\\project\\file";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
@@ -105,11 +105,11 @@ public FileNode fileList() throws Exception {
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
 
         FileNode current = root;
-//        String[] parts = path.split("\\\\");
-        String[] parts = path.split("/");
+        String[] parts = path.split("\\\\");
+//        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
-            if (part.isEmpty() || part.equals("user1")) continue;
+            if (part.isEmpty() || part.equals("savef")) continue;
 
 
             Optional<FileNode> found = current.getChildren().stream()

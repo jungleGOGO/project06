@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인페이지</title>
-    <title>Online Code Editor</title>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
@@ -19,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
     <script th:src="@{/static/js/main.js}" defer></script>
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
 </head>
 <style>
     /* 모달 스타일 */
@@ -128,6 +129,37 @@
 <footer>
 </footer>
 <script th:inline="javascript">
+
+    $.contextMenu({
+        selector: '[data-role="display"]',
+
+        items: {
+            item1: {
+                name: '삭제',
+                callback: function (key, options) {
+                    // 메뉴 아이템을 클릭한 경우의 동작
+                    console.log("key", key);
+                    console.log("options", options);
+
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href')
+                    // span 안의 a 태그의 텍스트를 가져옴
+                    console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                    axios.post("/editor/delete", { filename: filename }).then((response) => {
+                        showFileList()
+                        console.log("삭제됨");
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                }
+            },
+            item2: { name: 'Item 2', callback: function() { /* 코드 작성 */ } },
+            // 추가적인 아이템들...
+        }
+    });
+</script>
+<script th:inline="javascript">
     const extensionSelect = document.getElementById("extension");
     const customExtensionInput = document.getElementById("customExtensionInput");
     const customExtension = document.getElementById("customExtension");
@@ -209,7 +241,9 @@
 
 <script th:inline="javascript">
     document.getElementById("save").addEventListener("click", function () {
-        let filename = document.getElementById("filename").value;
+        let extension = document.getElementById("extension").value;
+        let name =document.getElementById("filename").value;
+        let filename = name + extension ;
         const htmlCodeEl = document.querySelector("[data-html]");
         const cssCodeEl = document.querySelector("[data-css]");
         const jsCodeEl = document.querySelector("[data-js]");
@@ -218,6 +252,10 @@
         const jsCode = jsCodeEl.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
+        if (!isValidFilename(name)) {
+            alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+            return; // 추가 실행 중단
+        }
         let code = {'filename' : filename,'content' : content };
         console.log(filename);
         console.log(content);
@@ -297,7 +335,7 @@
                     primaryKey: 'id',
                     uiLibrary: 'materialdesign',
                     dataSource: transformToTreeViewFormat(fileList),
-                    imageUrlField: 'flagUrl'
+                    imageUrlField: 'flagUrl',
                 });
 
                 // 트리 재구성 후 상태 복원
@@ -419,6 +457,14 @@
     }
 
 </script>
+
+<script>
+    document.getElementById('content').addEventListener('click', function(event) {
+        event.preventDefault(); // 기본 동작 취소
+        alert('결과창 안에서는 마우스 왼쪽클릭을 할 수 없습니다.');
+    });
+</script>
+
 
 
 </body>
