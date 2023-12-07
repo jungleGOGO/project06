@@ -29,10 +29,10 @@ public class FileNode {
     private String determineFlagUrl(String name) {
 //        System.out.println(name);
         if (new File(name).isDirectory()) {
-            System.out.println("dir => " + name);
+//            System.out.println("dir => " + name);
             return "/static/img/folder.svg";
         } else {
-            System.out.println("file => " + name);
+//            System.out.println("file => " + name);
             return "/static/img/file.svg";
         }
     }
