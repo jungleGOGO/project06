@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>코드편집</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <script th:src="@{/static/js/split.min.js}"></script>
+    <link rel="stylesheet" data-name="vs/editor/editor.main" th:href="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.css}"/>
+    <script>var require = {paths: {'vs': '../node_modules/monaco-editor/min/vs'}};</script>
+    <script th:src="@{/static/node_modules/monaco-editor/min/vs/loader.js}"></script>
+    <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js}"></script>
+    <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.js}"></script>
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        #monaco { min-height:70vh; }
+        .file_name {
+            cursor: pointer;
+            text-decoration: underline;
+            color: blue;
+        }
+        #split-container {
+            display: flex;
+            height: 70vh;  /* Adjust the height as needed */
+        }
+        
+        #left-pane, #right-pane {
+            overflow: scroll;  /* For scrollable content */
+        }
+        #left-pane {
+            overflow-x: auto;
+            position: relative;
+            background-color: #eeeeee;
+        }
+        
+        #left-pane #tree {
+            min-width: 300px; /* 내부 컨텐츠의 최소 너비 */
+        }
+        #tree a {
+            text-decoration: none;
+            color: black;
+        }
+        
+        .split {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .gutter {
+            background-color: #eee;
+            background-repeat: no-repeat;
+            background-position: 50%;
+        }
+        
+        .gutter.gutter-horizontal {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+            cursor: col-resize;
+        }
+    </style>
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/}">홈</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+
+<h2>메인</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10">
+            <h2>온라인 코드 에디터</h2>
+            <div class="form-wrap">
+                <select name="language" id="language" onchange="changeLanguage()">
+                    <option value="java" selected>JAVA</option>
+                    <option value="javascript">Javascript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="react">REACT</option>
+                </select>
+            </div>
+            <div id="split-container">
+                <div id="left-pane">
+                    <div id="tree" style=""></div>
+                </div>
+                <div id="right-pane" style="margin-left: 10px; width: 800px; z-index: 0">
+                    <pre id="monaco"></pre>
+                </div>
+            </div>
+            <div class="form-wrap">
+                <hr>
+                <h4>파일 저장</h4>
+                <input type="text" name="filename" id="filename">
+                <input type="hidden" name="downloadName" id="downloadName">
+                <button type="button" id="btn1" class="btn btn-primary">저장</button>
+                <hr>
+                <h4>파일 다운로드</h4>
+                <button type="button" id="saveBtn" class="btn btn-primary">다운로드</button>
+                <button type="button" id="saveZip" class="btn btn-primary">ZIP 다운로드</button>
+                <hr>
+                <input type="text" name="mkdirname" id="mkdirname" placeholder="폴더명" oninput="validateInput(this)">
+                <button type="button" id="mkdir2" class="btn btn-primary">폴더 생성</button>
+                선택한 위치 기준으로 생성
+                <hr>
+            </div>
+            <div class="form-wrap">
+                <!--                <input type="text" name="filename2" id="filename2">사용 X-->
+                <!--                <button type="button" id="btn2" class="btn btn-primary">불러오기</button>-->
+
+            </div>
+            <div class="form-warp">
+                <hr>
+                <h4>JAVA 실행</h4>
+                <button onclick="send_compiler();" type="button" class="btn btn-danger">Run</button>
+                <div style="margin:5px 0 0 20px;">
+                    <div>경과시간: <span id="performance"></span> m/s</div>
+                </div>
+                <div>출력:</div>
+                <div id="output" style="flex:1 1 auto; padding-left:10px;">실행 결과가 여기에 표시됩니다.</div>
+                <hr>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+</div>
+
+<script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs/loader.js"></script>
+<script>
+    require.config({
+        paths: {
+            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs'
+        }
+    });
+
+    window.MonacoEnvironment = {
+        getWorkerUrl: function (workerId, label) {
+            return '/monaco-editor-worker-loader-proxy.js';
+        }
+    };
+
+    require(["vs/editor/editor.main"], function () {})
+</script>
+</body>
+</html>

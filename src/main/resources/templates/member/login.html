@@ -1,43 +1,145 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
-    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link th:href="@{/static/css/login.css}" rel="stylesheet">
 </head>
 <body>
-<div class="card-body">
-    <th:block th:if="${param.logout != null}">
-        <h1>Logout........</h1>
-    </th:block>
+<div class="section">
+    <div class="container">
+        <div class="row full-height justify-content-center">
+            <div class="col-12 text-center align-self-center py-5">
+                <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                    <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/static/img/logo/logo.png}" alt=""></a>
+                    <h6 class="mb-0 pb-3"><span>로그인 </span><span>회원가입</span></h6>
+                    <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
+                    <label for="reg-log"></label>
+                    <div class="card-3d-wrap mx-auto">
+                        <div class="card-3d-wrapper">
+                            <div class="card-front">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">로그인</h4>
+                                        <form action="/login" method="post">
+                                            <div class="form-group">
+                                                <input type="email" name="username" class="form-style" placeholder="Your Email"  autocomplete="off" required>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="password" name="password" class="form-style" placeholder="Your Password" autocomplete="off" required>
+                                            </div>
+                                            <button type="submit" class="btn mt-4">LOGIN</button>
+                                            <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
-    <form id="registerForm" action="/login" method="post">
-        <div class="input-group mb-3">
-            <span class="input-group-text">이메일</span>
-            <input type="email" name="username"  class="form-control" placeholder="USER ID" required>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">패스워드</span>
-            <input type="password" name="password" class="form-control" placeholder="PASSWORD" required>
-        </div>
-        <div class="input-group mb-3 ">
-            <input class="form-check-input" type="checkbox" name="remember-me">
-            <label class="form-check-label">
-                자동 로그인
-            </label>
-        </div>
-        <div class="my-4">
-            <div class="float-end">
-                <button type="submit" class="btn btn-primary submitBtn">LOGIN</button>
+                            <div class="card-back">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">회원가입</h4>
+                                        <form action="/join" method="post"  th:object="${memberJoinDTO}">
+                                            <div class="form-group">
+                                                <input type="text" th:field="*{mname}" class="form-style" placeholder="Your Full Name" autocomplete="off">
+                                                <p th:if="${#fields.hasErrors('mname')}" th:errors="*{mname}" class="fieldError">Incorrect data</p>
+                                            </div>
+                                            <div class="form-group mt-2" style="display: flex;">
+                                                <input type="email" th:field="*{email}"  class="form-style" placeholder="Your Email" id="memail" autocomplete="off" style="width: 70%;">
+                                                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">Incorrect data</p>
+                                                <button class="btn" type="button" id="checkEmail" style="margin-left:20px;">인증</button>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="text" th:field="*{code}" class="form-style"  placeholder="Email Code" id="memailconfirm" autocomplete="off">
+                                                <p th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="fieldError">Incorrect data</p>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="password" th:field="*{mpw}" class="form-style" placeholder="Your Password" autocomplete="off">
+                                                <p th:if="${#fields.hasErrors('mpw')}" th:errors="*{mpw}" class="fieldError">Incorrect data</p>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="password" th:field="*{passwordConfirm}" class="form-style" placeholder="Your Password"autocomplete="off">
+                                                <p th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="fieldError">Incorrect data</p>
+                                            </div>
+                                            <button type="submit" class="btn mt-4">SUBMIT</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
-    <a href="/oauth2/authorization/kakao">KAKAO</a>
-    <button type="button" class="btn btn-link" data-bs-toggle="modal"
-            data-bs-target="#findPw">비밀번호를 잊으셨나요?</button>
-</div><!--end card body-->
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function(){
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null){
+            alert(errorMessage);
+            console.log(errorMessage);
+        }
+    });
+</script>
+<script th:inline="javascript">
+    var emconfirmchk = false; // 이메일 인증
+    var $memail = $("#memail");
+    var $checkEmail = $("#checkEmail"); // 인증번호 발송 버튼
+    var $memailconfirm = $("#memailconfirm"); // 인증번호 확인input
+    var $memailconfirmTxt = $("#memailconfirmTxt"); // 인증번호 확인 txt
+    // 이메일 인증번호
+    $checkEmail.click(function() {
+        $.ajax({
+            type : "POST",
+            url : "/emailConfirm",
+            data : {
+                "email" : $memail.val()
+            },
+            success : function(data){
+                alert("해당 이메일로 인증번호 발송이 완료되었습니다. \n 확인부탁드립니다.")
+                console.log("data : "+data);
+                chkEmailConfirm(data, $memailconfirm, $memailconfirmTxt);
+            }
+        })
+    })
+    // 이메일 인증번호 체크 함수
+    function chkEmailConfirm(data, $memailconfirm, $memailconfirmTxt){
+        $memailconfirm.on("keyup", function(){
+            if (data != $memailconfirm.val()) {
+                emconfirmchk = false;
+                $memailconfirmTxt.html("<span id='emconfirmchk'>인증번호가 잘못되었습니다</span>")
+                $("#emconfirmchk").css({
+                    "color" : "#FA3E3E",
+                    "font-weight" : "bold",
+                    "font-size" : "10px"
+                });
+            } else {
+                emconfirmchk = true;
+                $memailconfirmTxt.html("<span id='emconfirmchk'>인증번호 확인 완료</span>")
+                $("#emconfirmchk").css({
+                    "color" : "#0D6EFD",
+                    "font-weight" : "bold",
+                    "font-size" : "10px"
+                });
+            }
+
+            // 회원가입 버튼 활성/비활성화 여부 확인
+            checkSignUpButton();
+        });
+    }
+
+    function checkSignUpButton() {
+        var $signUpButton = $(".submitBtn");
+        if (emconfirmchk) {
+            // 모든 조건이 충족되면 회원가입 버튼 활성화
+            $signUpButton.prop("disabled", false);
+        } else {
+            // 어떤 조건이라도 충족되지 않으면 회원가입 버튼 비활성화
+            $signUpButton.prop("disabled", true);
+        }
+    }
+
+</script>
 </body>
-
-
 </html>
