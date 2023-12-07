@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>연습장</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
@@ -93,6 +96,16 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="renameFileModal" >
+        <div class="modal-content">
+            <span class="close" onclick="closeRenameFileModal()">&times;</span>
+            <label for="newFilename">새 파일 이름:</label>
+            <input type="text" id="newFilename" name="newFilename">
+            <button onclick="renameFile()">변경</button>
+        </div>
+    </div>
+
     <section class="boxes">
         <div class="editor-container">
             <div class="editor-header">
@@ -149,9 +162,13 @@
                     });
                 }
             },
-            item2: { name: 'Item 2', callback: function() { /* 코드 작성 */ } },
-            // 추가적인 아이템들...
-        }
+            item2: {
+                    name: '이름 변경',
+                    callback: function (key, options) {
+                        openRenameFileModal(); // 모달 열기
+                    }
+                }
+            }
     });
 </script>
 <script th:inline="javascript">
@@ -325,13 +342,14 @@
                 $('#pane').append('<div id="tree"></div>');
             }
 
-            // 새로운 파일 목록으로 트리뷰 재구성
-            $('#tree').tree({
-                primaryKey: 'id',
-                uiLibrary: 'materialdesign',
-                dataSource: transformToTreeViewFormat(fileList),
-                imageUrlField: 'flagUrl',
-            });
+
+                // 새로운 파일 목록으로 트리뷰 재구성
+                $('#tree').tree({
+                    primaryKey: 'id',
+                    uiLibrary: 'materialdesign',
+                    dataSource: transformToTreeViewFormat(fileList),
+                    imageUrlField: 'flagUrl'
+                });
 
             // 트리 재구성 후 상태 복원
             restoreTreeState();
@@ -453,11 +471,40 @@
 
 </script>
 
-<script>
+<script th:inline="javascript">
     document.getElementById('content').addEventListener('click', function(event) {
         event.preventDefault(); // 기본 동작 취소
         alert('결과창 안에서는 마우스 왼쪽클릭을 할 수 없습니다.');
     });
+</script>
+
+<script th:inline="javascript">
+    // 모달 열기 함수
+    function openRenameFileModal() {
+        document.getElementById('renameFileModal').style.display = 'block';
+    }
+
+    // 모달 닫기 함수
+    function closeRenameFileModal() {
+        document.getElementById('renameFileModal').style.display = 'none';
+    }
+
+    // 파일 이름 변경 함수
+    function renameFile() {
+        const currentFilename = document.getElementById("downloadName").value;
+        const newFilename = document.getElementById("newFilename").value;
+
+        // 파일 이름 변경 API 호출
+        axios.post("/editor/rename", { currentFilename, newFilename })
+            .then((response) => {
+                showFileList(); // 변경된 파일 목록 다시 로드
+                closeRenameFileModal(); // 모달 닫기
+                console.log("파일 이름이 성공적으로 변경되었습니다.");
+            })
+            .catch((error) => {
+                console.error("파일 이름 변경 중 오류:", error);
+            });
+    }
 </script>
 
 
