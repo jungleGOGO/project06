@@ -98,7 +98,7 @@ public FileNode fileList() throws Exception {
         parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
     });
 
-    System.out.println(root);
+//    System.out.println(root);
     return root;
 }
 
@@ -119,7 +119,7 @@ public FileNode fileList() throws Exception {
                 current = found.get();
             } else {
 
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
