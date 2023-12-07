@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>연습장</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
@@ -325,13 +328,14 @@
                 $('#pane').append('<div id="tree"></div>');
             }
 
-            // 새로운 파일 목록으로 트리뷰 재구성
-            $('#tree').tree({
-                primaryKey: 'id',
-                uiLibrary: 'materialdesign',
-                dataSource: transformToTreeViewFormat(fileList),
-                imageUrlField: 'flagUrl',
-            });
+
+                // 새로운 파일 목록으로 트리뷰 재구성
+                $('#tree').tree({
+                    primaryKey: 'id',
+                    uiLibrary: 'materialdesign',
+                    dataSource: transformToTreeViewFormat(fileList),
+                    imageUrlField: 'flagUrl',
+                });
 
             // 트리 재구성 후 상태 복원
             restoreTreeState();
