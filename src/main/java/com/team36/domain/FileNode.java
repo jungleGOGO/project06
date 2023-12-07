@@ -20,7 +20,7 @@ public class FileNode {
         this.text = text;
         this.children = new ArrayList<>();
 //        System.out.println("text : "+text);
-        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/storage"+text);
+        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
     }
 
     public void addChild(FileNode child) {

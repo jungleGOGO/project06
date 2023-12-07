@@ -142,6 +142,11 @@ public class EditorController {
         return current;
     }
 
+    @PostMapping("/delete")
+    public void deletefile(){
+
+    }
+
 
 }
 
