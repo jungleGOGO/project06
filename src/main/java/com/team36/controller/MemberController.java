@@ -49,6 +49,12 @@ public class MemberController {
         return "member/login";
     }
 
+    @GetMapping("/member/loginFail")
+    public String loginFail (Model model) {
+        model.addAttribute("msg", "로그인 실패! 다시 시도해 주세요:)");
+        model.addAttribute("url", "/login");
+        return "layout/alert";
+    }
     @PostMapping("/join")
     public String joinPOST(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult, Model model){
         log.info("join post...");
@@ -61,17 +67,20 @@ public class MemberController {
                     .rejectValue("email", "error.email", "사용이 불가한 이메일입니다.");
         }
 
-        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw()))
+        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw())){
             bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "비밀번호와 비밀번호 확인이 다릅니다.");
-
+        }
 
         if(bindingResult.hasErrors()){
+          System.out.println("error"+bindingResult.hasErrors());
+            System.out.println("e" +bindingResult.getFieldError().getDefaultMessage());
+          model.addAttribute("error", bindingResult.hasErrors());
           model.addAttribute("memberJoinDTO", memberJoinDTO);
-        return "member/join";
+          return "member/login";
         }
+
         memberService.join(memberJoinDTO);
         return "redirect:/login";
-
     }
 
     @GetMapping("/member/mypage")

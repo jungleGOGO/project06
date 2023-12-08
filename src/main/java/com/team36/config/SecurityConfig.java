@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 import javax.sql.DataSource;
@@ -26,6 +27,8 @@ public class SecurityConfig {
     private final DataSource dataSource;
 
     private final CustomUserDetailsService userDetailsService;
+
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -45,8 +48,9 @@ public class SecurityConfig {
                     .anyRequest().authenticated());
 
         http
-            .formLogin((formLogin) ->
-                formLogin.loginPage("/login")
+            .formLogin((formLogin) -> formLogin
+                    .loginPage("/login")
+                    .failureUrl("/member/loginFail")
             );
 
         http

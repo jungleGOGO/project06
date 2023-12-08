@@ -15,14 +15,15 @@ import java.net.URLClassLoader;
 @Component
 public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    private final String path = "/Users/juncheol/Desktop/compile/";
+//    private final String path = "/Users/juncheol/Desktop/compile/";
+    private final String path = "D:\\hk\\project\\compile\\";
 
 
     public String compileAndRunCode(String code) throws Exception {
         // 유일한 식별자 생성
         String uuid = UUIDUtil.createUUID();
         // 코드를 저장할 고유 경로 생성
-        String uuidPath = path + uuid + "/";
+        String uuidPath = path + uuid + "\\";
         File newFolder = new File(uuidPath);
         // Java 파일 생성
         File sourceFile = new File(uuidPath + "Test.java");
