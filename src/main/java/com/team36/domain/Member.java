@@ -40,19 +40,9 @@ public class Member extends BaseEntity {
     public void changePassword(String mpw ){
         this.mpw = mpw;
     }
-
-    public void changeEmail(String email){
-        this.email = email;
-    }
-
+    public void changeMname(String mname) { this.mname=mname; }
     public void addRole(MemberRole memberRole){
         this.roleSet.add(memberRole);
     }
-
-    public void clearRoles() {
-        this.roleSet.clear();
-    }
-
-    public void addProfile(Profile profile) { this.profile = profile; }
 
 }

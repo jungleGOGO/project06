@@ -4,6 +4,46 @@
 <head>
     <title>TCODING</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
+    <style>
+        #btnWrap {
+            width: 500px;
+            margin: 100px auto;
+        }
+        #popupBtn {
+            width: 150px;
+            height: 50px;
+            padding: 10px 5px;
+        }
+        #modalWrap {
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: none;
+        }
+
+        #modalBody {
+            width: 500px;
+            height: 300px;
+            padding: 30px 30px;
+            margin: 0 auto;
+            border: 1px solid #777;
+            background-color: #fff;
+        }
+
+        #closeBtn {
+            float:right;
+            font-weight: bold;
+            color: #777;
+            font-size:25px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,17 +54,45 @@
         <h2 data-aos="fade-up">웹 브라우저에서 손쉽게 코딩을 해보고 테스트할 수 있는 편리함이 가득해요.</h2>
         <th:block sec:authorize="isAnonymous()">
             <a data-aos="fade-up" data-aos-delay="200" th:href="@{/login}" class="btn-get-started scrollto" style="font-weight: bold">로그인</a>
+            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
             <div class="d-inline-flex">
-            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder">프로젝트</a>
-            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+                <a data-aos="fade-up" data-aos-delay="200" id="popupBtn" class="btn-get-started scrollto" style="font-weight: bolder">시작하기</a>
             </div>
             <div id="logout">
                 <a data-aos="fade-up" data-aos-delay="200" th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket" style="color:#FFEBA7FF;"></i></a>
             </div>
+
+            <div id="modalWrap">
+                <div id="modalBody">
+                    <span id="closeBtn">&times;</span>
+                    <p>modal-popup 입니다.</p>
+                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder">프로젝트</a>
+                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+                </div>
+            </div>
         </th:block>
     </div>
+    <script>
+        const btn = document.getElementById('popupBtn');
+        const modal = document.getElementById('modalWrap');
+        const closeBtn = document.getElementById('closeBtn');
+
+        btn.onclick = function() {
+            modal.style.display = 'block';
+        }
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
 </section>
 </body>
 </html>

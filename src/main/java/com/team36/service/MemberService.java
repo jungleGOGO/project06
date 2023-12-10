@@ -11,8 +11,6 @@ public interface MemberService {
     static class MidExistException extends Exception {}
     Member existByEmail(String email);
     void join(MemberJoinDTO memberJoinDTO) ;
-
     void changePw(MemberJoinDTO memberJoinDTO);
-
-
+    boolean changeName(MemberJoinDTO memberJoinDTO);
 }
