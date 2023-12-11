@@ -6,6 +6,51 @@
     <link th:href="@{/static/css/page.css}" rel="stylesheet">
     <style>
         .footer-area {position:relative!important;}
+        #popupBtn {
+            width: 150px;
+            padding: 10px 5px;
+        }
+        #modalWrap {
+            position: fixed;
+            z-index: 1;
+            padding-top: 150px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            display: none;
+        }
+
+        #modalBody {
+            width: 800px;
+            height: 500px;
+            padding: 30px 30px;
+            margin: 0 auto;
+            background-color: #1e2022;
+        }
+
+        #closeBtn {
+            float:right;
+            font-weight: bold;
+            color: #777;
+            font-size:25px;
+            cursor: pointer;
+        }
+        .file-label {
+            margin-top: 30px;
+            background-color: #5b975b;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 65%;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .file {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -17,7 +62,7 @@
                 <div class="center-wrap">
                 <div class="row g-0">
                     <div class="col-md-4 d-flex justify-content-center mt-2">
-                        <img th:src="@{/static/img/basic.png}" style=" width: 200px; height:200px;" class="img-fluid rounded-start" alt="...">
+                        <img th:src="@{/static/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" alt="...">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -35,7 +80,8 @@
                             </div>
                         </div>
                         <div>
-                            <a th:href="@{/member/check}" class="btn btn-secondary float-end mx-4">내정보수정</a>
+                            <button type="button" id="popupBtn" class="btn btn-secondary float-end mx-4" style="font-weight: bolder; border: none;">이미지변경</button>
+                            <a th:href="@{/member/check}" class="btn btn-secondary float-end">내정보수정</a>
                         </div>
                     </div>
                 </div>
@@ -71,7 +117,63 @@
             </div>
         </div>
     </div>
+    <div id="modalWrap">
+        <div id="modalBody" class="d-flex flex-column align-items-center" style=" border-radius: 30px;">
+            <span id="closeBtn">&times;</span>
+            <img th:src="@{/static/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" id="previewImage" alt="...">
+            <label class="file-label" for="fileInput">Choose File</label>
+            <input type="file" class="file" accept="image/png, image/jpeg" id="fileInput"><br>
+            <label class="file-label" for="changeImage">이미지 변경</label>
+            <input type="button" class="file" id="changeImage" onclick="changeImage()">
+        </div>
+    </div>
 </div>
+<script>
+    const btn = document.getElementById('popupBtn');
+    const modal = document.getElementById('modalWrap');
+    const closeBtn = document.getElementById('closeBtn');
+    const fileDOM = document.querySelector('#fileInput');
+    const preview = document.querySelector('#previewImage');
+
+    btn.onclick = function() {
+        modal.style.display = 'block';
+    }
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    fileDOM.addEventListener('change', () => {
+        const file = fileDOM.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+            console.log(file.name);
+        }
+    });
+
+    var fileName = fileDOM.files[0].name;
+    let params = { fileName: fileName }
+    $.ajax({
+        url:"/member/changeImage",
+        type:"post",
+        data:params,
+        success : function(result) {},
+    });
+
+</script>
+
+
 <th:block th:insert="~{layout/footer :: footer}"></th:block>
 </body>
 </html>

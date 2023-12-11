@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,6 +209,15 @@ public class MemberController {
         member.setMid(Integer.parseInt(principal.getName()));
         member.setMname(mname);
         memberService.changeName(member);
+        return true;
+    }
+
+    @PostMapping("/member/changeImage")
+    @ResponseBody
+    public boolean changeImage(@RequestParam("memberImg") String memberImg, Principal principal) throws FileNotFoundException {
+
+        OutputStream file = new FileOutputStream("D:\\hk\\project\\img\\"+memberImg);
+
         return true;
     }
 }
