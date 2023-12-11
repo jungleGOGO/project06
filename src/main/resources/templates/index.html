@@ -4,46 +4,7 @@
 <head>
     <title>TCODING</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
-    <style>
-        #btnWrap {
-            width: 500px;
-            margin: 100px auto;
-        }
-        #popupBtn {
-            width: 150px;
-            height: 50px;
-            padding: 10px 5px;
-        }
-        #modalWrap {
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            display: none;
-        }
-
-        #modalBody {
-            width: 500px;
-            height: 300px;
-            padding: 30px 30px;
-            margin: 0 auto;
-            border: 1px solid #777;
-            background-color: #fff;
-        }
-
-        #closeBtn {
-            float:right;
-            font-weight: bold;
-            color: #777;
-            font-size:25px;
-            cursor: pointer;
-        }
-    </style>
+    <link th:href="@{/static/css/index.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -53,23 +14,46 @@
         <h1 data-aos="zoom-in">T 코딩입니다!</h1>
         <h2 data-aos="fade-up">웹 브라우저에서 손쉽게 코딩을 해보고 테스트할 수 있는 편리함이 가득해요.</h2>
         <th:block sec:authorize="isAnonymous()">
-            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/login}" class="btn-get-started scrollto" style="font-weight: bold">로그인</a>
-            <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+            <div class="d-inline-flex">
+                <a data-aos="fade-up" data-aos-delay="200" th:href="@{/login}" class="btn-get-started scrollto" style="font-weight: bold">로그인</a>
+                <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+            </div>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
-            <div class="d-inline-flex">
-                <a data-aos="fade-up" data-aos-delay="200" id="popupBtn" class="btn-get-started scrollto" style="font-weight: bolder">시작하기</a>
-            </div>
+            <a data-aos="fade-up" data-aos-delay="200" id="popupBtn" class="btn-get-started scrollto" style="font-weight: bolder">시작하기</a>
             <div id="logout">
-                <a data-aos="fade-up" data-aos-delay="200" th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket" style="color:#FFEBA7FF;"></i></a>
+                <a data-aos="fade-up" data-aos-delay="200"><i class="fa-solid fa-user" style="color:#FFEBA7FF;"></i></a>
+                <div id="balloon-wrap">
+                    <ul id="balloon">
+                        <li><a th:href="@{/member/mypage}">마이페이지</a></li>
+                        <li><a th:href="@{/logout}">로그아웃</a></li>
+                    </ul>
+                </div>
             </div>
 
+
             <div id="modalWrap">
-                <div id="modalBody">
+                <div id="modalBody" style=" border-radius: 30px;">
                     <span id="closeBtn">&times;</span>
-                    <p>modal-popup 입니다.</p>
-                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder">프로젝트</a>
-                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+                    <div class="row m-4 pt-5" >
+                        <div class="col">
+                            <div>
+                                <img th:src="@{/static/img/java.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
+                                <div>
+                                    <p class="mb-0 mt-4"><i class="fa-brands fa-java" style="color:#007396; font-size: 20px;"></i></p>
+                                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder; border-radius:25px; margin-top: 35px;">프로젝트</a></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <img th:src="@{/static/img/editor.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
+                                <div>
+                                    <p class="mb-0 mt-4"><i class="fa-brands fa-css3-alt"style="color:#1572b6; font-size: 20px;"></i>&nbsp;<i class="fa-brands fa-html5" style="color:#e34f26; font-size: 20px;"></i>&nbsp;<i class="fa-brands fa-square-js" style="color:#f7df1e; font-size: 20px;"></i></p>
+                                    <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder; border-radius:25px; margin-top: 35px;">연습장</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </th:block>
@@ -78,6 +62,8 @@
         const btn = document.getElementById('popupBtn');
         const modal = document.getElementById('modalWrap');
         const closeBtn = document.getElementById('closeBtn');
+        const icon = document.getElementById('logout');
+        const balloon = document.getElementById('balloon');
 
         btn.onclick = function() {
             modal.style.display = 'block';
@@ -92,6 +78,18 @@
             }
         }
 
+        icon.addEventListener('mouseenter', function (){
+            balloon.style.display = 'block';
+        })
+
+        icon.addEventListener('mouseover', function (){
+            console.log("bye");
+            balloon.style.display = 'block';
+        })
+
+        icon.addEventListener('mouseout', function (){
+            balloon.style.display = 'none';
+        })
     </script>
 </section>
 </body>
