@@ -8,7 +8,6 @@
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -65,6 +64,12 @@
         text-decoration: none;
         color: black;
     }
+
+     #tree a.selected {
+         background-color: #007bff;
+         color: #fff;
+     }
+
 </style>
 <body>
 <main>
@@ -163,12 +168,12 @@
                 }
             },
             item2: {
-                    name: '이름 변경',
-                    callback: function (key, options) {
-                        openRenameFileModal(); // 모달 열기
-                    }
+                name: '이름 변경',
+                callback: function (key, options) {
+                    openRenameFileModal(); // 모달 열기
                 }
             }
+        }
     });
 </script>
 <script th:inline="javascript">
@@ -336,20 +341,20 @@
     }
     // 페이지 로드 시에 실행되도록
     function loadFileList() {
-        axios.get('/fileList').then(response => {
+        axios.get('/editor/fileList').then(response => {
             const fileList = response.data;
             if ($('#pane').find('#tree').length === 0) {
                 $('#pane').append('<div id="tree"></div>');
             }
 
 
-                // 새로운 파일 목록으로 트리뷰 재구성
-                $('#tree').tree({
-                    primaryKey: 'id',
-                    uiLibrary: 'materialdesign',
-                    dataSource: transformToTreeViewFormat(fileList),
-                    imageUrlField: 'flagUrl'
-                });
+            // 새로운 파일 목록으로 트리뷰 재구성
+            $('#tree').tree({
+                primaryKey: 'id',
+                uiLibrary: 'materialdesign',
+                dataSource: transformToTreeViewFormat(fileList),
+                imageUrlField: 'flagUrl'
+            });
 
             // 트리 재구성 후 상태 복원
             restoreTreeState();
@@ -400,26 +405,53 @@
         console.log('CSS Code:', cssCode);
         console.log('JavaScript Code:', jsCode);
     }
+    let selectedFiles = [];
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
-
-        treeArea.addEventListener('click', function(event) {
-            if (event.target.closest('a')) {
+        treeArea.addEventListener('click', function (event) {
+            const anchor = event.target.closest('a');
+            if (anchor) {
                 event.preventDefault();
+
+                const wrapper = anchor.closest('[data-role="node"]');
+                const isSelected = wrapper.classList.contains('selected ');
+
+                // Ctrl 키가 눌려 있는지 확인
+                if (event.ctrlKey || event.metaKey) {
+                    // 선택 상태를 토글
+                    if (isSelected) {
+                        wrapper.classList.remove('selected');
+                        selectedFiles = selectedFiles.filter(file => file !== anchor.getAttribute('href'));
+                    } else {
+                        wrapper.classList.add('selected');
+                        selectedFiles.push(anchor.getAttribute('href'));
+                    }
+                } else {
+                    // Ctrl 키가 눌려 있지 않은 경우 단일 선택 수행
+                    clearSelection();
+                    wrapper.classList.add('selected');
+                    selectedFiles = [anchor.getAttribute('href')];
+                }
+
+                // 디버깅용으로 선택된 파일 표시
+                console.log('Selected Files:', selectedFiles);
             }
         });
-        treeArea.addEventListener('dblclick', function(event) {
+
+        treeArea.addEventListener('dblclick', function (event) {
             const anchor = event.target.closest('a');
-            htmlEditor.setValue("");
-            cssEditor.setValue("");
-            jsEditor.setValue("");
+
             if (anchor) {
-                const filename = anchor.getAttribute('href'); // 파일명 추출
-                document.getElementById("downloadName").value = filename;
-                console.log("filename")
-                console.log(filename)
+                htmlEditor.setValue("");
+                cssEditor.setValue("");
+                jsEditor.setValue("");
+
+                const fullPath = anchor.getAttribute('href');
+                const filename = anchor.textContent;
+              console.log("filename:"+filename)
+
                 axios.post('/editor/test2', null, {
-                    params: { filename2: filename }
+                    params: {filename2: fullPath}
                 })
                     .then(response => {
                         const fileContent = response.data;
@@ -445,12 +477,8 @@
                         // 더블클릭 시 모달을 닫도록 추가
                         closeModal();
                     });
-            }
-        });
-        treeArea.addEventListener('dblclick', function(event) {
-            const anchor = event.target.closest('a');
-            if (anchor) {
-                const wrapper = anchor.closest('[data-role="wrapper"]');
+            } else {
+                const wrapper = event.target.closest('[data-role="wrapper"]');
                 const expander = wrapper.querySelector('[data-role="expander"]');
                 const childUl = wrapper.parentElement.querySelector('ul');
 
@@ -466,18 +494,8 @@
                 }
             }
         });
-
     }
-
 </script>
-
-<script th:inline="javascript">
-    document.getElementById('content').addEventListener('click', function(event) {
-        event.preventDefault(); // 기본 동작 취소
-        alert('결과창 안에서는 마우스 왼쪽클릭을 할 수 없습니다.');
-    });
-</script>
-
 <script th:inline="javascript">
     // 모달 열기 함수
     function openRenameFileModal() {
@@ -507,7 +525,63 @@
     }
 </script>
 
+<script th:inline="javascript">
+    document.getElementById('tree').addEventListener('click', function(event) {
+        const anchor = event.target.closest('a');
+        if (anchor) {
+            event.preventDefault();
 
+            const wrapper = anchor.closest('[data-role="node"]');
+            const isSelected = wrapper.classList.contains('selected');
+
+            // Ctrl 키가 눌려 있는지 확인
+            if (event.ctrlKey || event.metaKey) {
+                // 선택 상태를 토글
+                if (isSelected) {
+                    wrapper.classList.remove('selected');
+                    selectedFiles = selectedFiles.filter(file => file !== anchor.getAttribute('href'));
+                } else {
+                    wrapper.classList.add('selected');
+                    selectedFiles.push(anchor.getAttribute('href'));
+                }
+            } else {
+                // Ctrl 키가 눌려 있지 않은 경우 단일 선택 수행
+                clearSelection();
+                wrapper.classList.add('selected');
+                selectedFiles = [anchor.getAttribute('href')];
+            }
+
+            // 디버깅용으로 선택된 파일 표시
+            console.log('Selected Files:', selectedFiles);
+        }
+    });
+</script>
+<script th:inline="javascript">
+    function clearSelection() {
+        // 모든 선택 상태 제거
+        document.querySelectorAll('.selected').forEach(item => item.classList.remove('selected'));
+    }
+</script>
+
+<!--링크는 새창으로 띄우게함-->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Wait for the iframe to load
+        document.getElementById('content').addEventListener('load', function () {
+            // Access the contentDocument of the iframe
+            const iframeContent = document.getElementById('content').contentDocument;
+
+            // Check if contentDocument is available
+            if (iframeContent) {
+                // Find all 'a' tags and set target="_blank"
+                const anchorTags = iframeContent.querySelectorAll('a');
+                anchorTags.forEach(function (anchor) {
+                    anchor.setAttribute('target', '_blank');
+                });
+            }
+        });
+    });
+</script>
 
 </body>
 

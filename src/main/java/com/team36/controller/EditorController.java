@@ -48,7 +48,7 @@ public class EditorController {
         // 파일 경로
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
 //        String filePath = "D:\\hk\\project\\file\\" + filename2;
-        String filePath = "D:\\kimleeho\\" + filename2;
+        String filePath = "D:\\kimleeho" + filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
