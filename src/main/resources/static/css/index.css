@@ -1,0 +1,82 @@
+#popupBtn {
+    width: 150px;
+    height: 50px;
+    padding: 10px 5px;
+}
+#modalWrap {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody {
+    width: 800px;
+    height: 500px;
+    padding: 30px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+}
+
+#closeBtn {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#balloon-wrap{
+    width: 120px;
+    height: 100px;
+    position:absolute;
+    top:65px;
+    right:-8px;
+    z-index: 99;
+}
+
+#balloon-wrap a{
+    color: #fff;
+}
+
+#balloon {
+    position:absolute;
+    width:120px;
+    height:auto;
+    background: #102770;
+    border-radius: 20px;
+    text-align: center;
+    padding: 0;
+    display: none;
+}
+
+#balloon:after {
+    border-top:0px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgb(16, 39, 112);
+    content:"";
+    position:absolute;
+    top:-10px;
+    left:80px;
+}
+
+#balloon li{
+    padding :10px;
+    list-style: none;
+}
+
+#balloon li a {
+    font-family: 'GongGothicMedium';
+}
+
+#balloon li:hover a{
+    color: #ffeba7;
+    font-family: 'GongGothicMedium';
+}
