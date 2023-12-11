@@ -1,5 +1,6 @@
 package com.team36.dto;
 
+import com.team36.domain.Member;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +21,7 @@ public class ProfileDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pno;
     private int mid;
+    private Member member;
     private String memberImg = "basic.png";
     private String intro;
     private String gitLink1;
