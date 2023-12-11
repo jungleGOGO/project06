@@ -356,6 +356,7 @@
                 imageUrlField: 'flagUrl'
             });
 
+
             // 트리 재구성 후 상태 복원
             restoreTreeState();
             treeEvent();
@@ -563,6 +564,7 @@
     }
 </script>
 
+
 <!--링크는 새창으로 띄우게함-->
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
@@ -570,7 +572,6 @@
         document.getElementById('content').addEventListener('load', function () {
             // Access the contentDocument of the iframe
             const iframeContent = document.getElementById('content').contentDocument;
-
             // Check if contentDocument is available
             if (iframeContent) {
                 // Find all 'a' tags and set target="_blank"
@@ -582,6 +583,38 @@
         });
     });
 </script>
+<script th:inline="javascript">
+    // 모달 열기 함수
+    function openRenameFileModal() {
+        document.getElementById('renameFileModal').style.display = 'block';
+    }
+
+    // 모달 닫기 함수
+    function closeRenameFileModal() {
+        document.getElementById('renameFileModal').style.display = 'none';
+    }
+
+    // 파일 이름 변경 함수
+    function renameFile() {
+        const currentFilename = document.getElementById("downloadName").value;
+        const newFilename = document.getElementById("newFilename").value;
+
+        // 파일 이름 변경 API 호출
+        axios.post("/editor/rename", { currentFilename, newFilename })
+            .then((response) => {
+                showFileList(); // 변경된 파일 목록 다시 로드
+                closeRenameFileModal(); // 모달 닫기
+                console.log("파일 이름이 성공적으로 변경되었습니다.");
+            })
+            .catch((error) => {
+                console.error("파일 이름 변경 중 오류:", error);
+            });
+    }
+</script>
+
+
+
+
 
 </body>
 

@@ -5,7 +5,7 @@
     <th:block th:insert="~{layout/head :: head}"></th:block>
     <script th:src="@{/static/js/split.min.js}"></script>
     <link rel="stylesheet" data-name="vs/editor/editor.main" th:href="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.css}"/>
-    <script>var require = {paths: {'vs': '../node_modules/monaco-editor/min/vs'}};</script>
+    <script>var require = {paths: {'vs': '../static/node_modules/monaco-editor/min/vs'}};</script>
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/loader.js}"></script>
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js}"></script>
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.js}"></script>
@@ -130,21 +130,21 @@
 </div>
 
 <script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs/loader.js"></script>
-<script>
-    require.config({
-        paths: {
-            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs'
-        }
-    });
+<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs/loader.js"></script>-->
+<!--<script>-->
+<!--    require.config({-->
+<!--        paths: {-->
+<!--            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.13.1/min/vs'-->
+<!--        }-->
+<!--    });-->
 
-    window.MonacoEnvironment = {
-        getWorkerUrl: function (workerId, label) {
-            return '/monaco-editor-worker-loader-proxy.js';
-        }
-    };
+<!--    window.MonacoEnvironment = {-->
+<!--        getWorkerUrl: function (workerId, label) {-->
+<!--            return '/monaco-editor-worker-loader-proxy.js';-->
+<!--        }-->
+<!--    };-->
 
-    require(["vs/editor/editor.main"], function () {})
-</script>
+<!--    require(["vs/editor/editor.main"], function () {})-->
+<!--</script>-->
 </body>
 </html>
