@@ -49,7 +49,7 @@
     position:absolute;
     width:120px;
     height:auto;
-    background: #102770;
+    background: #1e2022;
     border-radius: 20px;
     text-align: center;
     padding: 0;
@@ -60,7 +60,7 @@
     border-top:0px solid transparent;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid rgb(16, 39, 112);
+    border-bottom: 10px solid rgb(30, 32, 34);
     content:"";
     position:absolute;
     top:-10px;

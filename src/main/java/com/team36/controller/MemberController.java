@@ -73,15 +73,15 @@ public class MemberController {
         }
 
         if(bindingResult.hasErrors()){
-          System.out.println("error"+bindingResult.hasErrors());
-            System.out.println("e" +bindingResult.getFieldError().getDefaultMessage());
           model.addAttribute("error", bindingResult.hasErrors());
           model.addAttribute("memberJoinDTO", memberJoinDTO);
           return "member/login";
         }
 
         memberService.join(memberJoinDTO);
-        return "redirect:/login";
+        model.addAttribute("msg", "회원가입이 정상적으로 처리되었습니다:)");
+        model.addAttribute("url", "/login");
+        return "layout/alert";
     }
 
     @GetMapping("/member/mypage")
@@ -174,18 +174,29 @@ public class MemberController {
 
     @PostMapping("/member/changePw")
     public String changePw(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult,Principal principal, Model model){
+        Member member = memberRepository.findByMid(principal.getName());
+        String pw = member.getMpw();
+        log.info(memberJoinDTO.getPasswordConfirm());
+        log.info(memberJoinDTO.getMpw());
 
-        if(memberJoinDTO.getPasswordConfirm() != memberJoinDTO.getMpw())
-            bindingResult.rejectValue("mpw", "error.mpw", "비밀번호와 비밀번호 확인이 다릅니다.");
-
-        if(passEncoder.matches(memberJoinDTO.getNowPassword(), memberRepository.findByMid(principal.getName()).getMpw())){
-            MemberJoinDTO mem = new MemberJoinDTO();
-            mem.setMid(Integer.parseInt(principal.getName()));
-            mem.setMpw(memberJoinDTO.getMpw());
-            memberService.changePw(mem);
+        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw())) {
+            log.info("==============e1");
+            bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "비밀번호와 비밀번호 확인이 다릅니다.");
         }
 
-        return "redirect:/member/mypage";
+        if(!passEncoder.matches(memberJoinDTO.getNowPassword(), pw)) {
+            log.info("===============e2");
+            bindingResult.rejectValue("nowPassword", "error.nowPassword", "비밀번호가 잘못되었습니다.");
+        }
+
+        MemberJoinDTO mem = new MemberJoinDTO();
+        mem.setMid(Integer.parseInt(principal.getName()));
+        mem.setMpw(memberJoinDTO.getMpw());
+        memberService.changePw(mem);
+        model.addAttribute("msg", "비밀번호가 정상적으로 변경되었습니다:)");
+        model.addAttribute("url", "/member/mypage");
+
+        return "layout/alert";
     }
 
     @PostMapping ("/member/changeName")
