@@ -137,6 +137,8 @@
 
             <span class="material-symbols-outlined " id="run">play_circle</span>
             <span class="material-symbols-outlined" id="clear">ink_eraser</span>
+            <button id="loadFromLocalStorageBtn">LocalStorage</button>
+            <button onclick="local()">LocalINsert</button>
         </div>
 
     </div>
@@ -728,6 +730,48 @@
     });
 </script>
 
+<script th:inline="javascript">
+    function autosave () {
+        let extension = document.getElementById("extension").value;
+        let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
+        let filename = name + extension ;
+        const htmlCodeEl = document.querySelector("[data-html]");
+        const cssCodeEl = document.querySelector("[data-css]");
+        const jsCodeEl = document.querySelector("[data-js]");
+        const htmlCode = htmlCodeEl.value;
+        const cssCode = cssCodeEl.value;
+        const jsCode = jsCodeEl.value;
+        const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+
+        if (!isValidFilename(name)) {
+            alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+            return; // 추가 실행 중단
+        }
+        let code = {'filename' : filename,'content' : content };
+        console.log(filename);
+        console.log(content);
+
+        axios.post("/editor/autoSave", code)
+            .then((response) => {
+                alert("파일이 자동저장되었습니다.");
+            })
+            .catch((error) => {
+                if (error.response && error.response.data) {
+                    if (error.response.data.msg) {
+                        alert(error.response.data.msg);
+                    } else {
+                        alert(error.response.data);
+                    }
+                } else {
+                    console.error("에러:", error.message);
+                }
+            });
+
+    }
+
+    setInterval(autosave,10000);
+</script>
+<!--로컬스토리지-->
 
 </body>
 

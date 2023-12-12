@@ -3,6 +3,7 @@ package com.team36.controller;
 import com.team36.domain.Editor;
 import com.team36.domain.FileNode;
 import com.team36.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,9 @@ import java.util.stream.Stream;
 
 @Controller
 @Log4j2
+@RequiredArgsConstructor
 public class EditorController {
     private final FileService fileService;
-
-    @Autowired
-    public EditorController(FileService fileService) {
-        this.fileService = fileService;
-    }
 
     @GetMapping("/editor")
     public String getEditor() throws Exception{
@@ -57,6 +54,24 @@ public class EditorController {
         }
 
         return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+    }
+
+    @PostMapping("/editor/autoSave")
+    @ResponseBody
+    public ResponseEntity<String> autoSave(@RequestBody Editor editor){
+        String filename = editor.getFilename();
+        String content = editor.getContent();
+        String filePath = "D:\\kimleeho\\autosave\\" + filename;
+
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+            fileWriter.write(content);
+            fileWriter.flush();
+        } catch (IOException e) {
+            // 파일 쓰기 오류 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+        }
+
+        return ResponseEntity.ok("파일이 자동 저장되었습니다.");
     }
 
     @PostMapping("/editor/test2")
@@ -92,6 +107,8 @@ public class EditorController {
             return "File not found";
         }
     }
+
+
 
 
     @GetMapping("/editor/fileList")
