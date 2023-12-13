@@ -12,6 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Controller
 @Slf4j
@@ -44,6 +45,8 @@ public class MemoController {
         String filePath  = "\\\\10.41.0.153\\storage"+ filename2;
         File file = new File(filePath);
 
+        Path path = Path.of(filePath);
+
         // 파일이 존재하고, 실제 파일인지 확인
         if (!file.exists() || !file.isFile()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -51,6 +54,11 @@ public class MemoController {
         }
 
         try {
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+            System.out.println("크기 : "+attrs.size());
+            System.out.println("생성일 : "+attrs.creationTime());
+            System.out.println("수정일 : "+attrs.lastModifiedTime());
+
             String fileContent = readFile(filePath);
 //            System.out.println("fileContent : " + fileContent);
 //            System.out.println("filePath  : " + filePath);
