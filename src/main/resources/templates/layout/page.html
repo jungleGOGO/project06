@@ -11,41 +11,37 @@
         </div>
     </form>
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        // fragment-search(pageLink, options)에서 options 가 여기에 들어간다.
-        let realpath = /*[[@{'/'}]]*/ 'default';
-        let pageLink = /*[[${pageLink}]]*/ 'default';
+
+        let realpath = 'default';
+        let pageLink = 'default';
         $("#search-form").attr("action", realpath+pageLink);
 
-        var options = /*[[${options}]]*/ 'default';
+        var options = 'default';
 
-        // 혹시 일전에 검색을 했을 경우 해당 검색 내용을 불러온다. 이는 page 객체에 저장되어 전달된다.
-        var type = /*[[${pageDTO.type}]]*/ 'default';
 
-        // include하는 main화면에서 options를 넘겨줄 때 하나의 옵션을 ,(반점)으로 구분한다.
-        // ex. options = ['id:아이디', 'name:이름', 'tel:전화번호']
+        var type = 'default';
+
+
         options = options.split(",");
         console.log(options);
 
         for(i in options){
-            // 혹시 "id:아이디  "과 같이 공백이 들어있을 경우 대비하여 trim 한 후 :(콜론)을 기준으로 분리한다.
-            // 이때 콜론 왼쪽에는 DB 테이블의 컬럼 이름이, 오른쪽에는 사용자에게 표시될 이름을 입력한다.
-            // ex. option = ['id', '아이디']
+
             var option = options[i].trim().split(":");
             var newoption;
 
             var optionVal = option[0].trim(); // ex. id
             var optionName = option[1].trim(); // ex. 아이디
             if(type===optionVal){
-                // 만약 현재 검색 타입이라면 selected를 추가하여 선택되게 한다.
+
                 newoption = `<option value="${optionVal}" selected>${optionName}</option>`;
             } else {
                 newoption = `<option value="${optionVal}">${optionName}</option>`;
             }
 
-            $("#type").append(newoption); // form 의 select 에 새로운 옵션을 추가한다.
+            $("#type").append(newoption);
         }
-        /*]]>*/
+
     </script>
 </div>
 
@@ -73,8 +69,8 @@
             form.method = "GET";
             form.action = realpath2+pageLink2;
 
-            let searchtype = /*[[${pageDTO.type}]]*/ 'default';
-            let searchkeyword = /*[[${pageDTO.keyword}]]*/ 'default';
+            let searchtype =  'default';
+            let searchkeyword = 'default';
 
 
             let params = {type: searchtype, keyword: searchkeyword, page: page};
@@ -94,7 +90,7 @@
             document.body.appendChild(form);
             form.submit();
         }
-        /*]]>*/
+
     </script>
 </nav>
 
