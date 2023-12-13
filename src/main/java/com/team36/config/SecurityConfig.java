@@ -50,6 +50,7 @@ public class SecurityConfig {
         http
             .formLogin((formLogin) -> formLogin
                     .loginPage("/login")
+                    .loginProcessingUrl("/member/loginPro")
                     .failureUrl("/member/loginFail")
             );
 

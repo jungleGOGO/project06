@@ -21,7 +21,8 @@ public class FileNode {
         this.children = new ArrayList<>();
 //        System.out.println("text : "+text);
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
-        this.flagUrl = determineFlagUrl("D:\\hk\\project\\file\\"+text);
+//        this.flagUrl = determineFlagUrl("D:\\hk\\project\\file\\"+text);
+        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage\\"+text);
     }
 
     public void addChild(FileNode child) {

@@ -3,6 +3,7 @@ package com.team36.service;
 import com.team36.constant.MemberRole;
 import com.team36.domain.Member;
 import com.team36.dto.MemberJoinDTO;
+import com.team36.dto.MemberSecurityDTO;
 import com.team36.repository.MemberRepository;
 import com.team36.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.FieldError;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -62,5 +65,20 @@ public class MemberServiceImpl implements MemberService{
         member.changeMname(memberJoinDTO.getMname());
         memberRepository.save(member);
         return true;
+    }
+
+    @Override
+    public List<MemberJoinDTO> list() {
+        List<Member> memberList = memberRepository.findAll();
+        List<MemberJoinDTO> list = memberList.stream().map(member -> (modelMapper.map(member, MemberJoinDTO.class))).collect(Collectors.toList());
+        return list;
+    }
+
+    @Override
+    public void changeActive(Integer active, Integer mid) {
+        Optional<Member> result = memberRepository.findById(String.valueOf(mid));
+        Member member = result.orElseThrow();
+        member.changeActive(active, mid);
+        memberRepository.save(member);
     }
 }

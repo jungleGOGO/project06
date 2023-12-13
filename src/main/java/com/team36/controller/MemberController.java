@@ -53,6 +53,8 @@ public class MemberController {
         return "member/login";
     }
 
+    @PostMapping("/member/loginPro")
+
     @GetMapping("/member/loginFail")
     public String loginFail (Model model) {
         model.addAttribute("msg", "로그인 실패! 다시 시도해 주세요:)");

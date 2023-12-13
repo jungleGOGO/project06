@@ -11,5 +11,9 @@ import java.util.Scanner;
 @Log4j2
 public class ProfileTest {
 
+    public static void main(String[] args) {
+        String j ="hello";
+        System.out.println(j);
+    }
 
 }
