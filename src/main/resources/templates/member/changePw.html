@@ -4,6 +4,12 @@
     <title>비밀번호변경</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
     <link th:href="@{/static/css/page.css}" rel="stylesheet">
+    <style>
+        .fieldError {
+            color: #bd2130;
+            font-weight: bolder;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -41,4 +47,5 @@
     </div>
 </div>
 </body>
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
 </html>

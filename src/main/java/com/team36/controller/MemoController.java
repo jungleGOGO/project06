@@ -39,6 +39,7 @@ public class MemoController {
     @PostMapping("/test2")
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
+
         String filePath = "/Users/juncheol/mounttest" + filename2;
 
         File file = new File(filePath);
@@ -95,7 +96,6 @@ public class MemoController {
 
 
         // 웹 경로를 파일 시스템 경로로 변환
-
         String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
         String filePath = baseDir + webPath.replace("/", File.separator);
 

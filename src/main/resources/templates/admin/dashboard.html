@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>관리자 페이지</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <script th:src="@{/static/js/scripts.js}"></script>
+    <link th:href="@{/static/css/admin.css}" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+<th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+<div id="layoutSidenav">
+    <th:block th:insert="~{layout/adminSidebar :: sidebar}"></th:block>
+    <div id="layoutSidenav_content">
+        <main>
+            <h2>회원관리</h2>
+            <div th:replace="/layout/page  :: search('admin/dash', 'mname:이름,email:이메일')"></div>
+            <div class="table-responsive-sm">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">이메일</th>
+                    <th scope="col">이름</th>
+                    <th scope="col">가입일</th>
+                    <th scope="col">상태</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member, status: ${list}">
+                    <td>[[${member.email}]]</td>
+                    <input type="hidden" name="mid" id="mid" th:value="${member.mid}" >
+                    <td>[[${member.mname}]]</td>
+                    <td>[[${#temporals.format(member.regDate, 'yyyy-MM-dd')}]]</td>
+                    <td>
+                        <select class="form-select" name="active" id="active" >
+                            <option th:value="0" th:selected="${member.active == 0}">활동중</option>
+                            <option th:value="1" th:selected="${member.active == 1}">활동정지</option>
+                            <option th:value="2" th:selected="${member.active == 2}">탈퇴</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <th:block th:if="${not #lists.isEmpty(list)}"><div th:replace="/layout/page :: pagination('admin/dash')"></div></th:block>
+            <div th:if="${#lists.isEmpty(list)}" class="text-center">목록이 비어있습니다.</div>
+            </div>
+        </main>
+    </div>
+    <th:block th:insert="~{layout/footer :: footer}"></th:block>
+</div>
+<script>
+    $(function() {
+        $("#active").on("change", function() {
+            let active = parseInt($("#active").val());
+            var mid = $("#mid").val();
+            let params = {"active" : active, "mid" : mid};
+            $.ajax({
+            url:"/admin/activeUpdate",
+            type:"post",
+            data:params,
+            success : function(result) {},
+            });
+        });
+    });
+</script>
+</body>
+</html>

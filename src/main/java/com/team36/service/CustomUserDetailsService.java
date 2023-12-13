@@ -31,12 +31,17 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("loadUserByUsername: " + username);
 
         Optional<Member> result = memberRepository.getWithRoles(username);
+        log.info(result);
 
         if (result.isEmpty()) { //해당 아이디를 가진 사용자가 없다면
             throw new UsernameNotFoundException("username not found...");
         }
 
         Member member = result.get();
+
+        if (member.getActive() != 0) { //active가 0이 아닐때 (1: 활동중지 2: 탈퇴 일때)
+            throw new UsernameNotFoundException("User is not active");
+        }
 
         MemberSecurityDTO memberSecurityDTO =
                 new MemberSecurityDTO(

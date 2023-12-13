@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -37,8 +39,9 @@ public class MemberJoinDTO {
     private String code;
 
     @ColumnDefault("0")
-    private int active;
+    private Integer active;
 
+    private LocalDateTime regDate;
     private String nowPassword;
     private String passwordConfirm;
 

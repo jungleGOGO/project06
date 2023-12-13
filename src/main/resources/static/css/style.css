@@ -550,131 +550,65 @@ section {
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
-#footer {
-  background: url("../img/footer-bg.jpg") center center no-repeat;
-  color: #fff;
-  font-size: 14px;
-  position: relative;
-}
-
-#footer::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+.footer-area {
+  position : absolute;
+  bottom:0;
   z-index: 1;
-}
+  background-color: #000000;
+  padding: 30px 0; }
 
-#footer .footer-top {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 80px 0;
-}
+@media only screen and (max-width: 767px) {
+  .footer-area {
+    text-align: center; } }
 
-#footer .footer-top .footer-logo img {
-  height: 80px;
-}
-
-#footer .footer-top h3 {
-  font-size: 36px;
-  font-weight: 700;
-  color: #fff;
-  position: relative;
-  padding: 30px 0 0 0;
+.footer-area .copywrite-text {
+  font-size: 12px;
   margin-bottom: 0;
-}
+  color: rgba(166, 165, 165, 0.54); }
 
-#footer .footer-top p {
-  font-size: 15;
-  font-style: italic;
-  margin: 30px 0 0 0;
-  padding: 0;
-}
+.footer-area .copywrite-text a {
+  color: rgba(166, 165, 165, 0.54);
+  font-size: 12px; }
 
-#footer .footer-top .footer-newsletter {
-  text-align: center;
-  font-size: 15px;
-  margin-top: 30px;
-}
+.footer-area .copywrite-text a:hover, .footer-area .copywrite-text a:focus {
+  color: #fff; }
 
-#footer .footer-top .footer-newsletter form {
-  background: #fff;
-  padding: 6px 10px;
-  position: relative;
-  border-radius: 50px;
-  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-  text-align: left;
-}
+.footer-area .footer-nav ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -ms-grid-row-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end; }
 
-#footer .footer-top .footer-newsletter form input[type="email"] {
-  border: 0;
-  padding: 4px 8px;
-  width: calc(100% - 100px);
-}
+@media only screen and (max-width: 767px) {
+  .footer-area .footer-nav ul {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin-top: 30px; } }
 
-#footer .footer-top .footer-newsletter form input[type="submit"] {
-  position: absolute;
-  top: 0;
-  right: -1px;
-  bottom: 0;
-  border: 0;
-  background: none;
+.footer-area .footer-nav li a {
+  color: #898888;
   font-size: 16px;
-  padding: 0 20px;
-  background: #102770;
-  color: #fff;
-  transition: 0.3s;
-  border-radius: 50px;
-  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-}
+  padding: 0 20px; }
 
-#footer .footer-top .footer-newsletter form input[type="submit"]:hover {
-  background: #5ab652;
-}
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .footer-area .footer-nav li a {
+    padding: 0 10px;
+    font-size: 14px; } }
 
-#footer .footer-top .social-links {
-  margin-top: 30px;
-}
+@media only screen and (max-width: 767px) {
+  .footer-area .footer-nav li a {
+    padding: 0 10px;
+    font-size: 14px; } }
 
-#footer .footer-top .social-links a {
-  font-size: 18px;
-  display: inline-block;
-  background: #102770;
-  color: #fff;
-  line-height: 1;
-  padding: 8px 0;
-  margin-right: 4px;
-  border-radius: 50%;
-  text-align: center;
-  width: 36px;
-  height: 36px;
-  transition: 0.3s;
-}
+.footer-area .footer-nav li a:hover, .footer-area .footer-nav li a:focus {
+  color: #fff; }
 
-#footer .footer-top .social-links a:hover {
-  background: #5ab652;
-  color: #fff;
-  text-decoration: none;
-}
-
-#footer .footer-bottom {
-  border-top: 1px solid #222222;
-  z-index: 2;
-  position: relative;
-  padding-top: 40px;
-  padding-bottom: 40px;
-}
-
-#footer .copyright {
-  text-align: center;
-}
-
-#footer .credits {
-  text-align: center;
-  font-size: 13px;
-  padding-top: 5px;
-}
+.footer-area .footer-nav li:last-child a {
+  padding-right: 0; }
