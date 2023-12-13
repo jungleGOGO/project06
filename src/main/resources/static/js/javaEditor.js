@@ -164,27 +164,6 @@
     $('#monaco').height((monaco_test.getModel().getLineCount() * 19) + 10); // 19 = 줄 높이, 10 = 세로 스크롤 높이
     /*]]>*/
 
-/////////////////////////////////////// 에디터 언어 변경  ///////////////////////////////////////////
-    function changeLanguage() {
-    var selectBox = document.getElementById('language');
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    console.log(selectedValue);
-
-    // 언어를 변경하기 전에 에디터의 현재 내용을 가져와서 저장
-    var currentContent = monaco_test.getValue();
-
-    // 에디터를 제거하고 새로운 언어로 다시 생성
-    monaco_test.dispose();
-    monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor(currentContent, selectedValue));
-
-    // 새로운 에디터로 기존 내용을 설정
-    monaco_test.setValue(currentContent);
-
-    // 기존 내용을 설정한 후에는 언어를 변경하도록 호출
-    monaco_test.setLanguage(selectedValue);
-    }
-
-
 
 /////////////////////////////////////// 파일 트리 구조 설정  ///////////////////////////////////////////
     let savedState = [];
@@ -310,12 +289,14 @@ function convertNode(fileNode, treeData, nodeId) {
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
 
+//////////////////////////// a 태그 이동 막기 /////////////////////////////
         treeArea.addEventListener('click', function(event) {
             if (event.target.closest('a')) {
                 event.preventDefault();
             }
         });
 
+/////////////////////////////////////// 더블클릭해서 파일 내용 불러오기 ////////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
             const anchor = event.target.closest('a');
             if (anchor) {
@@ -343,6 +324,7 @@ function convertNode(fileNode, treeData, nodeId) {
                     .catch(error => console.error('Error fetching file content:', error));
             }
         });
+//////////////////////////////////// 더블클릭해서 폴더 열고 닫기  /////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
             const anchor = event.target.closest('a');
             if (anchor) {
