@@ -23,7 +23,7 @@ public class MemoController {
     public String setFile(@RequestBody Memo memo) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
-        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/user1/"+filename); //
+        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
 //        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename); //
 //        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
@@ -37,7 +37,7 @@ public class MemoController {
     @PostMapping("/test2")
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
-        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
+        String filePath = "/Users/juncheol/mounttest" + filename2;
 
         File file = new File(filePath);
 
@@ -51,7 +51,7 @@ public class MemoController {
             String fileContent = readFile(filePath);
 //            System.out.println("fileContent : " + fileContent);
 //            System.out.println("filePath  : " + filePath);
-            log.info("filename : " + filename2);
+//            log.info("filename : " + filename2);
             return ResponseEntity.ok(fileContent);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -93,7 +93,7 @@ public class MemoController {
 
 
         // 웹 경로를 파일 시스템 경로로 변환
-        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
         String filePath = baseDir + webPath.replace("/", File.separator);
         Path directoryPath;
 

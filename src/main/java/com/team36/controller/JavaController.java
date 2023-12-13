@@ -34,16 +34,18 @@ public class JavaController {
 
     @GetMapping("/fileList")
     @ResponseBody
-    public FileNode fileList() throws Exception {
+    public List<FileNode> fileList() throws Exception {
 
         //유저 아이디와 프로젝트명 전달 받아서 처리 필요
         String userName = "";
         String projectName = "";
 
         // 준철
-        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+        String rootDirectoryPath = "/Users/juncheol/mounttest";
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
         String targetDirectoryPath = rootDirectoryPath + "/user1";
         FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
+
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
@@ -89,9 +91,14 @@ public class JavaController {
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
         });
 
-        System.out.println(root);
-        return root;
+        System.out.println(root.getChildren());
+//        return root;
+//        return root;
+        return root.getChildren();
+
+
     }
+
 
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
 
@@ -110,7 +117,7 @@ public class JavaController {
                 current = found.get();
             } else {
 
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
