@@ -25,10 +25,9 @@ public class MemoController {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
 
-        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
-//        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename); //
+//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
+        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
-//        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
         file.close();
@@ -41,8 +40,9 @@ public class MemoController {
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
 
-        String filePath = "/Users/juncheol/mounttest" + filename2;
-
+//        String filePath = "/Users/juncheol/mounttest" + filename2;
+//        String filePath = "\\\\Y:\\storage" + filename2;
+        String filePath  = "\\\\10.41.0.153\\storage"+ filename2;
         File file = new File(filePath);
 
         Path path = Path.of(filePath);
@@ -104,11 +104,10 @@ public class MemoController {
 
 
         // 웹 경로를 파일 시스템 경로로 변환
-        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
-        String filePath = baseDir + webPath.replace("/", File.separator);
+//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+        String baseDir = "\\\\Y:\\storage";
+        String filePath = baseDir + webPath.replace("\\", File.separator);
 
-//        String baseDir = "D:\\hk\\project\\file"; // 기본 경로
-//        String filePath = baseDir + webPath.replace("\\", File.separator);
 
         Path directoryPath;
 

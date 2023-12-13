@@ -41,19 +41,19 @@ public class JavaController {
         String projectName = "";
 
         // 준철
-        String rootDirectoryPath = "/Users/juncheol/mounttest";
+//        String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
-        String targetDirectoryPath = rootDirectoryPath + "/user1";
-        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
+//        String targetDirectoryPath = rootDirectoryPath + "/user1";
+//        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
 //        FileNode root = new FileNode("savef", "\\savef");
         // 현경
-//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
-//        String targetDirectoryPath = rootDirectoryPath + "\\user1";
-//        FileNode root = new FileNode("user1", "\\user1");
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String targetDirectoryPath = rootDirectoryPath + "\\user1";
+        FileNode root = new FileNode("user1", "\\user1");
 
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();
