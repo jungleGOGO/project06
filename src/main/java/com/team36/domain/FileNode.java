@@ -34,10 +34,10 @@ public class FileNode {
 //        System.out.println(name);
         if (new File(name).isDirectory()) {
 //            System.out.println("dir => " + name);
-            return "/static/img/folder.svg";
+            return "/static/img/icon/folder.svg";
         } else {
 //            System.out.println("file => " + name);
-            return "/static/img/file.svg";
+            return "/static/img/icon/file.svg";
         }
     }
 }
