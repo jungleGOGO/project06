@@ -1,8 +1,11 @@
 package com.team36.controller;
 
+import com.team36.domain.Member;
 import com.team36.dto.MemberJoinDTO;
 import com.team36.dto.MemberSecurityDTO;
+import com.team36.dto.PageDTO;
 import com.team36.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -20,11 +23,25 @@ public class AdminController {
 
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @GetMapping("/admin/dash")
-    public String adminHome(Model model) {
+    public String adminHome(Model model, HttpServletRequest request) {
         log.info("---------------------- ADMIN ----------------------");
-        List<MemberJoinDTO> list = memberService.list();
+        PageDTO<Member, MemberJoinDTO> pageDTO = new PageDTO<>();
+
+        String type = request.getParameter("type");
+        String keyword = request.getParameter("keyword");
+
+        int pageCurrent = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        pageDTO.setType(type);
+        pageDTO.setKeyword(keyword);
+        pageDTO.setPageCurrent(pageCurrent);
+
+        pageDTO = memberService.memberList(pageDTO);
+
+        List<MemberJoinDTO> list = pageDTO.getPagindDTO();
         model.addAttribute("list", list);
+        model.addAttribute("pageDTO", pageDTO);
         System.out.println(list);
+
         return "admin/dashboard";
     }
 

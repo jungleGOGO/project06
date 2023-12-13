@@ -1,5 +1,6 @@
 package com.team36.controller;
 
+import com.team36.constant.MemberRole;
 import com.team36.domain.Member;
 import com.team36.domain.Profile;
 import com.team36.dto.MemberJoinDTO;
@@ -52,8 +53,6 @@ public class MemberController {
         model.addAttribute("memberJoinDTO", new MemberJoinDTO());
         return "member/login";
     }
-
-    @PostMapping("/member/loginPro")
 
     @GetMapping("/member/loginFail")
     public String loginFail (Model model) {
