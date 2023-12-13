@@ -1,17 +1,22 @@
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
-/*@font-face {*/
-/*  font-family: 'GongGothicMedium';*/
-/*  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');*/
-/*  font-weight: normal;*/
-/*  font-style: normal;*/
-/*}*/
+@import url(//fonts.googleapis.com/earlyaccess/nanumgothiccoding.css);
 
-/** {*/
-/*  font-family: 'GongGothicMedium';*/
-/*}*/
+.nanumgothiccoding * {
+  font-family: 'Nanum Gothic Coding', monospace;
+}
 
+@font-face {
+  font-family: 'GongGothicMedium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+*{
+  font-family: 'Nanum Gothic Coding', monospace;
+}
 
 body {
   color: #555555;
@@ -86,6 +91,7 @@ a:hover {
 }
 
 #header .logo h1 {
+  font-family: 'GongGothicMedium';
   font-size: 28px;
   margin: 0;
   line-height: 1;
@@ -95,6 +101,7 @@ a:hover {
 }
 
 #header .logo h1 a, #header .logo h1 a:hover {
+  font-family: 'GongGothicMedium';
   color: #fff;
   text-decoration: none;
 }
@@ -144,6 +151,7 @@ a:hover {
 }
 
 .navbar a, .navbar a:focus {
+  font-family: 'GongGothicMedium';
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -162,6 +170,7 @@ a:hover {
 }
 
 .navbar a:hover, .navbar .active, .navbar .active:focus, .navbar li:hover > a {
+  font-family: 'GongGothicMedium';
   color: #102770;
 }
 
@@ -185,6 +194,7 @@ a:hover {
 }
 
 .navbar .dropdown ul a {
+  font-family: 'GongGothicMedium';
   padding: 10px 20px;
   font-size: 15px;
   text-transform: none;
@@ -196,6 +206,7 @@ a:hover {
 }
 
 .navbar .dropdown ul a:hover, .navbar .dropdown ul .active:hover, .navbar .dropdown ul li:hover > a {
+  font-family: 'GongGothicMedium';
   color: #102770;
 }
 
@@ -284,12 +295,14 @@ a:hover {
 }
 
 .navbar-mobile a {
+  font-family: 'GongGothicMedium';
   padding: 10px 20px;
   font-size: 15px;
   color: #151515;
 }
 
 .navbar-mobile a:hover, .navbar-mobile .active, .navbar-mobile li:hover > a {
+  font-family: 'GongGothicMedium';
   color: #102770;
 }
 
@@ -314,6 +327,7 @@ a:hover {
 }
 
 .navbar-mobile .dropdown ul a {
+  font-family: 'GongGothicMedium';
   padding: 10px 20px;
 }
 
@@ -322,6 +336,7 @@ a:hover {
 }
 
 .navbar-mobile .dropdown ul a:hover, .navbar-mobile .dropdown ul .active:hover, .navbar-mobile .dropdown ul li:hover > a {
+  font-family: 'GongGothicMedium';
   color: #102770;
 }
 
@@ -358,6 +373,7 @@ a:hover {
 }
 
 #hero h1 {
+  font-family: 'GongGothicMedium';
   margin: 0 0 30px 0;
   font-size: 48px;
   font-weight: 500;
@@ -366,6 +382,7 @@ a:hover {
 }
 
 #hero h2 {
+  font-family: 'GongGothicMedium';
   color: #aeaeae;
   margin-bottom: 30px;
   font-size: 14px;
@@ -374,7 +391,7 @@ a:hover {
 }
 
 #hero .btn-get-started {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'GongGothicMedium';
   text-transform: uppercase;
   font-weight: 400;
   font-size: 16px;
@@ -567,7 +584,6 @@ section {
   font-weight: 700;
   color: #fff;
   position: relative;
-  font-family: "Poppins", sans-serif;
   padding: 30px 0 0 0;
   margin-bottom: 0;
 }

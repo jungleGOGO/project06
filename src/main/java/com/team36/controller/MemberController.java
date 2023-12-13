@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -49,6 +50,12 @@ public class MemberController {
         return "member/login";
     }
 
+    @GetMapping("/member/loginFail")
+    public String loginFail (Model model) {
+        model.addAttribute("msg", "로그인 실패! 다시 시도해 주세요:)");
+        model.addAttribute("url", "/login");
+        return "layout/alert";
+    }
     @PostMapping("/join")
     public String joinPOST(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult, Model model){
         log.info("join post...");
@@ -61,17 +68,20 @@ public class MemberController {
                     .rejectValue("email", "error.email", "사용이 불가한 이메일입니다.");
         }
 
-        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw()))
+        if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw())){
             bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "비밀번호와 비밀번호 확인이 다릅니다.");
-
+        }
 
         if(bindingResult.hasErrors()){
+          System.out.println("error"+bindingResult.hasErrors());
+            System.out.println("e" +bindingResult.getFieldError().getDefaultMessage());
+          model.addAttribute("error", bindingResult.hasErrors());
           model.addAttribute("memberJoinDTO", memberJoinDTO);
-        return "member/join";
+          return "member/login";
         }
+
         memberService.join(memberJoinDTO);
         return "redirect:/login";
-
     }
 
     @GetMapping("/member/mypage")
@@ -91,15 +101,17 @@ public class MemberController {
     @PostMapping("/member/mypage")
     public String mypage (Profile profile, Principal principal){
 
-        String mid = principal.getName();
-        Member member = memberRepository.findByMid(mid);
+        int mid = Integer.parseInt(principal.getName());
+        Member member = memberRepository.findByMid(principal.getName());
         Profile exist = profileService.existsProfileByMember(member);
         log.info(exist);
-        Profile pf = new Profile();
+        ProfileDTO pf = new ProfileDTO();
 
 
         if(exist == null) {
             log.info("==============추가");
+            pf.setMid(mid);
+            log.info(mid);
             pf.setMember(member);
             pf.setIntro(profile.getIntro());
             pf.setGitLink1(profile.getGitLink1());
@@ -109,7 +121,7 @@ public class MemberController {
             profileService.insertProfile(pf);
         }else {
             log.info("==============수정");
-            pf.setPno(exist.getPno());
+            pf.setPno((long) exist.getPno());
             pf.setIntro(profile.getIntro());
             pf.setGitLink1(profile.getGitLink1());
             if (profile.getGitLink2() != null) {
@@ -174,5 +186,15 @@ public class MemberController {
         }
 
         return "redirect:/member/mypage";
+    }
+
+    @PostMapping ("/member/changeName")
+    @ResponseBody
+    public boolean changName(@RequestParam("mname")String mname, Principal principal){
+        MemberJoinDTO member = new MemberJoinDTO();
+        member.setMid(Integer.parseInt(principal.getName()));
+        member.setMname(mname);
+        memberService.changeName(member);
+        return true;
     }
 }

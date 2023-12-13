@@ -12,6 +12,7 @@ body{
     background-color: #1f2029;
     overflow-x: hidden;
 }
+
 a {
     cursor: pointer;
     transition: all 200ms linear;
@@ -31,9 +32,11 @@ p {
     line-height: 1.7;
 }
 h4 {
+    font-family: 'GongGothicMedium';
     font-weight: 600;
 }
 h6 span{
+    font-family: 'GongGothicMedium';
     padding: 0 20px;
     text-transform: uppercase;
     font-weight: 700;
@@ -148,15 +151,16 @@ h6 span{
 
 .form-group{
     position: relative;
-    display: block;
+    display: flex;
     margin: 0;
     padding: 0;
 }
 .form-style {
+    margin-right: 5px;
     padding: 13px 20px;
     padding-left: 55px;
     height: 48px;
-    width: 100%;
+    width: 90%;
     font-weight: 500;
     border-radius: 4px;
     font-size: 14px;
@@ -235,6 +239,7 @@ h6 span{
 }
 
 .btn{
+    font-family: 'GongGothicMedium';
     border-radius: 4px;
     height: 44px;
     font-size: 13px;

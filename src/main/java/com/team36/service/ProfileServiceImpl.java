@@ -2,8 +2,10 @@ package com.team36.service;
 
 import com.team36.domain.Member;
 import com.team36.domain.Profile;
+import com.team36.dto.MemberJoinDTO;
 import com.team36.dto.ProfileDTO;
 import com.team36.repository.ProfileRepository;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 @Transactional
 @Service
+@Log4j2
 public class ProfileServiceImpl implements ProfileService{
     private ModelMapper modelMapper = new ModelMapper();
     @Autowired
@@ -20,16 +23,19 @@ public class ProfileServiceImpl implements ProfileService{
 
 
     @Override
-    public int insertProfile(Profile profile) {
-        Profile pf = modelMapper.map(profile, Profile.class);
+    public int insertProfile(ProfileDTO profileDTO) {
+        log.info("=========profileInsert");
+        Profile pf = modelMapper.map(profileDTO, Profile.class);
+        log.info(pf.getMember());
+        profileRepo.save(pf);
         return profileRepo.save(pf).getPno();
     }
 
     @Override
-    public void updateProfile(Profile profile) {
-        Optional<Profile> result = profileRepo.findById((long) profile.getPno());
+    public void updateProfile(ProfileDTO profileDTO) {
+        Optional<Profile> result = profileRepo.findById(profileDTO.getPno());
         Profile pf = result.orElseThrow();
-        pf.change(profile.getIntro(), profile.getGitLink1(), profile.getGitLink2());
+        pf.change(profileDTO.getIntro(), profileDTO.getGitLink1(), profileDTO.getGitLink2());
         profileRepo.save(pf);
     }
 
@@ -37,4 +43,5 @@ public class ProfileServiceImpl implements ProfileService{
     public Profile existsProfileByMember(Member member) {
         return profileRepo.existsProfileByMember(member);
     }
+
 }

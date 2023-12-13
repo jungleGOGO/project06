@@ -29,8 +29,6 @@ public class MemberServiceImpl implements MemberService{
 
     private final PasswordEncoder passwordEncoder;
 
-    private final ProfileRepository profileRepository;
-
     @Override
     public void join(MemberJoinDTO memberJoinDTO) {
 
@@ -41,8 +39,6 @@ public class MemberServiceImpl implements MemberService{
         log.info(member);
         log.info(member.getRoleSet());
         memberRepository.save(member);
-
-
     }
 
     @Override
@@ -52,10 +48,18 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public void changePw(MemberJoinDTO memberJoinDTO) {
-
         Optional<Member> result = memberRepository.findById(String.valueOf(memberJoinDTO.getMid()));
         Member member = result.orElseThrow();
         member.changePassword(passwordEncoder.encode(memberJoinDTO.getMpw()));
         memberRepository.save(member);
+    }
+
+    @Override
+    public boolean changeName(MemberJoinDTO memberJoinDTO) {
+        Optional<Member> result = memberRepository.findById(String.valueOf(memberJoinDTO.getMid()));
+        Member member = result.orElseThrow();
+        member.changeMname(memberJoinDTO.getMname());
+        memberRepository.save(member);
+        return true;
     }
 }

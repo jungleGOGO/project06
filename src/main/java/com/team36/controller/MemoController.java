@@ -23,8 +23,10 @@ public class MemoController {
     public String setFile(@RequestBody Memo memo) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
+
         OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
 //        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename); //
+
 //        OutputStream file = new FileOutputStream("D:\\hk\\project\\file\\"+filename);
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -93,8 +95,13 @@ public class MemoController {
 
 
         // 웹 경로를 파일 시스템 경로로 변환
+
         String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
         String filePath = baseDir + webPath.replace("/", File.separator);
+
+//        String baseDir = "D:\\hk\\project\\file"; // 기본 경로
+//        String filePath = baseDir + webPath.replace("\\", File.separator);
+
         Path directoryPath;
 
         File file = new File(filePath);

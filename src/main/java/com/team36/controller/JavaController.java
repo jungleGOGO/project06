@@ -103,11 +103,11 @@ public class JavaController {
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
 
         FileNode current = root;
-//        String[] parts = path.split("\\\\");
-        String[] parts = path.split("/");
+        String[] parts = path.split("\\\\");
+//        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
-            if (part.isEmpty() || part.equals("user1")) continue;
+            if (part.isEmpty() || part.equals("savef")) continue;
 
 
             Optional<FileNode> found = current.getChildren().stream()
