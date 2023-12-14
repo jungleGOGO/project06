@@ -1,0 +1,241 @@
+/*--------------------------------------------------------------
+# General / Editor Section
+--------------------------------------------------------------*/
+
+body {
+    background-color: #383838;
+}
+
+strong {
+    color: #fff;
+    font-weight: bolder;
+    line-height: 35px;
+}
+
+#monaco { min-height:90vh; }
+.file_name {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+#split-container {
+    display: flex;
+    height: 95vh;  /* Adjust the height as needed */
+}
+
+#left-pane, #right-pane {
+    overflow: auto;  /* For scrollable content */
+}
+#left-pane {
+    overflow-x: auto;
+    position: relative;
+    background-color: #303030;
+}
+
+#left-pane #tree {
+    min-width: 300px;
+
+    /* 내부 컨텐츠의 최소 너비 */
+}
+#tree a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
+ul.gj-list li [data-role=image] {
+    width: 18px!important;
+}
+#logoImage { width: 30px!important;}
+
+img {
+    cursor:pointer;
+    width: 18px;
+    margin-left: 5px;
+}
+
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+.gutter {
+    background-color: #1e1e1e;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+/*.monaco-editor.vs-dark .monaco-editor-background,*/
+/*.monaco-editor.vs-dark .margin,*/
+/*.monaco-editor.vs-dark .glyph-margin {*/
+/*    background-color: gray !important;*/
+/*}*/
+.editor-info {
+    height: 36px;
+    background-color: #1E1E1E;
+    border-bottom: 2px solid #afafaf;
+    margin-bottom: 6px;
+}
+.editor-info button {
+    float: right;
+}
+#selectedFileName {
+    color: #eeeeee;
+}
+
+.tree-topbar {
+    height: 36px;
+    border-bottom: 2px solid white;
+}
+
+#run {
+    height: 25px;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+#compileImg {
+    width: 18px;
+    padding-bottom: 3px;
+    margin-left: 0px;
+}
+
+#newF {
+    margin-top: 6px;
+    margin-right: 5px;
+}
+
+/*--------------------------------------------------------------
+# Modal
+--------------------------------------------------------------*/
+
+#modalWrap {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody {
+    width: 470px;
+    height: 250px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+
+#closeBtn {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#modalContent {
+    margin-top: 70px;
+}
+
+#infoModal {
+    color: #db2727;
+    font-size: 12px;
+    float: right;
+    margin-right: 32px;
+}
+
+#modalWrap2 {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody2 {
+    width: 470px;
+    height: 250px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+
+#closeBtn2 {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#modalContent2 {
+    margin-top: 80px;
+}
+
+/*--------------------------------------------------------------
+# Menu
+--------------------------------------------------------------*/
+
+#iconNav {
+    position: fixed;
+    background-color: #102770;
+    top:3px;
+    right: 20px;
+    padding-top: 5px;
+    border-radius: 100px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
+#balloon-wrap {
+    width:90px;
+    top: 50px!important;
+    right: -13px!important;
+}
+
+#balloon {
+    width: 90px;
+}
+
+#balloon li {
+    padding: 4px!important;
+}
+
+#balloon:after {
+    border-top:0px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgb(30, 32, 34);
+    content:"";
+    position:absolute;
+    top:-10px;
+    left:52px;
+}
+
+#balloon li a {
+    font-family: 'GongGothicMedium';
+    font-size: 10px;
+}
+
+#balloon li:hover a{
+    color: #ffeba7;
+    font-family: 'GongGothicMedium';
+    font-size: 10px;
+}

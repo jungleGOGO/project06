@@ -45,6 +45,8 @@
             // 저장 후 파일 목록 다시 불러오기
             $('#tree').remove(); // 트리를 완전히 제거합니다.
             loadFileList();
+            modal.style.display = 'none';
+
         }).catch((error) => {
             console.log(error);
         });
@@ -377,4 +379,12 @@ function removeFirstSegment(path) {
     Split(['#left-pane', '#center-pane', '#right-pane'], {
     sizes: [20, 50,30],
     minSize: 120
+});
+
+
+/////////////////////////////////////// tree Contextmenu  //////////////////////////////////////
+
+$('#tree').find('[data-role="display"]').on('mouseenter', function (){
+    console.log("hi");
+    $(this).css("background-color","red");
 });
