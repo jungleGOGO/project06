@@ -4,6 +4,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title></title>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
@@ -12,13 +13,15 @@
     <link rel="stylesheet" href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
     <script th:src="@{/static/js/main.js}" defer></script>
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
@@ -50,11 +53,11 @@
         color: white;
         font-family: Arial, sans-serif;
     }
+
     /* 모달 스타일 */
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
         left: 0;
         top: 0;
         width: 100%;
@@ -64,6 +67,9 @@
         background-color: rgba(0,0,0,0.4);
         padding-top: 60px;
     }
+    .modal-backdrop {
+        display: none;
+    }
 
     /* 모달 내용 스타일 */
     .modal-content {
@@ -72,6 +78,9 @@
         padding: 20px;
         border: 1px solid #888;
         width: 60%;
+    }
+    .modal-dialog{
+        max-width:700px;
     }
 
     /* 모달 닫기 버튼 스타일 */
@@ -113,11 +122,14 @@
 <body>
 <main>
     <div class="black">
-
     <div class="button-container">
-        <a th:href="@{/}"><img th:src="@{/static/img/logo/logo.png}" alt="" style="width: 40px;"></a>
         <label for="filename">저장할 파일이름</label>
-        <input type="text" name="filename" id="filename" placeholder="파일명 입력">
+<!--        id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
+<!--        현재는 filename + extension으로 파일이름을 저장하고 있음.-->
+<!--        불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
+        <!-- 불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
+<!--        모달창으로 저장,다른이름으로 저장-->
+        <input type="text" name="filename" id="filename" value="untitled">
         <input type="hidden" name="filename2" id="filename2" >
         <label for="extension">파일확장자</label>
         <select id="extension">
@@ -132,17 +144,23 @@
             <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">
         </div>
         <div class="button-container">
-        <span class="material-symbols-outlined" id="save">save</span>
-        <span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()">dns</span>
+        <span class="material-symbols-outlined" id="save" title="저장">save</span>
+        <span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()" title="저장소">dns</span>
 <!--        <button type="button" id="loadFileBtn" class="btn btn-primary" onclick="showFileList()">불러오기</button>-->
-        <span class="material-symbols-outlined" id="saveBtn">download</span>
-
-            <span class="material-symbols-outlined " id="run">play_circle</span>
-            <span class="material-symbols-outlined" id="clear">ink_eraser</span>
-            <button id="loadFromLocalStorageBtn">LocalStorage</button>
-            <button onclick="local()">LocalINsert</button>
+        <span class="material-symbols-outlined" id="saveBtn" title="다운로드">download</span>
+            <span class="material-symbols-outlined " id="run" title="실행">play_circle</span>
+            <span class="material-symbols-outlined" id="clear" title="전체 지우기">ink_eraser</span>
+            <span class="material-symbols-outlined"  title="다른이름으로 저장">save_as</span>
+            <span class="material-symbols-outlined" id="readFile" title="내 파일읽기">upload_file</span>
         </div>
-
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck">
+            <label class="form-check-label" for="autoSaveCheck">자동저장</label>
+            <span id="checkCircle" class="material-symbols-outlined" style="display: none">check_circle</span>
+        </div>
+        <div class="form-check form-switch">
+            <span class="material-symbols-outlined" data-bs-toggle="modal" data-bs-target="#exampleModal">info</span>
+        </div>
     </div>
 <!--        파일리스트 모달창-->
     <div class="modal" id="fileListModal">
@@ -175,26 +193,54 @@
         </div>
     </div>
 
-    <section class="boxes">
-        <div class="editor-container tab-pane">
-            <div class="editor-header tab">
-                <h1>HTML</h1>
+        <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: black">
+                        <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="background-color: black">
+                        <!-- 모달 내용 -->
+                        <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
+                        <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
+                        <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
+                        <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
+                        <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
+                        <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
+                        <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
+                        <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
+                        <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
-            <textarea data-html><h2>Hello World!</h2></textarea>
         </div>
-        <div class="editor-container tab-pane">
-            <div class="editor-header tab">
-                <h1>CSS</h1>
-                <textarea data-css></textarea>
+
+
+
+        <section class="boxes">
+            <div class="editor-container tab-pane">
+                <div class="editor-header tab">
+                    <h1>HTML</h1>
+                </div>
+                <textarea data-html id="htmlTextarea"></textarea>
             </div>
-        </div>
-        <div class="editor-container tab-pane">
-            <div class="editor-header tab">
-                <h1>JS</h1>
-                <textarea data-js></textarea>
+            <div class="editor-container tab-pane">
+                <div class="editor-header tab">
+                    <h1>CSS</h1>
+                    <textarea data-css id="cssTextarea"></textarea>
+                </div>
             </div>
-        </div>
-    </section>
+            <div class="editor-container tab-pane">
+                <div class="editor-header tab">
+                    <h1>JS</h1>
+                    <textarea data-js id="jsTextarea"></textarea>
+                </div>
+            </div>
+        </section>
     </div>
 <div style="background: black">
     <hr style="color: white">
@@ -376,7 +422,6 @@
                     console.error("에러:", error.message);
                 }
             });
-
     });
 </script>
 <!--불러오기 버튼-->
@@ -643,8 +688,6 @@
         const newFileSet = document.getElementById("newFilename").value; //새로 입력한 파일이름 값 (파일이름명 규칙 때문에 따로 만듬)
         const newFilename = document.getElementById("newFilename").value+reextensionSelect.value; // 새로입력한 파일이름 + 확장자값
         const currentFileAndFolder = reselectedFile; // 선택한 파일의 href값
-        console.log("이게없다고?"+currentFilename);
-        console.log("이게없다고?"+newFilename);
 
         //파일이름명 규칙 실행
         if (!isValidFilename2(newFileSet)) {
@@ -655,8 +698,6 @@
         const lastBackslashIndex = currentFileAndFolder.lastIndexOf("\\");
         //href값에서 뒤의 파일명은 제거한 폴더 경로값만 추출
         const currentFolder = lastBackslashIndex !== -1 ? currentFileAndFolder.substring(0, lastBackslashIndex + 1) : "";
-
-        console.log("마지막 역슬래시 이후의 경로:", currentFolder);
 
 
         // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
@@ -690,7 +731,7 @@
     const newFilename = document.getElementById("newFilename").value;
     const recustomExtension = document.getElementById("recustomExtensionInput");
     const recustomEx= document.getElementById("recustomExtension");
-    console.log(reextensionSelect);
+
 
 
     // "직접입력" 옵션 선택 시 처리
@@ -732,6 +773,7 @@
     });
 </script>
 
+<!--자동저장 기능-->
 <script th:inline="javascript">
     function autosave () {
         let extension = document.getElementById("extension").value;
@@ -750,12 +792,11 @@
             return; // 추가 실행 중단
         }
         let code = {'filename' : filename,'content' : content };
-        console.log(filename);
-        console.log(content);
 
         axios.post("/editor/autoSave", code)
             .then((response) => {
-                alert("파일이 자동저장되었습니다.");
+                // 서버 응답이 성공한 경우
+                showSuccessMessage();
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
@@ -770,11 +811,160 @@
             });
 
     }
+    // 성공 메시지를 표시하고 2초 후에 숨김
+    function showSuccessMessage() {
+        const checkCircle = document.getElementById('checkCircle');
 
-    setInterval(autosave,10000);
+        // 성공 메시지를 표시
+        checkCircle.style.display = 'inline-block';
+
+        // 2초 후에 다시 숨김
+        setTimeout(() => {
+            checkCircle.style.display = 'none';
+        }, 2000);
+    }
 </script>
-<!--로컬스토리지-->
 
+<!--로컬 스토리지에 저장하는 스크립트-->
+<script th:inline="javascript">
+    function saveToLocalStorage() {
+        localStorage.setItem('htmlContent', document.getElementById('htmlTextarea').value);
+        localStorage.setItem('cssContent', document.getElementById('cssTextarea').value);
+        localStorage.setItem('jsContent', document.getElementById('jsTextarea').value);
+    }
+
+    // Load content from local storage on page load
+    document.getElementById('htmlTextarea').value = localStorage.getItem('htmlContent') || '';
+    document.getElementById('cssTextarea').value = localStorage.getItem('cssContent') || '';
+    document.getElementById('jsTextarea').value = localStorage.getItem('jsContent') || '';
+</script>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // HTML textarea
+        var htmlTextarea = document.getElementById('htmlTextarea');
+        var savedHtmlContent = localStorage.getItem('htmlContent');
+
+        // CSS textarea
+        var cssTextarea = document.getElementById('cssTextarea');
+        var savedCssContent = localStorage.getItem('cssContent');
+
+        // JS textarea
+        var jsTextarea = document.getElementById('jsTextarea');
+        var savedJsContent = localStorage.getItem('jsContent');
+
+        // 코드가 어디에 어떻게 박히느지 몰라서 추가함..
+        var htmlCodeEl2 = document.querySelector("[data-html]");
+        var cssCodeEl2 = document.querySelector("[data-css]");
+        var jsCodeEl2 = document.querySelector("[data-js]");
+        var htmlCode2 = htmlCodeEl.value;
+        var cssCode2 = cssCodeEl.value;
+        var jsCode2 = jsCodeEl.value;
+
+        // 빈 값인 경우에만 이어서 작업 여부 확인
+        if (!savedHtmlContent && !savedCssContent && !savedJsContent) {
+            return; // 모든 값이 비어있으면 확인 창을 표시하지 않음
+        }
+        // Display a confirmation dialog with an OK and Cancel button
+        var userConfirmed = window.confirm("이전에 저장하지 못한 기록이 있습니다:\n\n 이어서 작업하시겠습니까?");
+
+        // If the user clicks OK, populate textareas with saved values
+        if (userConfirmed) {
+            if (savedHtmlContent !== null) {
+                htmlTextarea.value = savedHtmlContent;
+            }
+
+            if (savedCssContent !== null) {
+                cssTextarea.value = savedCssContent;
+            }
+
+            if (savedJsContent !== null) {
+                jsTextarea.value = savedJsContent;
+            }
+        } else { // If the user clicks Cancel, clear the values in the textareas
+            console.log('caches' in window)
+            console.log(window.caches)
+
+            htmlCode2.value = "";
+            cssCode2.value = "";
+            jsCode2.value = "";
+            htmlTextarea.value="";
+            cssTextarea.value="";
+            jsTextarea.value="";
+            $(".CodeMirror-line").text("");
+            localStorage.removeItem('htmlContent');
+            localStorage.removeItem('cssContent');
+            localStorage.removeItem('jsContent');
+
+    }});
+</script>
+<script>
+    const checkbox = document.getElementById("autoSaveCheck");
+    let auto; // 변수 선언
+    let local = setInterval(saveToLocalStorage, 4000);
+
+    checkbox.addEventListener("change", function() {
+        if (checkbox.checked) {
+            clearInterval(auto);
+            console.log("자동저장중");
+
+            auto = setInterval(autosave,4000);
+            localStorage.removeItem('htmlContent');
+            localStorage.removeItem('cssContent');
+            localStorage.removeItem('jsContent');
+            clearInterval(local); // 변수를 정의한 후 clearInterval 호출
+        } else {
+            clearInterval(auto);
+            console.log("자동저장해제");
+            local = setInterval(saveToLocalStorage, 4000);
+        }
+    });
+</script>
+<!--파일업로드 관련 스크립트-->
+<script th:inline="javascript">
+    // 파일 업로드를 위한 이벤트 핸들러
+    $(document).ready(function () {
+        $('#readFile').click(function () {
+            // 파일 업로드 input 엘리먼트 생성
+            var inputFile = $('<input type="file" accept=".txt,.css,.html,.js,.scss" max-size="10485760" name="upfile">');
+
+            // 파일이 선택되었을 때의 이벤트 핸들러
+            inputFile.change(function () {
+                // FormData 객체 생성
+                var formData = new FormData();
+                // 선택된 파일 추가
+                formData.append('file', this.files[0]);
+
+                // 파일 업로드를 위한 Ajax 요청
+                $.ajax({
+                    url: '/editor/readFile', // 업로드 처리를 수행할 컨트롤러 URL
+                    type: 'POST',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        // 업로드 성공 시의 처리
+                        console.log('Upload success:', data);
+                    },
+                    error: function (error) {
+                        // 업로드 실패 시의 처리
+                        console.error('Upload error:', error);
+                    }
+                });
+            });
+
+            // 생성한 input 엘리먼트를 숨김 처리
+            inputFile.hide();
+
+            // body에 input 엘리먼트 추가
+            $('body').append(inputFile);
+
+            // input 엘리먼트 클릭 (파일 업로드 다이얼로그를 엽니다.)
+            inputFile.click();
+        });
+    });
+</script>
 </body>
 
 </html>
