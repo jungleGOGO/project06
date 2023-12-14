@@ -2,6 +2,8 @@ package com.team36.builder;
 
 import com.team36.util.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.tools.JavaCompiler;
@@ -10,6 +12,12 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -18,64 +26,112 @@ public class CompileBuilder {
     private final String path = "/Users/juncheol/Desktop/compile/";
 //    private final String path = "D:\\hk\\project\\compile\\";
 
+    // 파일명이랑 코드내용 전달 받음
+    // 파일명 .java 아니면 alert띄우도록 프론트에서 처리
+    // 메인메소드가 있어야 실행 가능
 
-    public String compileAndRunCode(String code) throws Exception {
-        // 유일한 식별자 생성
-        String uuid = UUIDUtil.createUUID();
-        // 코드를 저장할 고유 경로 생성
+    //- 타임아웃
+    //- 명령 제한
+    //- 에러메시지 경로 표시
+
+
+    private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
+
+    public String compileAndRunCode(String code) {
+        String uuid = UUID.randomUUID().toString();
         String uuidPath = path + uuid + "/";
         File newFolder = new File(uuidPath);
-        // Java 파일 생성
+        if (!newFolder.mkdir()) {
+            logger.error("Error creating directory: " + uuidPath);
+            return "Error creating directory.";
+        }
+
         File sourceFile = new File(uuidPath + "Test.java");
-        // 여기에서 Java 파일의 이름을 전달받아 처리
 
-        // 디렉토리 생성
-        newFolder.mkdir();
-
-        // 제공된 코드를 파일에 작성
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sourceFile))) {
             writer.write(code);
+        } catch (IOException e) {
+            logger.error("Error writing the source code to file: " + e.getMessage());
+            return "Error writing the source code to file.";
         }
 
-        // Java 컴파일러 가져오기
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        // 컴파일 오류를 캡처하기 위한 출력 스트림
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        // 컴파일 실행, 오류가 있으면 err 스트림에 저장
-        int compileResult = compiler.run(null, null, new PrintStream(err), sourceFile.getPath());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        // 컴파일 오류 체크
-        if (compileResult != 0) {
-            return "Compile error: " + err.toString();
-        }
+        Future<String> future = executor.submit(() -> {
+            Process process = null;
 
-        // 컴파일된 클래스 로드
-        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{new File(uuidPath).toURI().toURL()});
-        // 클래스명을 파일명과 일치시키기 위한 로직 필요
-        Class<?> cls = Class.forName("Test", true, classLoader);
+            StringBuilder output = new StringBuilder();
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder("javac", sourceFile.getAbsolutePath());
+                process = processBuilder.start();
+                if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                    process.destroy();
+                    throw new RuntimeException("Compilation timeout");
+                }
 
-        // 실행 결과를 캡처하기 위한 출력 스트림
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(out));
+                if (process.exitValue() != 0) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            output.append(line).append("\n");
+                        }
+                    }
+                    return "Compilation error:\n" + output;
+                }
 
-        // 클래스의 main 메소드 실행
+                processBuilder = new ProcessBuilder("java", "-cp", uuidPath, "Test");
+                process = processBuilder.start();
+                System.out.println("process alive "+process.isAlive());
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+
+                    while ((line = reader.readLine()) != null && process.waitFor(5,TimeUnit.SECONDS)) {
+                        output.append(line).append("\n");
+//                        if (process.waitFor(10,TimeUnit.SECONDS)){
+//                            process.destroy();
+//                        }
+                        System.out.println("while 끝 process alive "+process.isAlive());
+                    }
+
+                }
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        output.append(line).append("\n");
+                    }
+                }
+
+                if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                    process.destroy();
+                    throw new RuntimeException("Execution timeout");
+                }
+                System.out.println("check "+process.isAlive());
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error starting the process.", e);
+            } catch (InterruptedException e) {
+                if (process != null) {
+                    process.destroy();
+                }
+                throw new RuntimeException("Process was interrupted.", e);
+            }
+            System.out.println("---------------------false면 종료-------------");
+            System.out.println(process.isAlive());
+            return output.toString();
+        });
+
         try {
-            Method method = cls.getMethod("main", String[].class);
-            String[] params = null; // main 메소드에 전달할 파라미터
-            method.invoke(null, (Object) params); // static 메소드 호출
+            return future.get(5, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+
+            return "Execution timeout: Code execution took longer than 5 seconds.";
         } catch (Exception e) {
-            // 오류 발생 시 기존 System.out 스트림으로 복원
-            System.setOut(originalOut);
-            e.printStackTrace();
             return "Execution error: " + e.getMessage();
         } finally {
-            // 스트림 복원
-            System.setOut(originalOut);
+            executor.shutdownNow();
         }
 
-        // 실행 결과 반환
-        return out.toString();
     }
 }
 //    @SuppressWarnings({ "resource", "deprecation" })
