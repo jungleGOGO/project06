@@ -3,16 +3,18 @@ package com.team36.controller;
 import com.team36.domain.Editor;
 import com.team36.domain.FileNode;
 import com.team36.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,16 +24,13 @@ import java.util.stream.Stream;
 
 @Controller
 @Log4j2
+@RequiredArgsConstructor
 public class EditorController {
     private final FileService fileService;
 
-    @Autowired
-    public EditorController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
     @GetMapping("/editor")
     public String getEditor() throws Exception{
+
         return "editor";
     }
 
@@ -57,6 +56,24 @@ public class EditorController {
         }
 
         return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+    }
+
+    @PostMapping("/editor/autoSave")
+    @ResponseBody
+    public ResponseEntity<String> autoSave(@RequestBody Editor editor){
+        String filename = editor.getFilename();
+        String content = editor.getContent();
+        String filePath = "D:\\kimleeho\\autosave\\" + filename;
+
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+            fileWriter.write(content);
+            fileWriter.flush();
+        } catch (IOException e) {
+            // 파일 쓰기 오류 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+        }
+
+        return ResponseEntity.ok("파일이 자동 저장되었습니다.");
     }
 
     @PostMapping("/editor/test2")
@@ -92,6 +109,8 @@ public class EditorController {
             return "File not found";
         }
     }
+
+
 
 
     @GetMapping("/editor/fileList")
@@ -223,6 +242,37 @@ public class EditorController {
         }
 
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
+    }
+
+    @PostMapping("/editor/readFile")
+    public ResponseEntity<String> readFile(@RequestParam("file") MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            //파일 확장자 별로 content 변수명이 달라져야됨.
+            System.out.println("File name: " + file.getOriginalFilename());
+            System.out.println("Content type: " + file.getContentType());
+            System.out.println("File size: " + file.getSize() + " bytes");
+            try (InputStream inputStream = file.getInputStream();
+                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+
+                // 파일 내용 출력 또는 원하는 파일 처리 로직을 추가합니다.
+                System.out.println("File content:\n" + content);
+
+                return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("파일이 비어 있거나 존재하지 않습니다.");
+        }
     }
 }
 
