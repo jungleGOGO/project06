@@ -24,7 +24,7 @@
     <div class="row">
         <div style="padding:0;">
             <div id="split-container">
-                <div id="left-pane">
+                <div id="left-pane" style="width: 16%">
                     <div class="tree-topbar">
                         <div class="d-flex float-end" id="newF">
                             <img th:src="@{/static/img/icon/newFolder.svg}" alt="폴더생성" id="popupBtn" title="폴더생성">
@@ -34,7 +34,7 @@
                     <div id="tree" style=""></div>
                 </div>
 
-                <div id="center-pane" style="width: 850px; z-index: 0; background-color: #1e1e1e;">
+                <div id="center-pane" style="width: 60%; z-index: 0; background-color: #1e1e1e;">
                     <div class="editor-info">
                         <p id="selectedFileName" title="파일경로" style="float: left; margin: 12px; font-size: 12px;"></p>
                         <div class="d-flex float-end m-1">
@@ -50,7 +50,7 @@
                     <pre id="monaco"></pre>
                 </div>
 
-                <div id="right-pane" style="background-color: #cccccc; width: 596px;">
+                <div id="right-pane" style="background-color: #cccccc; width: 24%;">
                     <div>
                         <p style="border-bottom: 2px solid #afafaf; padding-bottom: 6px; padding-top: 4px;">시간시간시간</p>
                         <div id="output" style="flex:1 1 auto; padding-left:10px;">실행 결과가 여기에 표시됩니다.</div>
@@ -125,7 +125,6 @@
                 </div>
                 <div class="col-auto">
                     <button type="button" id="newFile2" class="btn btn-secondary mb-3">파일 생성</button>
-
                 </div>
             </form>
         </div>
