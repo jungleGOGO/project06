@@ -141,8 +141,7 @@
     return {
     value: inputValue,      // 에디터 내용 설정
     language: "java",    // 언어
-    fontFamily: "D2Coding",
-    fontSize: 16,
+    fontSize: 18,
     theme: "vs-dark",   // 테마
     lineNumbers: 'on',  // 줄 번호
     glyphMargin: false, // 체크 이미지 넣을 공간이 생김
@@ -156,7 +155,7 @@
     minimap: {
     enabled: true // 우측 스크롤 미니맵
     },
-    lineHeight: 24,
+    lineHeight: 20,
 
     }
     }
