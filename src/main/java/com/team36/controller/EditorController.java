@@ -244,13 +244,16 @@ public class EditorController {
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
     }
 
+
+
     @PostMapping("/editor/readFile")
-    public ResponseEntity<String> readFile(@RequestParam("file") MultipartFile file) {
+    @ResponseBody
+    public String readFile(@RequestParam("file") MultipartFile file) {
         if (file != null && !file.isEmpty()) {
-            //파일 확장자 별로 content 변수명이 달라져야됨.
-            System.out.println("File name: " + file.getOriginalFilename());
-            System.out.println("Content type: " + file.getContentType());
-            System.out.println("File size: " + file.getSize() + " bytes");
+            // 파일이 비어 있지 않은 경우에만 처리
+            String fileName = file.getOriginalFilename();
+            String fileExtension = getFileExtension(fileName);
+
             try (InputStream inputStream = file.getInputStream();
                  InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                  BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
@@ -261,17 +264,44 @@ public class EditorController {
                     content.append(line).append("\n");
                 }
 
-                // 파일 내용 출력 또는 원하는 파일 처리 로직을 추가합니다.
-                System.out.println("File content:\n" + content);
-
-                return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
+                // 파일 확장자에 따라 처리된 내용을 반환
+                return processFileContentByExtension(content.toString(), fileExtension);
             } catch (IOException e) {
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+                // 오류가 발생한 경우 빈 문자열 반환 또는 다른 오류 처리 방식 선택 가능
+                return "";
             }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("파일이 비어 있거나 존재하지 않습니다.");
+            // 파일이 비어 있거나 존재하지 않는 경우 빈 문자열 반환 또는 다른 처리 방식 선택 가능
+            return "";
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return fileName.substring(lastDotIndex + 1);
+        }
+        return "";
+    }
+
+    private String processFileContentByExtension(String content, String fileExtension) {
+        switch (fileExtension.toLowerCase()) {
+            case "html":
+            case "txt":
+                return content; // HTML 및 TXT 파일의 경우 그대로 반환
+            case "css":
+            case "scss":
+                System.out.println("css:"+content);
+                // CSS 및 SCSS 파일의 경우 CSS 텍스트 에어리어에 값 할당
+                return "<style>\n" + content + "\n</style>";
+            case "js":
+                // JS 파일의 경우 JS 텍스트 에어리어에 값 할당
+                System.out.println("JS:"+content);
+                return "<script>\n" + content + "\n</script>";
+            default:
+                // 다른 확장자의 경우 빈 문자열 반환 또는 다른 처리 방식 선택 가능
+                return "";
         }
     }
 }

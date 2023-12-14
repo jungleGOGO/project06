@@ -923,42 +923,63 @@
 <!--파일업로드 관련 스크립트-->
 <script th:inline="javascript">
     // 파일 업로드를 위한 이벤트 핸들러
-    $(document).ready(function () {
-        $('#readFile').click(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('readFile').addEventListener('click', function () {
             // 파일 업로드 input 엘리먼트 생성
-            var inputFile = $('<input type="file" accept=".txt,.css,.html,.js,.scss" max-size="10485760" name="upfile">');
+            var inputFile = document.createElement('input');
+            inputFile.type = 'file';
+            inputFile.accept = '.txt,.css,.html,.js,.scss';
+            inputFile.maxSize = 10485760;
+            inputFile.name = 'upfile';
 
             // 파일이 선택되었을 때의 이벤트 핸들러
-            inputFile.change(function () {
+            inputFile.addEventListener('change', function () {
                 // FormData 객체 생성
                 var formData = new FormData();
                 // 선택된 파일 추가
                 formData.append('file', this.files[0]);
 
-                // 파일 업로드를 위한 Ajax 요청
-                $.ajax({
-                    url: '/editor/readFile', // 업로드 처리를 수행할 컨트롤러 URL
-                    type: 'POST',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function (data) {
-                        // 업로드 성공 시의 처리
-                        console.log('Upload success:', data);
-                    },
-                    error: function (error) {
-                        // 업로드 실패 시의 처리
-                        console.error('Upload error:', error);
+                // 파일 업로드를 위한 Axios 요청
+                function extractCodeBlocks(fileContent) {
+                    const styleRegex = /<style>([\s\S]*?)<\/style>/g;
+                    const bodyRegex = /<body>([\s\S]*?)<\/body>/g;
+                    const scriptRegex = /<script>([\s\S]*?)<\/script>/g;
+
+                    let styleMatch = styleRegex.exec(fileContent);
+                    let bodyMatch = bodyRegex.exec(fileContent);
+                    let scriptMatch = scriptRegex.exec(fileContent);
+
+                    const cssCode = styleMatch ? styleMatch[1].trim() : '';
+                    const htmlCode = bodyMatch ? bodyMatch[1].trim() : '';
+                    const jsCode = scriptMatch ? scriptMatch[1].trim() : '';
+
+                    return { cssCode, htmlCode, jsCode };
+                }
+
+// 사용 예시
+                axios.post('/editor/readFile', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
                     }
-                });
+                })
+                    .then(function (response) {
+                        const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data);
+
+                        console.log('CSS Code:', cssCode);
+                        console.log('HTML Code:', htmlCode);
+                        console.log('JavaScript Code:', jsCode);
+                        setCodeValues(htmlCode, cssCode, jsCode);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
             });
 
             // 생성한 input 엘리먼트를 숨김 처리
-            inputFile.hide();
+            inputFile.style.display = 'none';
 
             // body에 input 엘리먼트 추가
-            $('body').append(inputFile);
+            document.body.appendChild(inputFile);
 
             // input 엘리먼트 클릭 (파일 업로드 다이얼로그를 엽니다.)
             inputFile.click();
