@@ -28,7 +28,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
 
-    private int active;
+    private Integer active;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
@@ -44,5 +44,6 @@ public class Member extends BaseEntity {
     public void addRole(MemberRole memberRole){
         this.roleSet.add(memberRole);
     }
+    public void changeActive(Integer active, Integer mid) { this.active=active; }
 
 }

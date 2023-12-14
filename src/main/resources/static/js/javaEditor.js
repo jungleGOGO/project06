@@ -135,11 +135,12 @@
 });
 
 /////////////////////////////////////// 처음 에디터 생성  ////////////////////////////////////////
-    function setEditor(inputValue, inputLanguage){
+    function setEditor(inputValue){
     return {
-    value: inputValue,
-    language: inputLanguage,    // 언어
+    value: inputValue,      // 에디터 내용 설정
+    language: "java",    // 언어
     fontFamily: "D2Coding",
+    fontSize: 16,
     theme: "vs-dark",   // 테마
     lineNumbers: 'on',  // 줄 번호
     glyphMargin: false, // 체크 이미지 넣을 공간이 생김
@@ -153,35 +154,15 @@
     minimap: {
     enabled: true // 우측 스크롤 미니맵
     },
-    lineHeight: 19
+    lineHeight: 24,
+
     }
     }
 
     /*<![CDATA[*/
-    let monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor("", ""));
+    let monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor(""));
     $('#monaco').height((monaco_test.getModel().getLineCount() * 19) + 10); // 19 = 줄 높이, 10 = 세로 스크롤 높이
     /*]]>*/
-
-/////////////////////////////////////// 에디터 언어 변경  ///////////////////////////////////////////
-    function changeLanguage() {
-    var selectBox = document.getElementById('language');
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    console.log(selectedValue);
-
-    // 언어를 변경하기 전에 에디터의 현재 내용을 가져와서 저장
-    var currentContent = monaco_test.getValue();
-
-    // 에디터를 제거하고 새로운 언어로 다시 생성
-    monaco_test.dispose();
-    monaco_test = new monaco.editor.create(document.getElementById('monaco'), setEditor(currentContent, selectedValue));
-
-    // 새로운 에디터로 기존 내용을 설정
-    monaco_test.setValue(currentContent);
-
-    // 기존 내용을 설정한 후에는 언어를 변경하도록 호출
-    monaco_test.setLanguage(selectedValue);
-    }
-
 
 
 /////////////////////////////////////// 파일 트리 구조 설정  ///////////////////////////////////////////
@@ -241,7 +222,6 @@
             $('#left-pane').append('<div id="tree"></div>');
         }
         console.log(fileList);
-        console.log(fileList.children);
 
 
 
@@ -249,6 +229,7 @@
         $('#tree').tree({
             primaryKey: 'id',
             uiLibrary: 'materialdesign',
+            // dataSource: transformToTreeViewFormat(fileList),
             dataSource: transformToTreeViewFormat(fileList),
 
             imageUrlField: 'flagUrl'
@@ -263,29 +244,31 @@
     }
 
     // FileNode 객체를 트리뷰 형식으로 변환
-    function transformToTreeViewFormat(fileNode) {
+function transformToTreeViewFormat(fileList) {
     var treeData = [];
-    convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다.
+    fileList.forEach(function(fileNode) {
+        convertNode(fileNode, treeData, 1);
+    });
     return treeData;
-    }
+}
 
-    // FileNode 객체를 트리뷰 노드로 변환
-    function convertNode(fileNode, treeData, nodeId) {
+function convertNode(fileNode, treeData, nodeId) {
     var node = {
-    id: nodeId,
-    text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
-    flagUrl: fileNode.flagUrl,
-    children: []
+        id: nodeId,
+        text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
+        flagUrl: fileNode.flagUrl,
+        children: []
     };
 
     fileNode.children.forEach(function(child) {
-    convertNode(child, node.children, nodeId + 1);
-    nodeId++;
+        convertNode(child, node.children, nodeId + 1);
+        nodeId++;
     });
 
     treeData.push(node);
-    }
-    // document.addEventListener('DOMContentLoaded', function() {
+}
+
+// document.addEventListener('DOMContentLoaded', function() {
     //     const treeArea = document.querySelector('#tree');
     //
     //     treeArea.addEventListener('click', function(event) {
@@ -306,19 +289,24 @@
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
 
+//////////////////////////// a 태그 이동 막기 /////////////////////////////
         treeArea.addEventListener('click', function(event) {
             if (event.target.closest('a')) {
                 event.preventDefault();
             }
         });
+
+/////////////////////////////////////// 더블클릭해서 파일 내용 불러오기 ////////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
             const anchor = event.target.closest('a');
             if (anchor) {
-                const filename = anchor.getAttribute('href'); // 파일명 추출
+                const filepath = anchor.getAttribute('href'); // 파일명 추출
+                const filename = anchor.textContent;
                 console.log("filename")
+                console.log(filepath)
                 console.log(filename)
                 axios.post('/api/test2', null, {
-                    params: { filename2: filename }
+                    params: { filename2: filepath }
                 })
                     .then(response => {
                         const anchorTags = treeArea.querySelectorAll('a');
@@ -328,16 +316,22 @@
                         });
                         const fileContent = response.data;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
+                        document.getElementById('selectedFileName').textContent = filename;
+                        document.getElementById('selectedFileName').title = removeFirstSegment(filepath);
+
                         anchor.style.fontWeight = 'bold';
                     })
                     .catch(error => console.error('Error fetching file content:', error));
             }
         });
+//////////////////////////////////// 더블클릭해서 폴더 열고 닫기  /////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
             const anchor = event.target.closest('a');
             if (anchor) {
                 const wrapper = anchor.closest('[data-role="wrapper"]');
                 const expander = wrapper.querySelector('[data-role="expander"]');
+                const image = wrapper.querySelector('[data-role="image"] img');
+                const icon = expander.querySelector('i');
                 const childUl = wrapper.parentElement.querySelector('ul');
 
                 if (expander && childUl) {
@@ -345,22 +339,42 @@
                     if (currentMode === 'open') {
                         expander.setAttribute('data-mode', 'close');
                         childUl.style.display = 'none';
+                        image.src = '/static/img/folder.svg';
+                        icon.classList.remove('chevron-down');
+                        icon.classList.add('chevron-right');
+
                     } else {
                         expander.setAttribute('data-mode', 'open');
                         childUl.style.display = 'block';
+                        image.src = '/static/img/folder_open_FILL0_wght400_GRAD0_opsz24.svg';
+                        icon.classList.remove('chevron-right');
+                        icon.classList.add('chevron-down');
+
                     }
                 }
             }
         });
 
+
+
+
+
+
+
     }
+
+function removeFirstSegment(path) {
+    const segments = path.split('/');
+    segments.splice(1, 1);
+    return  segments.join('/');
+}
 
 /////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
     document.getElementById('saveZip').addEventListener('click', function() {
         window.location.href = '/java/download-zip';
     });
 
-    Split(['#left-pane', '#right-pane'], {
-    sizes: [25, 75],
-    minSize: 200
+    Split(['#left-pane', '#center-pane', '#right-pane'], {
+    sizes: [20, 50,30],
+    minSize: 120
 });

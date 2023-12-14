@@ -21,7 +21,10 @@ public class FileNode {
         this.children = new ArrayList<>();
 //        System.out.println("text : "+text);
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
-        this.flagUrl = determineFlagUrl("D:\\hk\\project\\file\\"+text);
+
+        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+text);
+//        this.flagUrl = determineFlagUrl("D:\\hk\\project\\file\\"+text);
+
     }
 
     public void addChild(FileNode child) {
@@ -31,10 +34,10 @@ public class FileNode {
 //        System.out.println(name);
         if (new File(name).isDirectory()) {
 //            System.out.println("dir => " + name);
-            return "/static/img/folder.svg";
+            return "/static/img/icon/folder.svg";
         } else {
 //            System.out.println("file => " + name);
-            return "/static/img/file.svg";
+            return "/static/img/icon/file.svg";
         }
     }
 }

@@ -15,7 +15,7 @@
                 <div class="center-wrap">
                     <div class="section text-center">
                         <h6 class="mb-4 pb-3" style="font-weight: 900;">비밀번호를 다시 한번 입력해주세요.</h6>
-                        <div class="form-group">
+                        <div class="form-group d-flex justify-content-center">
                             <form th:action="@{/member/check}" method="post">
                                 <input type="password" id="mpw" name="mpw" class="form-style" autocomplete="off" style="width: 70%">
                                 <button type="submit" class="btn btn-dark" style="float:right">확인</button>
@@ -28,4 +28,5 @@
     </div>
 </div>
 </body>
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
 </html>
