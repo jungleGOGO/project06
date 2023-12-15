@@ -14,6 +14,7 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 main {
@@ -21,6 +22,10 @@ main {
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+h2 {
+  padding-left: 10px;
 }
 
 #logoImage {
@@ -31,6 +36,7 @@ main {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  border-top: 1px solid #fff;
 }
 
 iframe {
@@ -46,7 +52,7 @@ iframe {
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-left: 1px solid #ccc;
+  border-left: 1px solid #5c5b5b;
 }
 
 .editor-container .CodeMirror {
@@ -54,7 +60,7 @@ iframe {
 }
 
 .editor-header {
-  padding: 0 10px;
+  /*padding: 0 10px;*/
 }
 
 .button-container {
@@ -80,12 +86,15 @@ span.material-symbols-outlined {
   cursor: pointer;
 }
 .material-symbols-outlined {
+  color:#FFFFFF;
+  vertical-align: middle;
   font-variation-settings:
           'FILL' 0,
           'wght' 400,
           'GRAD' 0,
           'opsz' 24
 }
+
 
 select,input {
   background-color: #444141;
@@ -108,9 +117,23 @@ label{
   font-family: Arial, sans-serif;
 }
 
-/*--------------------------------------------------------------
-# Modal
---------------------------------------------------------------*/
+#resultDiv {
+  background-color: #444141;
+  color: white;
+  border: black;
+  font-size: 20px;
+  width: 120px;
+  padding-left: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-bottom:0px;
+  margin-left: 12px;
+}
+
+
+  /*--------------------------------------------------------------
+  # Modal
+  --------------------------------------------------------------*/
 
 .modal {
   display: none;
@@ -136,6 +159,7 @@ label{
   border: 1px solid #888;
   width: 60%;
 }
+
 .modal-dialog{
   max-width:700px;
 }
@@ -230,3 +254,44 @@ label{
   font-size: 10px;
 }
 
+
+#moreNav {
+  position: relative;
+  width: 4px;
+  padding-top: 2px;
+  padding-left: 6px;
+  margin-right: 24px;
+  z-index: 9999;
+
+}
+
+#balloon-wrap2 {
+  width: 90px;
+  /*top: 38px!important;*/
+  /*right: 486px!important;*/
+  /*position: fixed;*/
+
+}
+
+#balloon2 {
+  width: 190px;
+  background: #2a2a2a;
+  padding-left: 5px;
+  border-radius: 5px;
+  border: 0.1em solid gray;
+  color:#fff;
+  display: none;
+}
+
+#balloon2 li {
+  cursor: pointer;
+  list-style: none;
+  padding: 4px!important;
+  font-family: 'GongGothicMedium';
+}
+
+#balloon2 li:hover {
+  cursor: pointer;
+  color: #ffeba7;
+  font-family: 'GongGothicMedium';
+}

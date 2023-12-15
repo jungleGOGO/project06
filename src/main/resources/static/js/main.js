@@ -1,3 +1,38 @@
+/////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
+
+const icon = document.getElementById('iconNav');
+const balloon = document.getElementById('balloon');
+
+const icon2 = document.getElementById('moreNav');
+const balloon2 = document.getElementById('balloon2');
+
+icon.addEventListener('mouseenter', function (){
+  balloon.style.display = 'block';
+})
+
+icon.addEventListener('mouseover', function (){
+  console.log("bye");
+  balloon.style.display = 'block';
+})
+
+icon.addEventListener('mouseout', function (){
+  balloon.style.display = 'none';
+})
+
+icon2.addEventListener('mouseenter', function (){
+  balloon2.style.display = 'block';
+})
+
+icon2.addEventListener('mouseover', function (){
+  balloon2.style.display = 'block';
+})
+
+icon2.addEventListener('mouseout', function (){
+  balloon2.style.display = 'none';
+})
+
+
+
 const htmlCodeEl = document.querySelector("[data-html]");
 const cssCodeEl = document.querySelector("[data-css]");
 const jsCodeEl = document.querySelector("[data-js]");
@@ -910,20 +945,3 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 
-/////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
-
-const icon = document.getElementById('iconNav');
-const balloon = document.getElementById('balloon');
-
-icon.addEventListener('mouseenter', function (){
-  balloon.style.display = 'block';
-})
-
-icon.addEventListener('mouseover', function (){
-  console.log("bye");
-  balloon.style.display = 'block';
-})
-
-icon.addEventListener('mouseout', function (){
-  balloon.style.display = 'none';
-})

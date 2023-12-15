@@ -22,6 +22,7 @@
 <body>
 <nav class="navbar navbar-light bg-dark" >
     <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
+    <span class="material-symbols-outlined" data-bs-toggle="modal" data-bs-target="#exampleModal" style="font-size: 22px; color: #fff;">info</span>
 </nav>
 
 <div id="iconNav">
@@ -41,15 +42,40 @@
 </div>
 
 <main>
-    <div class="black">
-    <div class="button-container">
+    <div class="container-fluid" style="background-color:black;">
+    <div class="row gx-5 mt-2">
 <!--        id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
 <!--        현재는 filename + extension으로 파일이름을 저장하고 있음.-->
 <!--        불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
         <!-- 불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
 <!--        모달창으로 저장,다른이름으로 저장-->
-        <input type="text" name="filename" id="filename" value="untitled">
-        <input type="hidden" name="filename2" id="filename2" >
+        <div class="col-9 d-flex gx-5">
+            <input type="text" name="filename" id="filename" value="untitled">
+            <input type="hidden" name="filename2" id="filename2" >
+            <span class="material-symbols-outlined " id="run" title="실행" style="font-size: 34px; margin: 0 2px;">play_circle</span>
+            <span class="material-symbols-outlined" id="clear" title="전체 지우기" style="font-size: 34px; margin: 0 2px;">ink_eraser</span>
+        </div>
+        <div class="col-3 d-flex">
+            <div class="form-check form-switch">
+                <label class="form-check-label" for="autoSaveCheck">자동저장</label>
+                <input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck">
+                <span id="checkCircle" class="material-symbols-outlined" >check_circle</span>
+
+            <button type="button" class="btn btn-dark"><span class="material-symbols-outlined" id="save" title="저장">save</span>저장</button>
+            <button type="button" class="btn btn-dark"><span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()" title="저장소">dns</span>저장소</button>
+            </div>
+            <div id="moreNav">
+                <a><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></a>
+                <div id="balloon-wrap2">
+                    <ul id="balloon2">
+                        <li><span class="material-symbols-outlined" id="saveBtn" title="다운로드">download</span>다운로드</li>
+                        <li><span class="material-symbols-outlined"  title="다른이름으로 저장">save_as</span>다른이름으로저장</li>
+                        <li><span class="material-symbols-outlined" id="readFile" title="내 파일읽기">upload_file</span>내파일읽기</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
 <!--        <label for="extension">파일확장자</label>-->
 <!--        <select id="extension">-->
 <!--            <option value=".html">.html</option>-->
@@ -62,24 +88,6 @@
 <!--            <label for="customExtension">직접입력 확장자</label>-->
 <!--            <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">-->
 <!--        </div>-->
-<!--        <div class="button-container">-->
-<!--        <span class="material-symbols-outlined" id="save" title="저장">save</span>-->
-<!--        <span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()" title="저장소">dns</span>-->
-<!--&lt;!&ndash;        <button type="button" id="loadFileBtn" class="btn btn-primary" onclick="showFileList()">불러오기</button>&ndash;&gt;-->
-<!--        <span class="material-symbols-outlined" id="saveBtn" title="다운로드">download</span>-->
-<!--            <span class="material-symbols-outlined " id="run" title="실행">play_circle</span>-->
-<!--            <span class="material-symbols-outlined" id="clear" title="전체 지우기">ink_eraser</span>-->
-<!--            <span class="material-symbols-outlined"  title="다른이름으로 저장">save_as</span>-->
-<!--            <span class="material-symbols-outlined" id="readFile" title="내 파일읽기">upload_file</span>-->
-<!--        </div>-->
-<!--        <div class="form-check form-switch">-->
-<!--            <input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck">-->
-<!--            <label class="form-check-label" for="autoSaveCheck">자동저장</label>-->
-<!--            <span id="checkCircle" class="material-symbols-outlined" style="display: none">check_circle</span>-->
-<!--        </div>-->
-        <div class="form-check form-switch">
-            <span class="material-symbols-outlined" data-bs-toggle="modal" data-bs-target="#exampleModal">info</span>
-        </div>
     </div>
 <!--        파일리스트 모달창-->
     <div class="modal" id="fileListModal">
@@ -143,31 +151,30 @@
         <section class="boxes">
             <div class="editor-container tab-pane">
                 <div class="editor-header tab">
-                    <h1>HTML <span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span></h1>
+                    <h2>HTML <span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span></h2>
                 </div>
                 <textarea data-html id="htmlTextarea"></textarea>
             </div>
             <div class="editor-container tab-pane">
                 <div class="editor-header tab">
-                    <h1>CSS<span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span></h1>
+                    <h2>CSS<span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span></h2>
                     <textarea data-css id="cssTextarea"></textarea>
                 </div>
             </div>
-            <div class="editor-container tab-pane">
-                <div class="editor-header tab">
-                    <h1>JS <span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span></h1>
+            <div class="editor-container tab-pane" style="border-right: 1px solid #5c5b5b;">
+                <div class="editor-header tab" style="padding-right: 0px;">
+                    <h2>JS <span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span></h2>
                     <textarea data-js id="jsTextarea"></textarea>
                 </div>
             </div>
         </section>
     </div>
-<div style="background: black">
-    <hr style="color: white">
-    <p style="color: white; font-size: 20px;">결과</p>
-    <hr style="color: white">
-</div>
-    <iframe data-code id="content"></iframe>
-
+    <div style="background: black; padding-top: 14px;">
+        <p id="resultDiv">결과</p>
+    </div>
+    <div >
+        <iframe data-code id="content"></iframe>
+    </div>
 </main>
 </body>
 
