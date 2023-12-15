@@ -333,9 +333,6 @@
         }
 
         // 사용자가 입력한 파일명과 조합된 확장자를 설정
-        // const htmlCode = htmlCodeEl.value;
-        // const cssCode = cssCodeEl.value;
-        // const jsCode = jsCodeEl.value;
         const htmlCode = htmlEditor.value;
         const cssCode = cssEditor.value;
         const jsCode = jsEditor.value;
@@ -392,9 +389,9 @@
         let extension = document.getElementById("extension").value;
         let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
         let filename = name + extension ;
-        const htmlCode = htmlCodeEl.value;
-        const cssCode = cssCodeEl.value;
-        const jsCode = jsCodeEl.value;
+        // const htmlCode = htmlCodeEl.value;
+        // const cssCode = cssCodeEl.value;
+        // const jsCode = jsCodeEl.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
         if (!isValidFilename(name)) {
@@ -785,12 +782,10 @@
         let extension = document.getElementById("extension").value;
         let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
         let filename = name + extension ;
-        // const htmlCode = htmlCodeEl.value;
-        // const cssCode = cssCodeEl.value;
-        // const jsCode = jsCodeEl.value;
-        const htmlCode = htmlEditor.value;
-        const cssCode = cssEditor.value;
-        const jsCode = jsEditor.value;
+
+        // const htmlCode = htmlEditor.value;
+        // const cssCode = cssEditor.value;
+        // const jsCode = jsEditor.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
         let local = setInterval(saveToLocalStorage, 4000);
 
@@ -858,20 +853,19 @@
         setInterval(saveToLocalStorage,7000);
         // HTML textarea
 
-        // var htmlTextarea = htmlCodeEl.value;
-        var htmlTextarea = htmlEditor.value;
-        var savedHtmlContent = localStorage.getItem('htmlContent');
+
+        const htmlTextarea = document.getElementById('htmlTextarea');
+        let savedHtmlContent = localStorage.getItem('htmlContent');
 
         // CSS textarea
 
-        // var cssTextarea = cssCodeEl.value;
-        var cssTextarea = cssEditor.value;
-        var savedCssContent = localStorage.getItem('cssContent');
+        const cssTextarea = document.getElementById('cssTextarea');
+        let savedCssContent = localStorage.getItem('cssContent');
 
         // JS textarea
-        // var jsTextarea = jsCodeEl.value;
-        var jsTextarea = jsEditor.value;
-        var savedJsContent = localStorage.getItem('jsContent');
+
+        const jsTextarea = document.getElementById('jsTextarea');
+        let savedJsContent = localStorage.getItem('jsContent');
 
         // 코드가 어디에 어떻게 박히느지 몰라서 추가함..
 
@@ -886,25 +880,25 @@
         if (userConfirmed) {
             if (savedHtmlContent !== null) {
                 htmlTextarea.value = savedHtmlContent;
-                htmlCodeEl.value=savedHtmlContent;
+                // htmlCodeEl.value=savedHtmlContent;
                 htmlEditor.setValue(savedHtmlContent);
             }
 
             if (savedCssContent !== null) {
-                cssCodeEl.value=savedCssContent;
+                // cssCodeEl.value=savedCssContent;
                 cssTextarea.value = savedCssContent;
                 cssEditor.setValue(savedCssContent);
             }
 
             if (savedJsContent !== null) {
-                jsCodeEl.value = savedJsContent;
-                jsTextarea.value = savedJsContent;
+                // jsCodeEl.value = savedJsContent;
+                jsTextarea.value=savedJsContent;
                 jsEditor.setValue(savedJsContent);
             }
         } else { // If the user clicks Cancel, clear the values in the textareas
-            htmlCodeEl.value="";
-            cssCodeEl.value="";
-            jsCodeEl.value="";
+            // htmlCodeEl.value="";
+            // cssCodeEl.value="";
+            // jsCodeEl.value="";
             htmlEditor.value="";
             cssEditor.value="";
             jsEditor.value="";
