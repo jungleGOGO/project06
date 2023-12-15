@@ -1,5 +1,12 @@
+/*--------------------------------------------------------------
+# General / Editor Section
+--------------------------------------------------------------*/
+
 * {
   box-sizing: border-box;
+}
+section {
+  padding: 0 !important;
 }
 
 body {
@@ -14,6 +21,10 @@ main {
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+#logoImage {
+  width: 30px!important;
 }
 
 .boxes {
@@ -47,9 +58,8 @@ iframe {
 }
 
 .button-container {
+  margin-top: 7px;
   border-bottom: 1px solid #ccc;
-  padding: 10px;
-  display: flex;
 }
 
 .button-container>button {
@@ -64,5 +74,159 @@ iframe {
   .cm-s-monokai.CodeMirror {
     max-height: 200px;
   }
+}
+
+span.material-symbols-outlined {
+  cursor: pointer;
+}
+.material-symbols-outlined {
+  font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+}
+
+select,input {
+  background-color: #444141;
+  color: white;
+  border: black;
+  font-size: 20px;
+  width: 120px;
+  padding-left: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+label{
+  color: white;
+}
+
+.black {
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/*--------------------------------------------------------------
+# Modal
+--------------------------------------------------------------*/
+
+.modal {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+.modal-backdrop {
+  display: none;
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+}
+.modal-dialog{
+  max-width:700px;
+}
+
+/* 모달 닫기 버튼 스타일 */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#tree a {
+  text-decoration: none;
+  color: black;
+}
+/* 버튼 컨테이너 스타일 */
+.button-container {
+  display: flex;
+  gap: 10px; /* 요소들 사이의 간격 설정 (원하는 만큼 조절) */
+}
+
+/* 가상 요소로 구분선 스타일 설정 */
+.button-container span::after {
+  content: "|"; /* 가상 요소의 내용 설정 */
+  margin-left: 5px; /* 가상 요소의 왼쪽 여백 설정 (원하는 만큼 조절) */
+  color: white; /* 가상 요소의 색상 설정 */
+}
+
+/* 마지막 버튼 뒤에는 구분선을 표시하지 않음 */
+.button-container span:last-child::after {
+  content: none; /* 마지막 버튼 뒤의 가상 요소 내용을 없앰 */
+}
+
+
+/*--------------------------------------------------------------
+# Menu
+--------------------------------------------------------------*/
+
+#iconNav {
+  position: fixed;
+  background-color: #102770;
+  top:3px;
+  right: 20px;
+  padding-top: 5px;
+  border-radius: 100px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+}
+
+#balloon-wrap {
+  width:90px;
+  top: 50px!important;
+  right: -13px!important;
+}
+
+#balloon {
+  width: 90px;
+}
+
+#balloon li {
+  padding: 4px 2px!important;
+}
+
+#balloon:after {
+  border-top:0px solid transparent;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgb(30, 32, 34);
+  content:"";
+  position:absolute;
+  top:-10px;
+  left:52px;
+}
+
+#balloon li a {
+  font-family: 'GongGothicMedium';
+  font-size: 10px;
+}
+
+#balloon li:hover a{
+  color: #ffeba7;
+  font-family: 'GongGothicMedium';
+  font-size: 10px;
 }
 
