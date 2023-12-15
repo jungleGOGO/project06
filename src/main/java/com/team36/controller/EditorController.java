@@ -111,8 +111,6 @@ public class EditorController {
     }
 
 
-
-
     @GetMapping("/editor/fileList")
     @ResponseBody
     public FileNode fileList() throws Exception {
@@ -182,7 +180,7 @@ public class EditorController {
         return current;
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/editor/delete")
     public String deleteFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
         // 파일 또는 폴더를 삭제할 디렉토리 경로
@@ -207,7 +205,7 @@ public class EditorController {
             System.out.println("삭제할 파일 또는 폴더가 존재하지 않습니다: " + filePath);
             // 파일 또는 폴더가 존재하지 않을 때의 처리를 추가할 수 있습니다.
         }
-        return "redirect:/fileList";
+        return "redirect:/editor/fileList";
     }
 
     @PostMapping("/editor/rename")
@@ -266,6 +264,7 @@ public class EditorController {
 
                 // 파일 확장자에 따라 처리된 내용을 반환
                 return processFileContentByExtension(content.toString(), fileExtension);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 // 오류가 발생한 경우 빈 문자열 반환 또는 다른 오류 처리 방식 선택 가능

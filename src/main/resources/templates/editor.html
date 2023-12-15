@@ -224,19 +224,19 @@
         <section class="boxes">
             <div class="editor-container tab-pane">
                 <div class="editor-header tab">
-                    <h1>HTML</h1>
+                    <h1>HTML <span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span></h1>
                 </div>
                 <textarea data-html id="htmlTextarea"></textarea>
             </div>
             <div class="editor-container tab-pane">
                 <div class="editor-header tab">
-                    <h1>CSS</h1>
+                    <h1>CSS<span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span></h1>
                     <textarea data-css id="cssTextarea"></textarea>
                 </div>
             </div>
             <div class="editor-container tab-pane">
                 <div class="editor-header tab">
-                    <h1>JS</h1>
+                    <h1>JS <span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span></h1>
                     <textarea data-js id="jsTextarea"></textarea>
                 </div>
             </div>
@@ -535,15 +535,26 @@
         const cssCodeEl = document.querySelector("[data-css]");
         const jsCodeEl = document.querySelector("[data-js]");
 
-        // 코드미러 에디터에 값 설정
-        htmlEditor.setValue(htmlCode);
-        cssEditor.setValue(cssCode);
-        jsEditor.setValue(jsCode);
+        // 코드 미러 에디터에 값 설정
+        if (htmlCode.trim() !== '') {
+            htmlEditor.setValue(htmlCode);
+        } else {
+            // 기존 내용이 있으면 이전 내용을 유지합니다.
+            htmlEditor.setValue(htmlEditor.getValue());
+        }
 
-        // 설정된 값을 확인하기 위해 로그 출력
-        console.log('HTML Code:', htmlCode);
-        console.log('CSS Code:', cssCode);
-        console.log('JavaScript Code:', jsCode);
+        if (cssCode.trim() !== '') {
+            cssEditor.setValue(cssCode);
+        } else {
+            cssEditor.setValue(cssEditor.getValue());
+        }
+
+        if (jsCode.trim() !== '') {
+            jsEditor.setValue(jsCode);
+        } else {
+            jsEditor.setValue(jsEditor.getValue());
+        }
+
     }
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
@@ -828,15 +839,21 @@
 <!--로컬 스토리지에 저장하는 스크립트-->
 <script th:inline="javascript">
     function saveToLocalStorage() {
-        localStorage.setItem('htmlContent', document.getElementById('htmlTextarea').value);
-        localStorage.setItem('cssContent', document.getElementById('cssTextarea').value);
-        localStorage.setItem('jsContent', document.getElementById('jsTextarea').value);
+        // localStorage.setItem('htmlContent', document.getElementById('htmlTextarea').value);
+        // localStorage.setItem('cssContent', document.getElementById('cssTextarea').value);
+        // localStorage.setItem('jsContent', document.getElementById('jsTextarea').value);
+        localStorage.setItem('htmlContent', htmlEditor.value);
+        localStorage.setItem('cssContent', cssEditor.value);
+        localStorage.setItem('jsContent', jsEditor.value);
     }
 
     // Load content from local storage on page load
-    document.getElementById('htmlTextarea').value = localStorage.getItem('htmlContent') || '';
-    document.getElementById('cssTextarea').value = localStorage.getItem('cssContent') || '';
-    document.getElementById('jsTextarea').value = localStorage.getItem('jsContent') || '';
+    // document.getElementById('htmlTextarea').value = localStorage.getItem('htmlContent') || '';
+    // document.getElementById('cssTextarea').value = localStorage.getItem('cssContent') || '';
+    // document.getElementById('jsTextarea').value = localStorage.getItem('jsContent') || '';
+    htmlEditor.value= localStorage.getItem('htmlContent') || '';
+    cssEditor.value= localStorage.getItem('cssContent') || '';
+    jsEditor.value= localStorage.getItem('jsContent') || '';
 </script>
 
 <script th:inline="javascript">
@@ -872,14 +889,17 @@
         if (userConfirmed) {
             if (savedHtmlContent !== null) {
                 htmlTextarea.value = savedHtmlContent;
+                htmlEditor.setValue(savedHtmlContent)
             }
 
             if (savedCssContent !== null) {
                 cssTextarea.value = savedCssContent;
+                cssEditor.setValue(savedCssContent)
             }
 
             if (savedJsContent !== null) {
                 jsTextarea.value = savedJsContent;
+                jsEditor.setValue(savedJsContent)
             }
         } else { // If the user clicks Cancel, clear the values in the textareas
             console.log('caches' in window)
@@ -891,6 +911,9 @@
             htmlTextarea.value="";
             cssTextarea.value="";
             jsTextarea.value="";
+            htmlEditor.value="";
+            cssEditor.value="";
+            jsEditor.value="";
             $(".CodeMirror-line").text("");
             localStorage.removeItem('htmlContent');
             localStorage.removeItem('cssContent');
@@ -940,23 +963,8 @@
                 formData.append('file', this.files[0]);
 
                 // 파일 업로드를 위한 Axios 요청
-                function extractCodeBlocks(fileContent) {
-                    const styleRegex = /<style>([\s\S]*?)<\/style>/g;
-                    const bodyRegex = /<body>([\s\S]*?)<\/body>/g;
-                    const scriptRegex = /<script>([\s\S]*?)<\/script>/g;
 
-                    let styleMatch = styleRegex.exec(fileContent);
-                    let bodyMatch = bodyRegex.exec(fileContent);
-                    let scriptMatch = scriptRegex.exec(fileContent);
 
-                    const cssCode = styleMatch ? styleMatch[1].trim() : '';
-                    const htmlCode = bodyMatch ? bodyMatch[1].trim() : '';
-                    const jsCode = scriptMatch ? scriptMatch[1].trim() : '';
-
-                    return { cssCode, htmlCode, jsCode };
-                }
-
-// 사용 예시
                 axios.post('/editor/readFile', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -964,10 +972,6 @@
                 })
                     .then(function (response) {
                         const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data);
-
-                        console.log('CSS Code:', cssCode);
-                        console.log('HTML Code:', htmlCode);
-                        console.log('JavaScript Code:', jsCode);
                         setCodeValues(htmlCode, cssCode, jsCode);
                     })
                     .catch(function (error) {
@@ -985,6 +989,49 @@
             inputFile.click();
         });
     });
+</script>
+<script th:inline="javascript">
+    function extractCodeBlocks(fileContent) {
+        // 줄바꿈 문자열을 모두 표준화하여 \n으로 변환
+        fileContent = fileContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+        const headRegex = /<head>([\s\S]*?)<\/head>/g;
+        const bodyRegex = /<body>([\s\S]*?)<\/body>/g;
+        const styleRegex = /<style>([\s\S]*?)<\/style>/g;
+        const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/g;
+
+        let bodyCode = '';
+        let headCode = '';
+        let cssCode = '';
+        let htmlCode = '';
+        let jsCode = '';
+        let match;
+        // <script> 태그 일치 항목 찾기
+        while ((match = scriptRegex.exec(fileContent)) !== null) {
+            const scriptContent = match[1].replace(/^\s*\n/gm, ''); // 첫 번째 빈 줄 제거
+            jsCode += scriptContent.trim() + '\n';
+            console.log(jsCode);
+        }
+
+// jsCode에서 선행 및 후행 빈 줄 제거
+        jsCode = jsCode.replace(/(^\s*|\s*$)/g, '');
+
+        fileContent = fileContent.replace(/<script[^>]*>[\s\S]*?<\/script>/g, '');
+        // <body> 태그 일치 항목 찾기
+        while ((match = bodyRegex.exec(fileContent)) !== null) {
+            htmlCode += match[1].trim() + '\n';
+        }
+        fileContent = fileContent.replace(/<body>[\s\S]*?<\/body>/g, '');
+
+        // <style> 태그 일치 항목 찾기
+
+        while ((match = styleRegex.exec(fileContent)) !== null) {
+            cssCode += match[1].trim() + '\n';
+        }
+
+        return { cssCode, htmlCode, jsCode };
+    }
+
 </script>
 </body>
 

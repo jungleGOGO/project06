@@ -4,6 +4,9 @@ const jsCodeEl = document.querySelector("[data-js]");
 const codeEl = document.querySelector("[data-code]").contentWindow.document;
 const runButtonEl = document.querySelector("#run");
 const clearButtonEl = document.querySelector("#clear");
+const clearHtmlButtonEl = document.querySelector("#clearHtml");
+const clearCssButtonEl = document.querySelector("#clearCss");
+const clearJsButtonEl = document.querySelector("#clearJs");
 
 const defaultEditorSettings = {
   styleActiveLine: true,
@@ -126,5 +129,16 @@ javascriptCode.addEventListener('input', function (e) {
 clearButtonEl.addEventListener("click", () => {
   htmlEditor.setValue("");
   cssEditor.setValue("");
+  jsEditor.setValue("");
+});
+
+clearHtmlButtonEl.addEventListener("click", () => {
+  htmlEditor.setValue("");
+
+});
+clearCssButtonEl.addEventListener("click", () => {
+  cssEditor.setValue("");
+});
+clearJsButtonEl.addEventListener("click", () => {
   jsEditor.setValue("");
 });
