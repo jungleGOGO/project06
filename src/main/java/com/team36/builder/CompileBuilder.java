@@ -38,102 +38,133 @@ public class CompileBuilder {
     private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
 
     public String compileAndRunCode(String code) {
+        // 고유 식별자 생성하여 각 코드 실행을 고유한 디렉토리에 저장
         String uuid = UUID.randomUUID().toString();
         String uuidPath = path + uuid + "/";
         File newFolder = new File(uuidPath);
+
+///////////////////////////////////////////// 자바 파일 생성 /////////////////////////////////////////////////////
+        // 디렉토리 생성 시도
         if (!newFolder.mkdir()) {
-            logger.error("Error creating directory: " + uuidPath);
-            return "Error creating directory.";
+            // 디렉토리 생성 실패 시 로그 기록 및 에러 메시지 반환
+            logger.error("디렉토리 생성 오류: " + uuidPath);
+            return "디렉토리를 생성할 수 없습니다.";
         }
-
+        // 새 Java 소스 파일 생성
         File sourceFile = new File(uuidPath + "Test.java");
-
+        // 제공된 코드를 파일에 쓰기
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sourceFile))) {
             writer.write(code);
         } catch (IOException e) {
-            logger.error("Error writing the source code to file: " + e.getMessage());
-            return "Error writing the source code to file.";
+            // 파일 쓰기 실패 시 로그 기록 및 에러 메시지 반환
+            logger.error("소스 코드 파일 작성 오류: " + e.getMessage());
+            return "소스 코드 파일을 작성할 수 없습니다.";
         }
 
+        System.out.println("---- 자바 파일 생성 완료 ----");
+/////////////////////////////////////////////////  컴파일  ///////////////////////////////////////////////////////
+        // 비동기 작업 실행을 위한 ExecutorService 생성
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
+        // 비동기 작업 시작
         Future<String> future = executor.submit(() -> {
             Process process = null;
-
             StringBuilder output = new StringBuilder();
+
             try {
+                // 'javac'를 사용하여 Java 코드 컴파일
                 ProcessBuilder processBuilder = new ProcessBuilder("javac", sourceFile.getAbsolutePath());
                 process = processBuilder.start();
+
+                // 컴파일 작업에 대한 10초 타임아웃 설정
                 if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                    // 타임아웃 발생 시 프로세스 종료 및 예외 발생
                     process.destroy();
-                    throw new RuntimeException("Compilation timeout");
+                    throw new RuntimeException("컴파일 타임아웃");
                 }
 
+                // 컴파일 오류 검사
                 if (process.exitValue() != 0) {
+                    // 컴파일 오류 메시지 캡처 및 반환
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             output.append(line).append("\n");
                         }
                     }
-                    return "Compilation error:\n" + output;
+                    return "컴파일 오류:\n" + output;
                 }
-
+                System.out.println("---- 자바 파일 컴파일 완료 ----");
+//////////////////////////////////////////////  코드실행  ////////////////////////////////////////////////////
+                // 컴파일된 클래스 실행
                 processBuilder = new ProcessBuilder("java", "-cp", uuidPath, "Test");
                 process = processBuilder.start();
-                System.out.println("process alive "+process.isAlive());
+                System.out.println("---- 프로세스 실행 시작 ---- " + process.isAlive());
+
+                // 표준 출력 스트림 캡처
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
-
-                    while ((line = reader.readLine()) != null && process.waitFor(5,TimeUnit.SECONDS)) {
+                    System.out.println();
+                    while ((line = reader.readLine()) != null && process.waitFor(5, TimeUnit.SECONDS)) {
                         output.append(line).append("\n");
-//                        if (process.waitFor(10,TimeUnit.SECONDS)){
-//                            process.destroy();
-//                        }
-                        System.out.println("while 끝 process alive "+process.isAlive());
                     }
+                    System.out.println("inputStream , 프로세스 상태 " + process.isAlive());
 
                 }
+
+                // 표준 오류 스트림 캡처
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         output.append(line).append("\n");
                     }
+                    System.out.println("ErrorStream , 프로세스 상태 " + process.isAlive());
                 }
-
+//
+//                 실행 작업에 대한 5초 타임아웃 설정
                 if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                    // 타임아웃 발생 시 프로세스 종료
                     process.destroy();
-                    throw new RuntimeException("Execution timeout");
+                    throw new RuntimeException("실행 타임아웃");
                 }
-                System.out.println("check "+process.isAlive());
+                System.out.println("프로세스 상태 확인: " + process.isAlive());
 
             } catch (IOException e) {
-                throw new RuntimeException("Error starting the process.", e);
+                throw new RuntimeException("프로세스 시작 오류.", e);
             } catch (InterruptedException e) {
                 if (process != null) {
                     process.destroy();
                 }
-                throw new RuntimeException("Process was interrupted.", e);
+                throw new RuntimeException("프로세스 중단됨.", e);
+            } finally {
+                process.destroyForcibly();
+                System.out.println("finally , 프로세스 상태 " + process.isAlive());
+
             }
-            System.out.println("---------------------false면 종료-------------");
-            System.out.println(process.isAlive());
+            System.out.println("try 종료 , 프로세스 상태 " + process.isAlive());
+
             return output.toString();
         });
 
         try {
-            return future.get(5, TimeUnit.SECONDS);
+            // 비동기 작업 결과 대기 및 반환
+            return future.get(10, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
+            // 타임아웃 발생 시 작업 취소 및 타임아웃 메시지 반환
             future.cancel(true);
 
-            return "Execution timeout: Code execution took longer than 5 seconds.";
+            return "실행 타임아웃: 코드 실행 시간이 5초를 초과했습니다.";
         } catch (Exception e) {
-            return "Execution error: " + e.getMessage();
+            // 실행 중 발생한 오류 메시지 반환
+            return "실행 오류: " + e.getMessage();
         } finally {
+            // ExecutorService 종료
             executor.shutdownNow();
         }
-
     }
 }
+
+
 //    @SuppressWarnings({ "resource", "deprecation" })
 //    public Object compileCode(String body) throws Exception {
 //        String uuid = UUIDUtil.createUUID();
