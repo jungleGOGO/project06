@@ -147,7 +147,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     return {
     value: inputValue,      // 에디터 내용 설정
     language: "java",    // 언어
-    fontSize: 18,
+    fontSize: 16,
     theme: "vs-dark",   // 테마
     lineNumbers: 'on',  // 줄 번호
     glyphMargin: false, // 체크 이미지 넣을 공간이 생김

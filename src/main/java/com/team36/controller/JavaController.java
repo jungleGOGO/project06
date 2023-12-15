@@ -117,7 +117,7 @@ public class JavaController {
                 current = found.get();
             } else {
 
-                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);

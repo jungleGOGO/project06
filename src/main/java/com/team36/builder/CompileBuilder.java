@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-//    private final String path = "/Users/juncheol/Desktop/compile/";
-    private final String path = "D:\\hk\\project\\compile\\";
+    private final String path = "/Users/juncheol/Desktop/compile/";
+//    private final String path = "D:\\hk\\project\\compile\\";
 
     // 파일명이랑 코드내용 전달 받음
     // 파일명 .java 아니면 alert띄우도록 프론트에서 처리
@@ -38,7 +38,6 @@ public class CompileBuilder {
     private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
 
     public String compileAndRunCode(String code) {
-        // 고유 식별자 생성하여 각 코드 실행을 고유한 디렉토리에 저장
         String uuid = UUID.randomUUID().toString();
         String uuidPath = path + uuid + "/";
         File newFolder = new File(uuidPath);
@@ -104,7 +103,6 @@ public class CompileBuilder {
                 // 표준 출력 스트림 캡처
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
-                    System.out.println();
                     while ((line = reader.readLine()) != null && process.waitFor(5, TimeUnit.SECONDS)) {
                         output.append(line).append("\n");
                     }
@@ -136,10 +134,6 @@ public class CompileBuilder {
                     process.destroy();
                 }
                 throw new RuntimeException("프로세스 중단됨.", e);
-            } finally {
-                process.destroyForcibly();
-                System.out.println("finally , 프로세스 상태 " + process.isAlive());
-
             }
             System.out.println("try 종료 , 프로세스 상태 " + process.isAlive());
 
@@ -148,7 +142,7 @@ public class CompileBuilder {
 
         try {
             // 비동기 작업 결과 대기 및 반환
-            return future.get(10, TimeUnit.SECONDS);
+            return future.get(5, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             // 타임아웃 발생 시 작업 취소 및 타임아웃 메시지 반환
             future.cancel(true);
@@ -162,6 +156,7 @@ public class CompileBuilder {
             executor.shutdownNow();
         }
     }
+
 }
 
 
