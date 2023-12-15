@@ -290,18 +290,20 @@ img {
 
 
 #moreNav {
-    position: fixed;
-    top:40px;
-    right: 578px;
-    padding-top: 5px;
-    padding-right: 10px;
+    position: relative;
+    width: 4px;
+    padding-top: 2px;
+    padding-left: 6px;
+    /*padding-right: 10px;*/
+    z-index: 9999;
+
 }
 
 #balloon-wrap2 {
     width: 90px;
-    top: 38px!important;
-    right: 486px!important;
-    position: fixed;
+    /*top: 38px!important;*/
+    /*right: 486px!important;*/
+    /*position: fixed;*/
 
 }
 

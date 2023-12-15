@@ -24,7 +24,7 @@ public class FileNode {
 
 //        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+text);
         this.flagUrl = determineFlagUrl("Y:\\storage\\"+text);
-        System.out.println("flagUrl : "+text);
+//        System.out.println("flagUrl : "+text);
 
     }
 
