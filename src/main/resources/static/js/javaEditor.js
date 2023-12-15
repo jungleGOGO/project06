@@ -1,3 +1,8 @@
+//////////////////////////////////// Split //////////////////////////////////////
+Split(['#left-pane', '#center-pane', '#right-pane'], {
+    sizes: [20, 50,30],
+    minSize: 120
+});
 
 //////////////////////////////////// 폴더 생성 //////////////////////////////////////
 // 폴더명 입력 문자만 입력 가능하도록 처리
@@ -68,6 +73,7 @@
     contentType: "application/json",
     success: function(response) {
     $("#output").html(response.output.replace(/\n/g, "<br>"));
+    $("#compileTime").html("<i class=\"fa-solid fa-circle\" style=\"color: #1b4134; font-size: 10px; margin-right: 6px;\"></i>"+response.time + ","+response.date );
 },
     error: function(error) {
     $("#output").html("Error: " + error.responseText);
@@ -141,8 +147,7 @@
     return {
     value: inputValue,      // 에디터 내용 설정
     language: "java",    // 언어
-    fontFamily: "D2Coding",
-    fontSize: 16,
+    fontSize: 18,
     theme: "vs-dark",   // 테마
     lineNumbers: 'on',  // 줄 번호
     glyphMargin: false, // 체크 이미지 넣을 공간이 생김
@@ -156,7 +161,7 @@
     minimap: {
     enabled: true // 우측 스크롤 미니맵
     },
-    lineHeight: 24,
+    lineHeight: 20,
 
     }
     }
@@ -326,6 +331,7 @@ function convertNode(fileNode, treeData, nodeId) {
                     .catch(error => console.error('Error fetching file content:', error));
             }
         });
+
 //////////////////////////////////// 더블클릭해서 폴더 열고 닫기  /////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
             const anchor = event.target.closest('a');
@@ -357,12 +363,6 @@ function convertNode(fileNode, treeData, nodeId) {
             }
         });
 
-
-
-
-
-
-
     }
 
 function removeFirstSegment(path) {
@@ -371,20 +371,120 @@ function removeFirstSegment(path) {
     return  segments.join('/');
 }
 
-/////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
-    document.getElementById('saveZip').addEventListener('click', function() {
-        window.location.href = '/java/download-zip';
+/////////////////////////////////////// 새파일 추가 ////////////////////////////////////////
+document.getElementById("newFile2").addEventListener("click", function (){
+    saveTreeState();
+    let newFile = document.getElementById("newFile").value;
+    let newMonaco =  "";
+    let memo = { 'filename': newFile, 'monaco': newMonaco };
+    axios.post("/api/newFile", memo).then((response) => {
+        // 저장 후 파일 목록 다시 불러오기
+        $('#tree').remove(); // 트리를 완전히 제거합니다.
+        loadFileList();
+        fileload(newFile);
+        modal2.style.display = 'none';
+    }).catch((error) => {
+        console.log(error);
     });
+});
 
-    Split(['#left-pane', '#center-pane', '#right-pane'], {
-    sizes: [20, 50,30],
-    minSize: 120
+function fileload(filename) {
+    axios.post('/api/test2', null, {
+        params: { filename2: filename }
+    }).then((response) => {
+            const fileContent = response.data;
+            monaco_test.setValue(fileContent); // 에디터에 내용 설정
+            document.getElementById('selectedFileName').textContent = filename;
+            document.getElementById('selectedFileName').title = removeFirstSegment(filename);
+            console.log("여기까쥐!");
+        })
+        .catch((error) => {
+            console.error('Error fetching file content:', error);
+        });
+}
+
+
+/////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
+
+const btn = document.getElementById('popupBtn');
+const modal = document.getElementById('modalWrap');
+const closeBtn = document.getElementById('closeBtn');
+
+const btn2 = document.getElementById('popupBtn2');
+const modal2 = document.getElementById('modalWrap2');
+const closeBtn2 = document.getElementById('closeBtn2');
+
+const btn3 = document.getElementById('popupBtn3');
+const modal3 = document.getElementById('modalWrap3');
+const closeBtn3 = document.getElementById('closeBtn3');
+
+const icon = document.getElementById('iconNav');
+const balloon = document.getElementById('balloon');
+
+const icon2 = document.getElementById('moreNav');
+const balloon2 = document.getElementById('balloon2');
+
+btn.onclick = function() {
+    modal.style.display = 'block';
+}
+closeBtn.onclick = function() {
+    modal.style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == modal || event.target == modal2 || event.target == model3) {
+        modal.style.display = "none";
+        modal2.style.display = "none";
+        modal3.style.display = "none";
+    }
+}
+
+btn2.onclick = function() {
+    modal2.style.display = 'block';
+}
+closeBtn2.onclick = function() {
+    modal2.style.display = 'none';
+}
+
+btn3.onclick = function() {
+    modal3.style.display = 'block';
+}
+closeBtn3.onclick = function() {
+    modal3.style.display = 'none';
+}
+
+
+icon.addEventListener('mouseenter', function (){
+    balloon.style.display = 'block';
+})
+
+icon.addEventListener('mouseover', function (){
+    console.log("bye");
+    balloon.style.display = 'block';
+})
+
+icon.addEventListener('mouseout', function (){
+    balloon.style.display = 'none';
+})
+
+
+icon2.addEventListener('mouseenter', function (){
+    balloon2.style.display = 'block';
+})
+
+icon2.addEventListener('mouseover', function (){
+    balloon2.style.display = 'block';
+})
+
+icon2.addEventListener('mouseout', function (){
+    balloon2.style.display = 'none';
+})
+
+
+/////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
+document.getElementById('saveZip').addEventListener('click', function() {
+    window.location.href = '/java/download-zip';
 });
 
 
-/////////////////////////////////////// tree Contextmenu  //////////////////////////////////////
 
-$('#tree').find('[data-role="display"]').on('mouseenter', function (){
-    console.log("hi");
-    $(this).css("background-color","red");
-});
