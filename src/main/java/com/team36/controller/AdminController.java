@@ -40,7 +40,7 @@ public class AdminController {
         List<MemberJoinDTO> list = pageDTO.getPagindDTO();
         model.addAttribute("list", list);
         model.addAttribute("pageDTO", pageDTO);
-        System.out.println(list);
+
 
         return "admin/dashboard";
     }

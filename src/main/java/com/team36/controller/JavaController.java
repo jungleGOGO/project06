@@ -91,7 +91,7 @@ public class JavaController {
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
         });
 
-        System.out.println(root.getChildren());
+//        System.out.println(root.getChildren());
 //        return root;
 //        return root;
         return root.getChildren();
