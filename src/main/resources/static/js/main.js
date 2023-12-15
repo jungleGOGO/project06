@@ -7,6 +7,7 @@ const clearButtonEl = document.querySelector("#clear");
 const clearHtmlButtonEl = document.querySelector("#clearHtml");
 const clearCssButtonEl = document.querySelector("#clearCss");
 const clearJsButtonEl = document.querySelector("#clearJs");
+const clearResult = document.querySelector("#clearRs");
 
 const defaultEditorSettings = {
   styleActiveLine: true,
@@ -141,4 +142,10 @@ clearCssButtonEl.addEventListener("click", () => {
 });
 clearJsButtonEl.addEventListener("click", () => {
   jsEditor.setValue("");
+});
+
+clearResult.addEventListener("click", () => {
+  codeEl.open();
+  codeEl.innerHTML = "";
+  codeEl.close();
 });
