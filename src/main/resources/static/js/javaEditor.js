@@ -356,12 +356,6 @@ function convertNode(fileNode, treeData, nodeId) {
             }
         });
 
-
-
-
-
-
-
     }
 
 function removeFirstSegment(path) {
@@ -378,12 +372,4 @@ function removeFirstSegment(path) {
     Split(['#left-pane', '#center-pane', '#right-pane'], {
     sizes: [20, 50,30],
     minSize: 120
-});
-
-
-/////////////////////////////////////// tree Contextmenu  //////////////////////////////////////
-
-$('#tree').find('[data-role="display"]').on('mouseenter', function (){
-    console.log("hi");
-    $(this).css("background-color","red");
-});
+    });
