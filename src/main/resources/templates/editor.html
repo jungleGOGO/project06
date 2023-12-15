@@ -152,7 +152,7 @@
             <span class="material-symbols-outlined " id="run" title="실행">play_circle</span>
             <span class="material-symbols-outlined" id="clear" title="전체 지우기">ink_eraser</span>
             <span class="material-symbols-outlined"  title="다른이름으로 저장">save_as</span>
-            <span class="material-symbols-outlined" id="readFile" title="내 파일읽기">upload_file</span>
+            <span class="material-symbols-outlined" id="readFile" title="내 파일읽기" >upload_file</span>
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck">
@@ -333,12 +333,9 @@
         }
 
         // 사용자가 입력한 파일명과 조합된 확장자를 설정
-        const htmlCodeEl = document.querySelector("[data-html]");
-        const cssCodeEl = document.querySelector("[data-css]");
-        const jsCodeEl = document.querySelector("[data-js]");
-        const htmlCode = htmlCodeEl.value;
-        const cssCode = cssCodeEl.value;
-        const jsCode = jsCodeEl.value;
+        const htmlCode = htmlEditor.value;
+        const cssCode = cssEditor.value;
+        const jsCode = jsEditor.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
 
@@ -392,12 +389,9 @@
         let extension = document.getElementById("extension").value;
         let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
         let filename = name + extension ;
-        const htmlCodeEl = document.querySelector("[data-html]");
-        const cssCodeEl = document.querySelector("[data-css]");
-        const jsCodeEl = document.querySelector("[data-js]");
-        const htmlCode = htmlCodeEl.value;
-        const cssCode = cssCodeEl.value;
-        const jsCode = jsCodeEl.value;
+        // const htmlCode = htmlCodeEl.value;
+        // const cssCode = cssCodeEl.value;
+        // const jsCode = jsCodeEl.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
         if (!isValidFilename(name)) {
@@ -532,28 +526,30 @@
 
     //html , css, jscode값을 분배하는 코드
     function setCodeValues(htmlCode, cssCode, jsCode) {
-        const htmlCodeEl = document.querySelector("[data-html]");
-        const cssCodeEl = document.querySelector("[data-css]");
-        const jsCodeEl = document.querySelector("[data-js]");
 
         // 코드 미러 에디터에 값 설정
         if (htmlCode.trim() !== '') {
             htmlEditor.setValue(htmlCode);
+
         } else {
             // 기존 내용이 있으면 이전 내용을 유지합니다.
             htmlEditor.setValue(htmlEditor.getValue());
+
         }
 
         if (cssCode.trim() !== '') {
             cssEditor.setValue(cssCode);
+
         } else {
             cssEditor.setValue(cssEditor.getValue());
         }
 
         if (jsCode.trim() !== '') {
             jsEditor.setValue(jsCode);
+
         } else {
             jsEditor.setValue(jsEditor.getValue());
+
         }
 
     }
@@ -602,9 +598,7 @@
                             const cssCode = styleMatch ? styleMatch.replace(/<style>|<\/style>/g, '').trim() : '';
                             const htmlCode = bodyMatch ? bodyMatch.replace(/<body>|<\/body>/g, '').trim() : '';
                             const jsCode = scriptMatch ? scriptMatch.replace(/<script>|<\/script>/g, '').trim() : '';
-                            console.log('CSS Code:', cssCode);
-                            console.log('HTML Code:', htmlCode);
-                            console.log('JavaScript Code:', jsCode);
+
                             setCodeValues(htmlCode, cssCode, jsCode);
                         } else {
                             console.log('No match found in the HTML file.');
@@ -721,7 +715,6 @@
             }
         })
             .then((response) => {
-                console.log(response); // 응답 출력
                 showFileList();
                 closeRenameFileModal();
                 alert("파일명 변경 완료");
@@ -761,8 +754,6 @@
     recustomExtension.addEventListener("input", function () {
         // 직접 입력 값을 select's value로 설정
         reextensionSelect.value = recustomEx.value;
-        console.log("설렉트문 값:"+reextensionSelect.value);
-        console.log("직접입력 값:"+recustomEx.value);
     });
 </script>
 
@@ -791,13 +782,12 @@
         let extension = document.getElementById("extension").value;
         let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
         let filename = name + extension ;
-        const htmlCodeEl = document.querySelector("[data-html]");
-        const cssCodeEl = document.querySelector("[data-css]");
-        const jsCodeEl = document.querySelector("[data-js]");
-        const htmlCode = htmlCodeEl.value;
-        const cssCode = cssCodeEl.value;
-        const jsCode = jsCodeEl.value;
+
+        // const htmlCode = htmlEditor.value;
+        // const cssCode = cssEditor.value;
+        // const jsCode = jsEditor.value;
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+        let local = setInterval(saveToLocalStorage, 4000);
 
         if (!isValidFilename(name)) {
             alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
@@ -809,6 +799,10 @@
             .then((response) => {
                 // 서버 응답이 성공한 경우
                 showSuccessMessage();
+                clearInterval(local);
+                localStorage.removeItem('htmlContent');
+                localStorage.removeItem('cssContent');
+                localStorage.removeItem('jsContent');
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
@@ -840,44 +834,40 @@
 <!--로컬 스토리지에 저장하는 스크립트-->
 <script th:inline="javascript">
     function saveToLocalStorage() {
-        // localStorage.setItem('htmlContent', document.getElementById('htmlTextarea').value);
-        // localStorage.setItem('cssContent', document.getElementById('cssTextarea').value);
-        // localStorage.setItem('jsContent', document.getElementById('jsTextarea').value);
-        localStorage.setItem('htmlContent', htmlEditor.value);
-        localStorage.setItem('cssContent', cssEditor.value);
-        localStorage.setItem('jsContent', jsEditor.value);
+
+        localStorage.setItem('htmlContent', htmlEditor.getValue());
+        localStorage.setItem('cssContent', cssEditor.getValue());
+        localStorage.setItem('jsContent', jsEditor.getValue());
     }
 
     // Load content from local storage on page load
-    // document.getElementById('htmlTextarea').value = localStorage.getItem('htmlContent') || '';
-    // document.getElementById('cssTextarea').value = localStorage.getItem('cssContent') || '';
-    // document.getElementById('jsTextarea').value = localStorage.getItem('jsContent') || '';
-    htmlEditor.value= localStorage.getItem('htmlContent') || '';
-    cssEditor.value= localStorage.getItem('cssContent') || '';
-    jsEditor.value= localStorage.getItem('jsContent') || '';
+
+
+    htmlCode= localStorage.getItem('htmlContent') || '';
+    cssCode= localStorage.getItem('cssContent') || '';
+    jsCode= localStorage.getItem('jsContent') || '';
 </script>
 
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
+        setInterval(saveToLocalStorage,7000);
         // HTML textarea
-        var htmlTextarea = document.getElementById('htmlTextarea');
-        var savedHtmlContent = localStorage.getItem('htmlContent');
+
+
+        const htmlTextarea = document.getElementById('htmlTextarea');
+        let savedHtmlContent = localStorage.getItem('htmlContent');
 
         // CSS textarea
-        var cssTextarea = document.getElementById('cssTextarea');
-        var savedCssContent = localStorage.getItem('cssContent');
+
+        const cssTextarea = document.getElementById('cssTextarea');
+        let savedCssContent = localStorage.getItem('cssContent');
 
         // JS textarea
-        var jsTextarea = document.getElementById('jsTextarea');
-        var savedJsContent = localStorage.getItem('jsContent');
+
+        const jsTextarea = document.getElementById('jsTextarea');
+        let savedJsContent = localStorage.getItem('jsContent');
 
         // 코드가 어디에 어떻게 박히느지 몰라서 추가함..
-        var htmlCodeEl2 = document.querySelector("[data-html]");
-        var cssCodeEl2 = document.querySelector("[data-css]");
-        var jsCodeEl2 = document.querySelector("[data-js]");
-        var htmlCode2 = htmlCodeEl.value;
-        var cssCode2 = cssCodeEl.value;
-        var jsCode2 = jsCodeEl.value;
 
         // 빈 값인 경우에만 이어서 작업 여부 확인
         if (!savedHtmlContent && !savedCssContent && !savedJsContent) {
@@ -890,42 +880,37 @@
         if (userConfirmed) {
             if (savedHtmlContent !== null) {
                 htmlTextarea.value = savedHtmlContent;
-                htmlEditor.setValue(savedHtmlContent)
+                // htmlCodeEl.value=savedHtmlContent;
+                htmlEditor.setValue(savedHtmlContent);
             }
 
             if (savedCssContent !== null) {
+                // cssCodeEl.value=savedCssContent;
                 cssTextarea.value = savedCssContent;
-                cssEditor.setValue(savedCssContent)
+                cssEditor.setValue(savedCssContent);
             }
 
             if (savedJsContent !== null) {
-                jsTextarea.value = savedJsContent;
-                jsEditor.setValue(savedJsContent)
+                // jsCodeEl.value = savedJsContent;
+                jsTextarea.value=savedJsContent;
+                jsEditor.setValue(savedJsContent);
             }
         } else { // If the user clicks Cancel, clear the values in the textareas
-            console.log('caches' in window)
-            console.log(window.caches)
-
-            htmlCode2.value = "";
-            cssCode2.value = "";
-            jsCode2.value = "";
-            htmlTextarea.value="";
-            cssTextarea.value="";
-            jsTextarea.value="";
+            // htmlCodeEl.value="";
+            // cssCodeEl.value="";
+            // jsCodeEl.value="";
             htmlEditor.value="";
             cssEditor.value="";
             jsEditor.value="";
-            $(".CodeMirror-line").text("");
             localStorage.removeItem('htmlContent');
             localStorage.removeItem('cssContent');
             localStorage.removeItem('jsContent');
-
     }});
 </script>
 <script>
     const checkbox = document.getElementById("autoSaveCheck");
     let auto; // 변수 선언
-    let local = setInterval(saveToLocalStorage, 4000);
+
 
     checkbox.addEventListener("change", function() {
         if (checkbox.checked) {
@@ -933,62 +918,57 @@
             console.log("자동저장중");
 
             auto = setInterval(autosave,4000);
-            localStorage.removeItem('htmlContent');
-            localStorage.removeItem('cssContent');
-            localStorage.removeItem('jsContent');
-            clearInterval(local); // 변수를 정의한 후 clearInterval 호출
+
+
         } else {
             clearInterval(auto);
             console.log("자동저장해제");
-            local = setInterval(saveToLocalStorage, 4000);
+            setInterval(saveToLocalStorage, 4000);
         }
     });
 </script>
 <!--파일업로드 관련 스크립트-->
 <script th:inline="javascript">
-    // 파일 업로드를 위한 이벤트 핸들러
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('readFile').addEventListener('click', function () {
-            // 파일 업로드 input 엘리먼트 생성
-            var inputFile = document.createElement('input');
-            inputFile.type = 'file';
-            inputFile.accept = '.txt,.css,.html,.js,.scss';
-            inputFile.maxSize = 10485760;
-            inputFile.name = 'upfile';
+    document.getElementById('readFile').addEventListener('click', function () {
+        // 파일 업로드 input 엘리먼트 생성
+        var inputFile = document.createElement('input');
+        inputFile.type = 'file';
+        inputFile.accept = '.txt,.css,.html,.js,.scss';
+        inputFile.maxSize = 10485760;
+        inputFile.name = 'upfile';
 
-            // 파일이 선택되었을 때의 이벤트 핸들러
-            inputFile.addEventListener('change', function () {
-                // FormData 객체 생성
-                var formData = new FormData();
-                // 선택된 파일 추가
-                formData.append('file', this.files[0]);
+        // 파일이 선택되었을 때의 이벤트 핸들러
+        inputFile.addEventListener('change', function () {
+            // FormData 객체 생성
+            var formData = new FormData();
+            // 선택된 파일 추가
+            formData.append('file', this.files[0]);
 
-                // 파일 업로드를 위한 Axios 요청
-
-
-                axios.post('/editor/readFile', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    }
+            // 파일 업로드를 위한 Axios 요청
+            axios.post('/editor/readFile', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+                .then(function (response) {
+                    // 서버 응답에서 코드 블록 추출
+                    const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data);
+                    // 추출된 코드 블록을 에디터에 설정
+                    setCodeValues(htmlCode, cssCode, jsCode);
                 })
-                    .then(function (response) {
-                        const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data);
-                        setCodeValues(htmlCode, cssCode, jsCode);
-                    })
-                    .catch(function (error) {
-                        console.error('Error:', error);
-                    });
-            });
-
-            // 생성한 input 엘리먼트를 숨김 처리
-            inputFile.style.display = 'none';
-
-            // body에 input 엘리먼트 추가
-            document.body.appendChild(inputFile);
-
-            // input 엘리먼트 클릭 (파일 업로드 다이얼로그를 엽니다.)
-            inputFile.click();
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
         });
+
+        // 생성한 input 엘리먼트를 숨김 처리
+        inputFile.style.display = 'none';
+
+        // body에 input 엘리먼트 추가
+        document.body.appendChild(inputFile);
+
+        // input 엘리먼트 클릭 (파일 업로드 다이얼로그를 엽니다.)
+        inputFile.click();
     });
 </script>
 <script th:inline="javascript">
@@ -1011,7 +991,6 @@
         while ((match = scriptRegex.exec(fileContent)) !== null) {
             const scriptContent = match[1].replace(/^\s*\n/gm, ''); // 첫 번째 빈 줄 제거
             jsCode += scriptContent.trim() + '\n';
-            console.log(jsCode);
         }
 
 // jsCode에서 선행 및 후행 빈 줄 제거

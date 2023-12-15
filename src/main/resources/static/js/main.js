@@ -47,9 +47,9 @@ for (const editor of [jsEditor, cssEditor, htmlEditor]) {
 }
 
 runButtonEl.addEventListener("click", () => {
-  const htmlCode = htmlCodeEl.value;
-  const cssCode = cssCodeEl.value;
-  const jsCode = jsCodeEl.value;
+  const htmlCode = htmlEditor.getValue();
+  const cssCode = cssEditor.getValue();
+  const jsCode = jsEditor.getValue();
 
   codeEl.open();
 
