@@ -15,8 +15,8 @@ import java.net.URLClassLoader;
 @Component
 public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    private final String path = "/Users/juncheol/Desktop/compile/";
-//    private final String path = "D:\\hk\\project\\compile\\";
+//    private final String path = "/Users/juncheol/Desktop/compile/";
+    private final String path = "D:\\hk\\project\\compile\\";
 
 
     public String compileAndRunCode(String code) throws Exception {
