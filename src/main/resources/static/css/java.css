@@ -10,6 +10,7 @@ strong {
     color: #fff;
     font-weight: bolder;
     line-height: 35px;
+    font-family: 'GongGothicMedium';
 }
 
 #monaco { min-height:90vh; }
@@ -40,7 +41,7 @@ strong {
 #tree a {
     text-decoration: none;
     color: #FFFFFF;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 ul.gj-list li [data-role=image] {
@@ -50,7 +51,7 @@ ul.gj-list li [data-role=image] {
 
 img {
     cursor:pointer;
-    width: 18px;
+    width: 30px;
     margin-left: 5px;
 }
 
@@ -107,6 +108,16 @@ img {
 #newF {
     margin-top: 6px;
     margin-right: 5px;
+}
+
+#compileTime {
+    font-family: 'GongGothicMedium';
+    height: 36px;
+    border-bottom: 2px solid #afafaf;
+    padding-bottom: 6px;
+    padding-top: 4px;
+    text-align: right;
+    padding-right: 20px;
 }
 
 /*--------------------------------------------------------------
@@ -188,6 +199,40 @@ img {
     margin-top: 80px;
 }
 
+#modalWrap3 {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody3 {
+    width: 470px;
+    height: 250px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+
+#closeBtn3 {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#modalContent3 {
+    margin-top: 80px;
+}
+
 /*--------------------------------------------------------------
 # Menu
 --------------------------------------------------------------*/
@@ -215,7 +260,7 @@ img {
 }
 
 #balloon li {
-    padding: 4px!important;
+    padding: 4px 2px!important;
 }
 
 #balloon:after {
@@ -238,4 +283,44 @@ img {
     color: #ffeba7;
     font-family: 'GongGothicMedium';
     font-size: 10px;
+}
+
+
+#moreNav {
+    position: fixed;
+    top:40px;
+    right: 578px;
+    padding-top: 5px;
+    padding-right: 10px;
+}
+
+#balloon-wrap2 {
+    width: 90px;
+    top: 38px!important;
+    right: 486px!important;
+    position: fixed;
+
+}
+
+#balloon2 {
+    width: 190px;
+    background: #2a2a2a;
+    padding-left: 5px;
+    border-radius: 5px;
+    border: 0.1em solid gray;
+    color:#fff;
+    display: none;
+}
+
+#balloon2 li {
+    cursor: pointer;
+    list-style: none;
+    padding: 4px!important;
+    font-family: 'GongGothicMedium';
+}
+
+#balloon2 li:hover {
+    cursor: pointer;
+    color: #ffeba7;
+    font-family: 'GongGothicMedium';
 }
