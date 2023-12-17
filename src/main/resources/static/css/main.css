@@ -37,6 +37,10 @@ h5 {
   color:#fff;
 }
 
+strong {
+  font-family: 'GongGothicMedium';
+  color:#fff;
+}
 #logoImage {
   width: 30px!important;
 }
@@ -233,6 +237,39 @@ label{
   content: none; /* 마지막 버튼 뒤의 가상 요소 내용을 없앰 */
 }
 
+#modalWrap {
+  position: fixed;
+  z-index: 1;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody {
+  width: 470px;
+  height: 250px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e2022;
+  border-radius: 30px;
+}
+
+#closeBtn {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent {
+  margin-top: 70px;
+}
 
 /*--------------------------------------------------------------
 # Menu
@@ -328,12 +365,12 @@ label{
   font-family: 'GongGothicMedium';
 }
 
-#svBtn {
+#popupBtn {
   font-family: 'GongGothicMedium';
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
 }
-#svFolder {
+#loadFileBtn {
   font-family: 'GongGothicMedium';
 }
 

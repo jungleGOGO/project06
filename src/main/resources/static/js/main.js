@@ -6,6 +6,10 @@ const balloon = document.getElementById('balloon');
 const icon2 = document.getElementById('moreNav');
 const balloon2 = document.getElementById('balloon2');
 
+const btn = document.getElementById('popupBtn');
+const modal = document.getElementById('modalWrap');
+const closeBtn = document.getElementById('closeBtn');
+
 icon.addEventListener('mouseenter', function (){
   balloon.style.display = 'block';
 })
@@ -30,6 +34,19 @@ icon2.addEventListener('mouseover', function (){
 icon2.addEventListener('mouseout', function (){
   balloon2.style.display = 'none';
 })
+
+btn.onclick = function() {
+  modal.style.display = 'block';
+}
+closeBtn.onclick = function() {
+  modal.style.display = 'none';
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
 
 
 
