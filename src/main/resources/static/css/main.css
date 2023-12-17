@@ -155,11 +155,25 @@ label{
 #more {
   width: 18px!important;
   padding: 8px 0;
-  margin-left: -4px;
+  margin-left: -6px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
 }
 
+.runBtn {
+  margin: 5px;
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  padding-top: 7px;
+  height: 37px;
+}
+
+#autoSaveCheck {
+  background-color: black;
+  color: white;
+  border: black;
+  font-size: 20px;
+}
   /*--------------------------------------------------------------
   # Modal
   --------------------------------------------------------------*/
@@ -286,21 +300,20 @@ label{
 
 
 #moreNav {
-  position: relative;
+  /*position: relative;*/
   width: 4px;
-  padding-top: 2px;
   padding-left: 6px;
   margin-right: 24px;
-  z-index: 9999;
+  /*z-index: 9999;*/
 
 }
 
 #balloon-wrap2 {
   width: 90px;
   /*top: 38px!important;*/
-  /*right: 486px!important;*/
-  /*position: fixed;*/
-
+  right: 218px!important;
+  position: fixed;
+  z-index: 9999;
 }
 
 #balloon2 {

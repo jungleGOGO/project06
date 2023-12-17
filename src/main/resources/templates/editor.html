@@ -48,33 +48,31 @@
 <!--        불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
         <!-- 불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
 <!--        모달창으로 저장,다른이름으로 저장-->
-        <div class="col-10 d-flex gx-5">
+        <div class="col-9 d-flex gx-5">
             <input type="text" name="filename" id="filename" value="untitled">
             <input type="hidden" name="filename2" id="filename2" >
-            <span class="material-symbols-outlined " id="run" title="실행" style="font-size: 34px; margin: 0 2px;">play_circle</span>
-            <span class="material-symbols-outlined" id="clear" title="전체 지우기" style="font-size: 34px; margin: 0 2px;">ink_eraser</span>
+            <div class="runBtn"><span class="material-symbols-outlined " id="run" title="실행" style="font-size: 22px; margin: 0 2px;">play_circle</span>RUN</div>
+            <div class="runBtn"><span class="material-symbols-outlined" id="clear" title="전체 지우기" style="font-size: 22px; margin: 0 2px;">ink_eraser</span>CLEAR</div>
         </div>
-        <div class="col-2 d-flex">
-            <div class="form-check form-switch" style="display: flex;">
-<!--                <label class="form-check-label" for="autoSaveCheck">자동저장</label>-->
-<!--                <input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck">-->
+
+        <div class="col-3">
+            <div class="d-flex float-end p-1" style="display: flex;">
 <!--                <span id="checkCircle" class="material-symbols-outlined" >check_circle</span>-->
 
-            <button type="button" class="btn btn-secondary" id="svBtn"><span class="material-symbols-outlined" id="save" title="저장">save</span>저장</button>
+            <button type="button" class="btn-sm btn-secondary" id="svBtn"><span class="material-symbols-outlined" id="save" title="저장">save</span>저장</button>
             <div id="moreNav">
-                <button type="button" class="btn btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
+                <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
                 <div id="balloon-wrap2">
                     <ul id="balloon2">
+                        <li>자동저장<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
                         <li><span class="material-symbols-outlined" id="saveBtn" title="다운로드">download</span>다운로드</li>
                         <li><span class="material-symbols-outlined"  title="다른이름으로 저장">save_as</span>다른이름으로저장</li>
                         <li><span class="material-symbols-outlined" id="readFile" title="내 파일읽기">upload_file</span>내파일읽기</li>
                     </ul>
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary"><span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()" title="저장소">dns</span>저장소</button>
+            <button type="button" class="btn-sm btn-secondary"><span class="material-symbols-outlined" id="loadFileBtn" onclick="showFileList()" title="저장소">dns</span>저장소</button>
             </div>
-
-
         </div>
 <!--        <label for="extension">파일확장자</label>-->
 <!--        <select id="extension">-->
@@ -177,5 +175,4 @@
     </div>
 </main>
 </body>
-
 </html>
