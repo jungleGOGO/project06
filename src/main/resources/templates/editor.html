@@ -20,10 +20,14 @@
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
 </head>
 <body>
+
+<!--헤더 -->
 <nav class="navbar navbar-light bg-dark" style="justify-content: space-between;">
     <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
     <span class="material-symbols-outlined" id="if" data-bs-toggle="modal" data-bs-target="#exampleModal">info</span>
 </nav>
+
+<!--사이드 메뉴 -->
 <div id="iconNav">
     <a><i class="fa-solid fa-user" style="color:#fff;"></i></a>
     <div id="balloon-wrap">
@@ -43,11 +47,11 @@
 <main>
     <div class="container-fluid" style="background-color:black;">
     <div class="row gx-5 mt-2">
-<!--        id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
-<!--        현재는 filename + extension으로 파일이름을 저장하고 있음.-->
-<!--        불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
-        <!-- 불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
-<!--        모달창으로 저장,다른이름으로 저장-->
+    <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
+    <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
+    <!--불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
+    <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
+    <!--모달창으로 저장,다른이름으로 저장-->
         <div class="col-9 d-flex gx-5">
             <input type="text" name="filename" id="filename" value="untitled">
             <input type="hidden" name="filename2" id="filename2" >
@@ -86,7 +90,30 @@
 <!--            <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">-->
 <!--        </div>-->
     </div>
-<!--        파일리스트 모달창-->
+
+    <!-- 코드 입력창 -->
+    <section class="boxes">
+        <div class="editor-container tab-pane">
+            <div class="editor-header tab" style="display:flex; justify-content: space-between;">
+                <h5 style="background-color:#e34f26;">HTML </h5><span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span>
+            </div>
+            <textarea data-html id="htmlTextarea"></textarea>
+        </div>
+        <div class="editor-container tab-pane">
+            <div class="editor-header tab" style="display:flex; justify-content: space-between;">
+                <h5 style="background-color:#1572b6;">CSS</h5><span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span>
+            </div>
+            <textarea data-css id="cssTextarea"></textarea>
+        </div>
+        <div class="editor-container tab-pane" style="border-right: 1px solid #5c5b5b;">
+            <div class="editor-header tab" style="padding-right: 0px; display:flex; justify-content: space-between;">
+                <h5 style="background-color:#f7df1e;">JS </h5><span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span>
+            </div>
+            <textarea data-js id="jsTextarea"></textarea>
+        </div>
+    </section>
+
+    <!--파일리스트 모달창-->
     <div class="modal" id="fileListModal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -95,7 +122,8 @@
             </div>
         </div>
     </div>
-<!--이름변경 모달창-->
+
+    <!--이름변경 모달창-->
     <div class="modal" id="renameFileModal" >
         <div class="modal-content" style="background: black">
             <span class="close" onclick="closeRenameFileModal()">&times;</span>
@@ -117,61 +145,43 @@
         </div>
     </div>
 
-        <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: black">
-                        <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" style="background-color: black">
-                        <!-- 모달 내용 -->
-                        <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
-                        <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
-                        <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
-                        <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
-                        <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
-                        <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
-                        <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
-                        <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
-                        <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
+    <!--도움말 모달창-->
+    <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: black">
+                    <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="background-color: black">
+                    <!-- 모달 내용 -->
+                    <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
+                    <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
+                    <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
+                    <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
+                    <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
+                    <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
+                    <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
+                    <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
+                    <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-
-
-
-        <section class="boxes">
-            <div class="editor-container tab-pane">
-                <div class="editor-header tab" style="display:flex; justify-content: space-between;">
-                    <h5 style="background-color:#e34f26;">HTML </h5><span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span>
-                </div>
-                <textarea data-html id="htmlTextarea"></textarea>
-            </div>
-            <div class="editor-container tab-pane">
-                <div class="editor-header tab" style="display:flex; justify-content: space-between;">
-                    <h5 style="background-color:#1572b6;">CSS</h5><span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span>
-                </div>
-                <textarea data-css id="cssTextarea"></textarea>
-            </div>
-            <div class="editor-container tab-pane" style="border-right: 1px solid #5c5b5b;">
-                <div class="editor-header tab" style="padding-right: 0px; display:flex; justify-content: space-between;">
-                    <h5 style="background-color:#f7df1e;">JS </h5><span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span>
-                </div>
-                <textarea data-js id="jsTextarea"></textarea>
-            </div>
-        </section>
     </div>
+
+    </div>
+
+    <!--결과창 -->
     <div style="background: black; padding-top: 14px;">
         <p id="resultDiv">RESULT</p>
     </div>
     <div >
         <iframe data-code id="content"></iframe>
     </div>
+
 </main>
 </body>
 </html>
