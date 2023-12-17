@@ -4,7 +4,6 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'GongGothicMedium';
 }
 
 section {
@@ -27,6 +26,7 @@ main {
 }
 
 h5 {
+  font-family: 'GongGothicMedium';
   margin: 0px 10px;
   width: 100px;
   text-align: center;
@@ -93,7 +93,6 @@ iframe {
 
 span.material-symbols-outlined {
   cursor: pointer;
-  padding-top: 6px;
   margin-right: 10px;
   font-size: 22px;
   color:#FFFFFF;
@@ -102,6 +101,7 @@ span.material-symbols-outlined {
 
 
 select,input {
+  font-family: 'GongGothicMedium';
   background-color: #444141;
   color: white;
   border: black;
@@ -123,6 +123,7 @@ label{
 }
 
 #resultDiv {
+  font-family: 'GongGothicMedium';
   background-color: #444141;
   color: white;
   border: black;
@@ -136,6 +137,18 @@ label{
   text-align: center;
 }
 
+#clearHtml {
+  padding-top:6px;
+}
+
+#clearCss {
+  padding-top: 6px;
+}
+
+#clearJs {
+  padding-top:6px;
+}
+
 #if {
   font-size: 22px;
   color: #fff;
@@ -147,33 +160,9 @@ label{
   padding-left: 5px;
 }
 
-#svBtn {
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-}
 
-#more {
-  width: 18px!important;
-  padding: 8px 0;
-  margin-left: -6px;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
 
-.runBtn {
-  margin: 5px;
-  border: 1px solid darkgray;
-  border-radius: 10px;
-  padding-top: 7px;
-  height: 37px;
-}
 
-#autoSaveCheck {
-  background-color: black;
-  color: white;
-  border: black;
-  font-size: 20px;
-}
   /*--------------------------------------------------------------
   # Modal
   --------------------------------------------------------------*/
@@ -337,4 +326,60 @@ label{
   cursor: pointer;
   color: #ffeba7;
   font-family: 'GongGothicMedium';
+}
+
+#svBtn {
+  font-family: 'GongGothicMedium';
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+#svFolder {
+  font-family: 'GongGothicMedium';
+}
+
+#more {
+  width: 18px!important;
+  padding: 8px 0;
+  margin-left: -6px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.runBtn {
+  font-family: 'GongGothicMedium';
+  margin: 3px 3px;
+  border: 1px solid #313131;
+  border-radius: 10px;
+  padding-top: 7px;
+  height: 37px;
+  color: #fff;
+  padding-right: 6px;
+  cursor: pointer;
+  background-color: #313131;
+}
+
+.runBtn:hover {
+  filter:brightness(1.5);
+}
+
+#autoSaveCheck {
+  background-color: black;
+  color: white;
+  border: black;
+  font-size: 20px;
+}
+
+#saveAT {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #868686;
+}
+
+#savetext {
+  padding-top: 3px;
+  padding-left: 8px;
+}
+
+#checkCircle {
+  padding-top: 9px;
 }
