@@ -118,6 +118,7 @@ public class EditorController {
         String rootDirectoryPath = "D:\\kimleeho";
 //        String rootDirectoryPath = "C:\\kimleeho";
         String targetDirectoryPath = rootDirectoryPath + "\\savef";
+
         FileNode root = new FileNode("savef", "savef"); // 상대 경로 사용
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();
@@ -246,7 +247,7 @@ public class EditorController {
 
     @PostMapping("/editor/readFile")
     @ResponseBody
-    public String readFile(@RequestParam("file") MultipartFile file) {
+    public Map<String, Object> readFile(@RequestParam("file") MultipartFile file) {
         if (file != null && !file.isEmpty()) {
             // 파일이 비어 있지 않은 경우에만 처리
             String fileName = file.getOriginalFilename();
@@ -263,17 +264,26 @@ public class EditorController {
                 }
 
                 // 파일 확장자에 따라 처리된 내용을 반환
-                return processFileContentByExtension(content.toString(), fileExtension);
+                Map<String, Object> response = new HashMap<>();
+                response.put("result",processFileContentByExtension(content.toString(), fileExtension) );
+                response.put("fileName", fileName);
+                return response;
+
 
             } catch (IOException e) {
                 e.printStackTrace();
                 // 오류가 발생한 경우 빈 문자열 반환 또는 다른 오류 처리 방식 선택 가능
-                return "";
+                Map<String, Object> response = new HashMap<>();
+                response.put("result","" );
+                return response;
             }
         } else {
             // 파일이 비어 있거나 존재하지 않는 경우 빈 문자열 반환 또는 다른 처리 방식 선택 가능
-            return "";
+            Map<String, Object> response = new HashMap<>();
+            response.put("result","" );
+            return response;
         }
+
     }
 
     private String getFileExtension(String fileName) {

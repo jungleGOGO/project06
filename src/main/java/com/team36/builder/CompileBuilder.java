@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 @Component
 public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    private final String path = "/Users/juncheol/Desktop/compile/";
-//    private final String path = "D:\\hk\\project\\compile\\";
+//    private final String path = "/Users/juncheol/Desktop/compile/";
+    private final String path = "D:\\hk\\project\\compile\\";
 
     // 파일명이랑 코드내용 전달 받음
     // 파일명 .java 아니면 alert띄우도록 프론트에서 처리

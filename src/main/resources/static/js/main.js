@@ -264,10 +264,12 @@ clearJsButtonEl.addEventListener("click", () => {
   let extension = document.getElementById("extension").value; //확장자 값
 
   // 사용자가 입력한 파일명과 조합된 확장자를 설정
-  let fullFilename = filename + extension;
-
+  let fullFilename = filename.split('.')[0] + extension;
+  console.log(fullFilename);
+  console.log(filename.split('.')[0]);
+  console.log(extension);
   // 파일 이름이 유효한지 확인
-  if (!isValidFilename(filename)) {
+  if (!isValidFilename(filename.split('.')[0])) {
   alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
   return; // 추가 실행 중단
 }
@@ -525,7 +527,7 @@ clearJsButtonEl.addEventListener("click", () => {
   const filename = anchor.textContent; // 파일명 추출
   document.getElementById("downloadName").value = filename;
   console.log("filename")
-  console.log(filename)
+  console.log(filename.split('.')[0]);
   axios.post('/editor/test2', null, {
   params: { filename2: folderAndfile }
 })
@@ -878,6 +880,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 파일 업로드를 위한 이벤트 핸들러
   document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('readFile').addEventListener('click', function () {
+
         // 파일 업로드 input 엘리먼트 생성
         var inputFile = document.createElement('input');
         inputFile.type = 'file';
@@ -901,8 +904,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           })
               .then(function (response) {
-                const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data);
+                const { cssCode, htmlCode, jsCode } = extractCodeBlocks(response.data.result);
                 setCodeValues(htmlCode, cssCode, jsCode);
+                document.getElementById('downloadName').value = response.data.fileName;
+
               })
               .catch(function (error) {
                 console.error('Error:', error);

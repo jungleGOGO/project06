@@ -53,8 +53,8 @@
     <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
     <!--모달창으로 저장,다른이름으로 저장-->
         <div class="col-9 d-flex gx-5">
-            <input type="text" name="file" id="file" value="untitled" readonly>
-            <input type="text" name="downloadName" id="downloadName" readonly>
+<!--            <input type="text" name="file" id="file" value="untitled" readonly>-->
+            <input type="text" name="downloadName" value="untitled" id="downloadName" readonly>
             <div id="customExtensionInput" style="display: none;">
                 <label for="customExtension">직접입력 확장자</label>
                 <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">
@@ -71,7 +71,7 @@
                     <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
                     <div id="balloon-wrap2">
                         <ul id="balloon2">
-                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
+                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck" checked></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
                         </ul>
@@ -174,7 +174,6 @@
                 <div class="col d-flex align-items-center mb-2">
                     <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
                     <select id="extension" class="form-select">
-                        <option selected>파일확장자</option>
                         <option value=".html">.html</option>
                         <option value=".txt">.txt</option>
                         <option value="">직접입력</option>
@@ -193,7 +192,7 @@
     <div style="background: black; padding-top: 14px;">
         <p id="resultDiv">RESULT</p>
     </div>
-    <div >
+    <div style="height: 100%;">
         <iframe data-code id="content"></iframe>
     </div>
 
