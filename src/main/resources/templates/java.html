@@ -94,9 +94,9 @@
                 <button type="button" id="saveBtn9" class="btn btn-primary">다운로드</button>
                 <button type="button" id="saveZip9" class="btn btn-primary">ZIP 다운로드</button>
                 <hr>
-                <input type="text" name="mkdirname9" id="mkdirname9" placeholder="폴더명" oninput="validateInput(this)">
-                <button type="button" id="mkdir29" class="btn btn-primary">폴더 생성</button>
-                선택한 위치 기준으로 생성
+<!--                <input type="text" name="mkdirname9" id="mkdirname9" placeholder="폴더명" oninput="validateInput(this)">-->
+<!--                <button type="button" id="mkdir29" class="btn btn-primary">폴더 생성</button>-->
+<!--                선택한 위치 기준으로 생성-->
                 <hr>
             </div>
         </div>
@@ -111,7 +111,7 @@
                    <strong>폴더명</strong>
                 </div>
                 <div class="col-auto">
-                    <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" oninput="validateInput(this)">
+                    <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" >
                 </div>
                 <div class="col-auto">
                     <button type="button" id="mkdir2" class="btn btn-secondary mb-3" style="font-family: 'GongGothicMedium';">폴더 생성</button>
@@ -159,6 +159,7 @@
         </div>
     </div>
 </div>
+<input type="hidden" th:value="${mid}" id="user_mid">
 <script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
 </body>
 </html>

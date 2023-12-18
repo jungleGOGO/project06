@@ -13,7 +13,8 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         // 입력된 값이 유효한 문자만 포함하고 있는지 검사합니다.
         if (!validChars.test(input.value)) {
             alert("한글, 영어, 숫자만 입력할 수 있습니다.");
-            input.value = input.value.replace(/[^가-힣a-zA-Z0-9]/g, ''); // 유효하지 않은 문자 제거
+            return false;
+            // input.value = input.value.replace(/[^가-힣a-zA-Z0-9]/g, ''); // 유효하지 않은 문자 제거
         }
     }
     // 선택한 항목이 디렉토리라면 해당하는 디렉토리 하위에 디렉토리를 생성하고, 파일이면 그 파일이있는 경로에 디렉토리를 생성
@@ -22,7 +23,10 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         let mkdirnameInput = document.getElementById("mkdirname");
 
         // validateInput 함수를 사용하여 입력 검증
-        validateInput(mkdirnameInput);
+        if (!validateInput(mkdirnameInput)) {
+            this.blur();
+            return false;
+        }
 
         const selectedElement = document.querySelector('[data-selected="true"]');
 
@@ -40,6 +44,10 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
             console.log('Href:', href);
         } else {
             console.log('선택된 요소가 없습니다.');
+
+            var mid = document.getElementById("user_mid").value;
+            href = '/'+mid
+            console.log('mid : '+href);
         }
 
         //작성한 폴더명
