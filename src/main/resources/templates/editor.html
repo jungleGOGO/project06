@@ -44,8 +44,8 @@
     </div>
 </div>
 
-<main>
-    <div class="container-fluid" style="background-color:black;">
+<main >
+    <div class="container-fluid" style=" background-color:black;">
     <div class="row gx-5 mt-2">
     <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
     <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
@@ -53,7 +53,6 @@
     <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
     <!--모달창으로 저장,다른이름으로 저장-->
         <div class="col-9 d-flex gx-5">
-<!--            <input type="text" name="file" id="file" value="untitled" readonly>-->
             <input type="text" name="downloadName" value="untitled" id="downloadName" readonly>
             <div id="customExtensionInput" style="display: none;">
                 <label for="customExtension">직접입력 확장자</label>
@@ -65,13 +64,13 @@
 
         <div class="col-3">
             <div class="d-flex float-end p-1" style="display: flex;">
-                <span id="checkCircle" class="material-symbols-outlined" >check_circle</span>
+                <span id="checkCircle" class="material-symbols-outlined" style="display:none;" >check_circle</span>
                 <button type="button" class="btn-sm btn-secondary" id="popupBtn"><span class="material-symbols-outlined" title="저장">save</span>저장</button>
                 <div id="moreNav">
                     <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
                     <div id="balloon-wrap2">
                         <ul id="balloon2">
-                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck" checked></div></li>
+                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
                         </ul>
@@ -81,7 +80,7 @@
             </div>
         </div>
     </div>
-
+    <div style="display: flex;">
     <!--코드 입력창 -->
     <section class="boxes">
         <div class="editor-container tab-pane">
@@ -186,19 +185,22 @@
         </div>
     </div>
 
-    </div>
-
-    <!--결과창 -->
-    <div style="background: black; padding-top: 14px;">
-        <p id="resultDiv">RESULT</p>
-    </div>
-
     <!--    iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
     <!--data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
     <!--data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
-    <div style="height: 100%;">
+    <div style="background-color: #fff; width: 70%;">
         <iframe data-code id="content"></iframe>
     </div>
+
+    </div>
+    </div>
+
+    <!--결과창 -->
+<!--    <div style="background: black; padding-top: 14px;">-->
+<!--        <p id="resultDiv">RESULT</p>-->
+<!--    </div>-->
+
+
 
 </main>
 <script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
