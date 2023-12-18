@@ -27,6 +27,7 @@ main {
 
 h5 {
   font-family: 'GongGothicMedium';
+  padding : 3px;
   margin: 0px 10px;
   width: 100px;
   text-align: center;
@@ -48,8 +49,8 @@ strong {
 .boxes {
   /*display: flex;*/
   width: 30%;
+  height:100%;
   justify-content: space-between;
-  border-top: 1px solid #fff;
 }
 
 iframe {
@@ -164,8 +165,29 @@ label{
   padding-left: 5px;
 }
 
+/*--------------------------------------------------------------
+# Split
+--------------------------------------------------------------*/
+.split {
+  display: flex;
+  flex-direction: row;
+}
 
+.gutter {
+  background-color: #1e1e1e;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
 
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: col-resize;
+}
 
   /*--------------------------------------------------------------
   # Modal
@@ -217,7 +239,7 @@ label{
 
 #tree a {
   text-decoration: none;
-  color: black;
+  color: #FFFFFF;
 }
 /* 버튼 컨테이너 스타일 */
 .button-container {
@@ -269,6 +291,40 @@ label{
 
 #modalContent {
   margin-top: 70px;
+}
+
+#modalWrap2 {
+  position: fixed;
+  z-index: 1;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody2 {
+  width: 600px;
+  height: 500px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e1e1e;
+  border-radius: 5px;
+}
+
+#closeBtn2 {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent2 {
+  margin-top: 80px;
 }
 
 /*--------------------------------------------------------------

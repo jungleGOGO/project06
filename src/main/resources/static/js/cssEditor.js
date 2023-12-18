@@ -104,6 +104,10 @@ const btn = document.getElementById('popupBtn');
 const modal = document.getElementById('modalWrap');
 const closeBtn = document.getElementById('closeBtn');
 
+const btn2 = document.getElementById('popupBtn2');
+const modal2 = document.getElementById('modalWrap2');
+const closeBtn2 = document.getElementById('closeBtn2');
+
 icon.addEventListener('mouseenter', function (){
     balloon.style.display = 'block';
 })
@@ -117,17 +121,13 @@ icon.addEventListener('mouseout', function (){
     balloon.style.display = 'none';
 })
 
-icon2.addEventListener('mouseenter', function (){
-    balloon2.style.display = 'block';
-})
-
-icon2.addEventListener('mouseover', function (){
-    balloon2.style.display = 'block';
-})
-
-icon2.addEventListener('mouseout', function (){
-    balloon2.style.display = 'none';
-})
+icon2.addEventListener('click', function (event) {
+    if (balloon2.style.display === 'none') {
+        balloon2.style.display = 'block';
+    } else if (balloon2.style.display === 'block') {
+        balloon2.style.display = 'none';
+    }
+});
 
 btn.onclick = function() {
     modal.style.display = 'block';
@@ -137,12 +137,28 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal) {
+    if (event.target == modal || event.target == modal2) {
         modal.style.display = "none";
     }
 }
 
+btn2.onclick = function() {
+    modal2.style.display = 'block';
+}
+closeBtn2.onclick = function() {
+    modal2.style.display = 'none';
+}
 
+//////////////////////////////////// Split //////////////////////////////////////
+Split(['#top-pane', '#middle-pane', '#bottom-pane'], {
+    direction: 'vertical',
+    minSize: [30, 30, 100]
+});
+
+Split(['#split', '#view'], {
+    sizes: [30,70],
+    minSize: [230,0]
+});
 
 //마우스 우클릭으로 여는 메뉴
 $.contextMenu({
