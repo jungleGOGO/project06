@@ -13,7 +13,10 @@ strong {
     font-family: 'GongGothicMedium';
 }
 
-#monaco { min-height:90vh; }
+#monaco {
+    min-height:90vh;
+}
+
 .file_name {
     cursor: pointer;
     text-decoration: underline;
@@ -54,6 +57,9 @@ img {
     width: 30px;
     margin-left: 5px;
 }
+#tree img {
+    width: 26px;
+}
 
 .split {
     display: flex;
@@ -86,6 +92,10 @@ img {
 }
 #selectedFileName {
     color: #eeeeee;
+    padding: 0;
+    margin: 0 !important;
+    font-size: 20px !important;
+    padding-left: 4px;
 }
 
 .tree-topbar {
@@ -106,7 +116,7 @@ img {
 }
 
 #newF {
-    margin-top: 6px;
+    margin-top: 2px;
     margin-right: 5px;
 }
 
@@ -287,18 +297,20 @@ img {
 
 
 #moreNav {
-    position: fixed;
-    top:40px;
-    right: 578px;
-    padding-top: 5px;
-    padding-right: 10px;
+    position: relative;
+    width: 4px;
+    padding-top: 2px;
+    padding-left: 6px;
+    /*padding-right: 10px;*/
+    z-index: 9999;
+
 }
 
 #balloon-wrap2 {
     width: 90px;
-    top: 38px!important;
-    right: 486px!important;
-    position: fixed;
+    /*top: 38px!important;*/
+    /*right: 486px!important;*/
+    /*position: fixed;*/
 
 }
 
@@ -323,4 +335,9 @@ img {
     cursor: pointer;
     color: #ffeba7;
     font-family: 'GongGothicMedium';
+}
+
+.gj-list-md-active {
+    background-color: #474747 !important;
+    color: #c7c7c7 !important;
 }

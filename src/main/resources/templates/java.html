@@ -16,6 +16,7 @@
 
 </head>
 <body>
+<!--헤더 -->
 <nav class="navbar navbar-light bg-dark" >
     <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
 </nav>
@@ -24,6 +25,7 @@
     <div class="row">
         <div style="padding:0; height: 40px;">
             <div id="split-container">
+                <!--파일 트리-->
                 <div id="left-pane" style="width: 16%">
                     <div class="tree-topbar">
                         <div class="d-flex float-end" id="newF">
@@ -33,14 +35,15 @@
                     </div>
                     <div id="tree" style=""></div>
                 </div>
-
+                <!--코드 입력창 -->
                 <div id="center-pane" style="width: 60%; z-index: 0; background-color: #1e1e1e;">
                     <div class="editor-info">
                         <p id="selectedFileName" title="파일경로" style="float: left; margin: 12px; font-size: 12px;"></p>
                         <div class="d-flex float-end mx-3 mt-1">
 <!--                            <img th:src="@{/static/img/icon/save.svg}" id="btn1" alt="저장" title="저장">-->
+                            <button onclick="send_compiler();" type="button" class="btn btn-danger float-end mx-2" id="run"><img th:src="@{/static/img/icon/play.svg}" alt="컴파일" id="compileImg" title="컴파일">&nbsp;RUN</button>
                             <div id="moreNav">
-                                <a><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8;"></i></a>
+                                <a><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></a>
                                 <div id="balloon-wrap2">
                                     <ul id="balloon2">
                                         <li id="saveBtn"><img th:src="@{/static/img/icon/download.svg}"  alt="다운로드" title="다운로드" style="width: 22px;">&nbsp;&nbsp;다운로드</li>
@@ -48,13 +51,12 @@
                                     </ul>
                                 </div>
                             </div>
-                            <button onclick="send_compiler();" type="button" class="btn btn-danger float-end mx-2" id="run"><img th:src="@{/static/img/icon/play.svg}" alt="컴파일" id="compileImg" title="컴파일">&nbsp;RUN</button>
                         </div>
                     </div>
 
                     <pre id="monaco"></pre>
                 </div>
-
+                <!--컴파일 영역 -->
                 <div id="right-pane" style="background-color: #cccccc; width: 24%;">
                     <div>
                         <p id="compileTime"></p>
@@ -63,11 +65,12 @@
                 </div>
             </div>
 
-
+            <!-- 사이드 메뉴 -->
             <div id="iconNav">
                 <a><i class="fa-solid fa-user" style="color:#fff;"></i></a>
                 <div id="balloon-wrap">
                     <ul id="balloon">
+                        <li><a th:href="@{/editor}">연습장</a></li>
                         <th:block sec:authorize="hasRole('USER')">
                             <li><a th:href="@{/member/mypage}">마이페이지</a></li>
                         </th:block>
@@ -79,7 +82,7 @@
                 </div>
             </div>
 
-
+            <!-- test 창 (화면에 x) -->
             <div class="form-wrap" style="display: none;">
                 <hr>
                 <h4>파일 저장</h4>
@@ -91,14 +94,15 @@
                 <button type="button" id="saveBtn9" class="btn btn-primary">다운로드</button>
                 <button type="button" id="saveZip9" class="btn btn-primary">ZIP 다운로드</button>
                 <hr>
-                <input type="text" name="mkdirname9" id="mkdirname9" placeholder="폴더명" oninput="validateInput(this)">
-                <button type="button" id="mkdir29" class="btn btn-primary">폴더 생성</button>
-                선택한 위치 기준으로 생성
+<!--                <input type="text" name="mkdirname9" id="mkdirname9" placeholder="폴더명" oninput="validateInput(this)">-->
+<!--                <button type="button" id="mkdir29" class="btn btn-primary">폴더 생성</button>-->
+<!--                선택한 위치 기준으로 생성-->
                 <hr>
             </div>
         </div>
     </div>
 
+    <!--폴더 생성 모달창 -->
     <div id="modalWrap">
         <div id="modalBody">
             <span id="closeBtn">&times;</span>
@@ -107,7 +111,7 @@
                    <strong>폴더명</strong>
                 </div>
                 <div class="col-auto">
-                    <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" oninput="validateInput(this)">
+                    <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" >
                 </div>
                 <div class="col-auto">
                     <button type="button" id="mkdir2" class="btn btn-secondary mb-3" style="font-family: 'GongGothicMedium';">폴더 생성</button>
@@ -118,6 +122,7 @@
         </div>
     </div>
 
+    <!--새파일 모달창 -->
     <div id="modalWrap2">
         <div id="modalBody2">
             <span id="closeBtn2">&times;</span>
@@ -136,6 +141,7 @@
         </div>
     </div>
 
+    <!--다른이름으로저장 모달창 -->
     <div id="modalWrap3">
         <div id="modalBody3">
             <span id="closeBtn3">&times;</span>
@@ -152,8 +158,8 @@
             </form>
         </div>
     </div>
-
 </div>
+<input type="hidden" th:value="${mid}" id="user_mid">
 <script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
 </body>
 </html>

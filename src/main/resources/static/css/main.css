@@ -1,5 +1,13 @@
+/*--------------------------------------------------------------
+# General / Editor Section
+--------------------------------------------------------------*/
+
 * {
   box-sizing: border-box;
+}
+
+section {
+  padding: 0 !important;
 }
 
 body {
@@ -7,6 +15,7 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 main {
@@ -16,10 +25,31 @@ main {
   width: 100%;
 }
 
+h5 {
+  font-family: 'GongGothicMedium';
+  margin: 0px 10px;
+  width: 100px;
+  text-align: center;
+  border-top-left-radius: 10px;
+  vertical-align: middle;
+  border-top-right-radius: 10px;
+  margin-top: 8px;
+  color:#fff;
+}
+
+strong {
+  font-family: 'GongGothicMedium';
+  color:#fff;
+}
+#logoImage {
+  width: 30px!important;
+}
+
 .boxes {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  border-top: 1px solid #fff;
 }
 
 iframe {
@@ -35,7 +65,7 @@ iframe {
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-left: 1px solid #ccc;
+  border-left: 1px solid #5c5b5b;
 }
 
 .editor-container .CodeMirror {
@@ -43,13 +73,12 @@ iframe {
 }
 
 .editor-header {
-  padding: 0 10px;
+  /*padding: 0 10px;*/
 }
 
 .button-container {
+  margin-top: 7px;
   border-bottom: 1px solid #ccc;
-  padding: 10px;
-  display: flex;
 }
 
 .button-container>button {
@@ -66,3 +95,329 @@ iframe {
   }
 }
 
+span.material-symbols-outlined {
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 22px;
+  color:#FFFFFF;
+  vertical-align: middle;
+}
+
+
+select,input {
+  font-family: 'GongGothicMedium';
+  background-color: #444141;
+  color: white;
+  border: black;
+  font-size: 20px;
+  width: 120px;
+  padding-left: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+label{
+  color: white;
+}
+
+.black {
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+#resultDiv {
+  font-family: 'GongGothicMedium';
+  background-color: #444141;
+  color: white;
+  border: black;
+  font-size: 20px;
+  width: 120px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-bottom:0px;
+  margin-left: 12px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#clearHtml {
+  padding-top:6px;
+}
+
+#clearCss {
+  padding-top: 6px;
+}
+
+#clearJs {
+  padding-top:6px;
+}
+
+#if {
+  font-size: 22px;
+  color: #fff;
+  background-color: #4a4a4b;
+  padding-bottom: 6px;
+  padding-top: 5px;
+  border-radius: 100px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+
+
+
+  /*--------------------------------------------------------------
+  # Modal
+  --------------------------------------------------------------*/
+
+.modal {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+.modal-backdrop {
+  display: none;
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 100%;
+}
+
+.modal-dialog{
+  max-width:700px;
+}
+
+/* 모달 닫기 버튼 스타일 */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#tree a {
+  text-decoration: none;
+  color: black;
+}
+/* 버튼 컨테이너 스타일 */
+.button-container {
+  display: flex;
+  gap: 10px; /* 요소들 사이의 간격 설정 (원하는 만큼 조절) */
+}
+
+/* 가상 요소로 구분선 스타일 설정 */
+.button-container span::after {
+  content: "|"; /* 가상 요소의 내용 설정 */
+  margin-left: 5px; /* 가상 요소의 왼쪽 여백 설정 (원하는 만큼 조절) */
+  color: white; /* 가상 요소의 색상 설정 */
+}
+
+/* 마지막 버튼 뒤에는 구분선을 표시하지 않음 */
+.button-container span:last-child::after {
+  content: none; /* 마지막 버튼 뒤의 가상 요소 내용을 없앰 */
+}
+
+#modalWrap {
+  position: fixed;
+  z-index: 1;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody {
+  width: 470px;
+  height: 250px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e2022;
+  border-radius: 30px;
+}
+
+#closeBtn {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent {
+  margin-top: 70px;
+}
+
+/*--------------------------------------------------------------
+# Menu
+--------------------------------------------------------------*/
+
+#iconNav {
+  position: fixed;
+  background-color: #102770;
+  top:3px;
+  right: 45px;
+  padding-top: 5px;
+  border-radius: 100px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+}
+
+#balloon-wrap {
+  width:90px;
+  top: 50px!important;
+  right: -13px!important;
+  z-index: 999;
+}
+
+#balloon {
+  width: 90px;
+}
+
+#balloon li {
+  padding: 4px 2px!important;
+}
+
+#balloon:after {
+  border-top:0px solid transparent;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgb(30, 32, 34);
+  content:"";
+  position:absolute;
+  top:-10px;
+  left:52px;
+}
+
+#balloon li a {
+  font-family: 'GongGothicMedium';
+  font-size: 10px;
+}
+
+#balloon li:hover a{
+  color: #ffeba7;
+  font-family: 'GongGothicMedium';
+  font-size: 10px;
+}
+
+
+#moreNav {
+  /*position: relative;*/
+  width: 4px;
+  padding-left: 6px;
+  margin-right: 24px;
+  /*z-index: 9999;*/
+
+}
+
+#balloon-wrap2 {
+  width: 90px;
+  /*top: 38px!important;*/
+  right: 218px!important;
+  position: fixed;
+  z-index: 9999;
+}
+
+#balloon2 {
+  width: 190px;
+  background: #2a2a2a;
+  padding-left: 5px;
+  border-radius: 5px;
+  border: 0.1em solid gray;
+  color:#fff;
+  display: none;
+}
+
+#balloon2 li {
+  cursor: pointer;
+  list-style: none;
+  padding: 4px!important;
+  font-family: 'GongGothicMedium';
+}
+
+#balloon2 li:hover {
+  cursor: pointer;
+  color: #ffeba7;
+  font-family: 'GongGothicMedium';
+}
+
+#popupBtn {
+  font-family: 'GongGothicMedium';
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+#loadFileBtn {
+  font-family: 'GongGothicMedium';
+}
+
+#more {
+  width: 18px!important;
+  padding: 8px 0;
+  margin-left: -6px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.runBtn {
+  font-family: 'GongGothicMedium';
+  margin: 3px 3px;
+  border: 1px solid #313131;
+  border-radius: 10px;
+  padding-top: 7px;
+  height: 37px;
+  color: #fff;
+  padding-right: 6px;
+  cursor: pointer;
+  background-color: #313131;
+}
+
+.runBtn:hover {
+  filter:brightness(1.5);
+}
+
+#autoSaveCheck {
+  background-color: #4e4e4e;
+  color: white;
+  border: black;
+  font-size: 20px;
+}
+
+#saveAT {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #868686;
+}
+
+#savetext {
+  padding-top: 3px;
+  padding-left: 8px;
+}
+
+#checkCircle {
+  padding-top: 9px;
+  cursor:default;
+}

@@ -13,20 +13,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.Principal;
 
 @Controller
 @Slf4j
 @RequestMapping("/api")
 public class MemoController {
 
+    // 파일 저장
     @PostMapping("/test1")
     @ResponseBody
-    public String setFile(@RequestBody Memo memo) throws Exception {
+    public String setFile(@RequestBody Memo memo, Principal principal) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
 
-//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+        String mid = principal.getName();
+
+        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -36,16 +40,17 @@ public class MemoController {
         return filename;
     }
 
+    //파일 내용 읽기
     @PostMapping("/test2")
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
 
-//        String filePath = "/Users/juncheol/mounttest" + filename2;
+        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
 //        String filePath = "\\\\Y:\\storage" + filename2
 
         // 첫번째거 : 새파일(모달창) 만들기 경로 || 두번째거 : 트리에서 파일 불러오는 경로 (현경)
         // String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
-        String filePath = "\\\\10.41.0.153\\storage" + filename2;
+//        String filePath = "\\\\10.41.0.153\\storage" + filename2;
 
         File file = new File(filePath);
         Path path = Path.of(filePath);
@@ -92,6 +97,8 @@ public class MemoController {
         }
     }
 
+
+    //폴더 생성
     @PostMapping("/mkdir")
     public ResponseEntity<?>  createDirectory(@RequestBody Directory directory) {
 
@@ -107,9 +114,9 @@ public class MemoController {
 
 
         // 웹 경로를 파일 시스템 경로로 변환
-//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
-        String baseDir = "\\\\Y:\\storage";
-        String filePath = baseDir + webPath.replace("\\", File.separator);
+        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
+//        String baseDir = "\\\\Y:\\storage";
+        String filePath = baseDir + webPath.replace("/", File.separator);
 
 
         Path directoryPath;
@@ -132,14 +139,17 @@ public class MemoController {
         }
     }
 
+    // 새 파일
     @PostMapping("/newFile")
     @ResponseBody
-    public String setNewFile(@RequestBody Memo memo) throws Exception {
+    public String setNewFile(@RequestBody Memo memo, Principal principal) throws Exception {
         String filename = memo.getFilename();
         String monaco = memo.getMonaco();
 
-//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/user1/"+filename); //
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+        String mid = principal.getName();
+
+        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename); //
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);

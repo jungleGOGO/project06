@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,23 +30,36 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/java")
 public class JavaController {
     @GetMapping("/project")
-    public String javaHome() throws Exception{
+    public String javaHome(Principal principal, Model model) throws Exception{
+
+        String mid = principal.getName();
+        model.addAttribute("mid",mid);
+//        System.out.println("project mid : "+ mid);
         return "java";
     }
 
     @GetMapping("/fileList")
     @ResponseBody
-    public List<FileNode> fileList() throws Exception {
+    public List<FileNode> fileList(Principal principal) throws Exception {
 
-        //유저 아이디와 프로젝트명 전달 받아서 처리 필요
-        String userName = "";
-        String projectName = "";
+        String mid = principal.getName();
+        System.out.println("mid : "+mid);
+
 
         // 준철
-//        String rootDirectoryPath = "/Users/juncheol/mounttest";
-//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+//      String rootDirectoryPath = "/Users/juncheol/mounttest";
+        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
-//        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
+        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
+        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
+
+        // File 객체 생성
+        File targetDirectory = new File(targetDirectoryPath);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
+        }
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
@@ -80,14 +95,14 @@ public class JavaController {
         // 디렉토리 노드 추가
         directories.forEach(dir -> {
             String dirRelativePath = dir.toString().substring(rootDirectoryPath.length());
-            findOrCreateNode(root, dirRelativePath, true);
+            findOrCreateNode(root, dirRelativePath, true,principal);
         });
 
         // 파일 노드 추가
         files.forEach(file -> {
             String fileRelativePath = file.toString().substring(rootDirectoryPath.length());
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));
-            FileNode parentNode = findOrCreateNode(root, parentDirPath, true); // 파일의 상위 디렉토리 노드 찾기
+            FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
         });
 
@@ -100,14 +115,17 @@ public class JavaController {
     }
 
 
-    private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
+    private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory, Principal principal) {
+
+        String mid = principal.getName();
+
 
         FileNode current = root;
-        String[] parts = path.split("\\\\");
+        String[] parts = path.split("/");
 //        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
-            if (part.isEmpty() || part.equals("user1")) continue;
+            if (part.isEmpty() || part.equals(mid)) continue;
 
 
             Optional<FileNode> found = current.getChildren().stream()
