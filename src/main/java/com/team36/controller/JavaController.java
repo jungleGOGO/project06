@@ -66,9 +66,9 @@ public class JavaController {
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
 //        FileNode root = new FileNode("savef", "\\savef");
         // 현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
-        String targetDirectoryPath = rootDirectoryPath + "\\user1";
-        FileNode root = new FileNode("user1", "\\user1");
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+//        String targetDirectoryPath = rootDirectoryPath + "\\user1";
+//        FileNode root = new FileNode("user1", "\\user1");
 
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();

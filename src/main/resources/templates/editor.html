@@ -71,7 +71,7 @@
                     <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
                     <div id="balloon-wrap2">
                         <ul id="balloon2">
-                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck" checked></li>
+                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck" checked></div></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
                         </ul>
@@ -162,14 +162,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-<div style="background: black">
-    <hr style="color: white">
-    <p style="color: white; font-size: 20px;">결과<span class="material-symbols-outlined" id="clearRs" title="결과 지우기">ink_eraser</span></p>
-    <hr style="color: white">
-</div>
-    <iframe data-code id="content"></iframe>
-=======
 
     <!--저장 모달창-->
     <div id="modalWrap">
@@ -200,11 +192,15 @@
     <div style="background: black; padding-top: 14px;">
         <p id="resultDiv">RESULT</p>
     </div>
+
+    <!--    iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
+    <!--data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
+    <!--data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
     <div style="height: 100%;">
         <iframe data-code id="content"></iframe>
     </div>
->>>>>>> eb9c848286aee990cfeff6d82179f2391da1a992
 
 </main>
+<script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
 </body>
 </html>
