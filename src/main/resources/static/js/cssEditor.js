@@ -280,19 +280,30 @@ $.contextMenu({
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
-    // const htmlCode = htmlCodeEl.value;
-    // const cssCode = cssCodeEl.value;
-    // const jsCode = jsCodeEl.value;
+    let cssExtension=".css";
+    let jsExtension = ".js";
+    let htmlExtension=".html";
+    let savedFilename= name + htmlExtension;
+    let savedCssname = name+ cssExtension;
+    let savedJsname = name + jsExtension;
+    const htmlCode = htmlEditor.value;
+    const cssCode = cssEditor.value;
+    const jsCode = jsEditor.value;
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
-
+    const cssContent = `${cssCode}`;
+    const jsContent = `${jsCode}`;
+    const htmlContent = `<html>\n<head>\n<link rel="stylesheet" href="./${savedCssname}" />\n</head>\n<body>\n${htmlCode}\n</body>\n<script><script src="./${savedJsname}" ></script><\/script>\n</html>`;
     if (!isValidFilename(name)) {
     alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
     return; // 추가 실행 중단
 }
     //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
     let code = {'filename' : filename,'content' : content };
-
-    axios.post("/editor/get", code) // code 객체를 전달
+    let cssFile ={'filename': filename, 'content':cssContent};
+    let jsFile = {'filename': filename, 'content':jsContent};
+    let htmlFile = {'filename': filename, 'content':htmlContent};
+    let FormDataRequest = {'filename' : filename,'codeContent' : content,'cssfilename':savedCssname,'jsfilename':savedJsname,'htmlfilename':savedFilename,'cssContent':cssContent,'jsContent':jsContent,'htmlContent':htmlContent };
+        axios.post("/editor/get", FormDataRequest) // code 객체를 전달
     .then((response) => {
     alert("파일이 성공적으로 저장되었습니다");
 })

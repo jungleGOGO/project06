@@ -1,10 +1,10 @@
 package com.team36.controller;
 
-import com.team36.domain.Code;
-import com.team36.domain.FileNode;
+import com.team36.domain.*;
 import com.team36.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 @Controller
 @Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class EditorController {
     private final FileService fileService;
@@ -38,29 +39,75 @@ public class EditorController {
     //ResponseEntity는 상태코드, 헤더, 본문 등을 세밀하게 제어가능
     //ResponseBody는 메서드가 직접 응답의 본문만을 반환한다
     //클라이언트에서 객체 형식으로 데이터를 보냈을때는 @RequestParam보다는 @RequestBody를 사용한다.
-    @PostMapping("/editor/get")
-    @ResponseBody
-    public ResponseEntity<String> setFile(@RequestBody Code code, Model model) {
-        String filename = code.getFilename();
-        String content = code.getContent();
+@PostMapping("/editor/get")
+@ResponseBody
+public ResponseEntity<String> handleFileUpload(
+        @RequestBody FormDataRequest formDataRequest, Model model) {
+
+    log.info("filename: {}", formDataRequest.getFilename());
+    log.info("cssfilename: {}", formDataRequest.getCssfilename());
+    log.info("jsfilename: {}", formDataRequest.getJsfilename());
+    log.info("htmlfilename: {}", formDataRequest.getHtmlfilename());
+    log.info("codeContent: {}", formDataRequest.getCodeContent());
+    log.info("cssContent: {}", formDataRequest.getCssContent());
+    log.info("jsContent: {}", formDataRequest.getJsContent());
+    log.info("htmlContent: {}", formDataRequest.getHtmlContent());
+
+    try {
+        String filename = formDataRequest.getFilename();
+        String content = formDataRequest.getCodeContent();
+        String htmlContent = formDataRequest.getHtmlContent();
+        String cssContent = formDataRequest.getCssContent();
+        String jsContent = formDataRequest.getJsContent();
+
         String filePath = "D:\\kimleeho\\savef\\" + filename;
+        String savedFolderPath = "D:\\kimleeho\\savef\\savedFolder\\";
+        String savedHtmlname = formDataRequest.getHtmlfilename();  // 수정된 부분
+        String savedCssname = formDataRequest.getCssfilename();
+        String savedJsname = formDataRequest.getJsfilename();
 
-        if (new File(filePath).exists()) {
-            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
-            model.addAttribute("msg", msg);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        // 중복 파일명 체크 함수
+//        if (isFileExists(filePath, savedFolderPath, savedHtmlname, savedCssname, savedJsname)) {
+//            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+//            model.addAttribute("msg", msg);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+//        }
+//
+//        if (isFileExists(filePath,filename)) {
+//            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+//            model.addAttribute("msg", msg);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+//        }
+
+        // 파일 생성 및 쓰기
+        writeFile(filePath, content);
+        writeFile(savedFolderPath + savedHtmlname, htmlContent);
+        writeFile(savedFolderPath + savedCssname, cssContent);
+        writeFile(savedFolderPath + savedJsname, jsContent);
+
+        return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+    }
+}
+
+    private boolean isFileExists(String... paths) {
+        for (String path : paths) {
+            if (new File(path).exists()) {
+                return true;
+            }
         }
+        return false;
+    }
 
+    private void writeFile(String filePath, String content) throws IOException {
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(content);
             fileWriter.flush();
-        } catch (IOException e) {
-            // 파일 쓰기 오류 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
         }
-
-        return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
     }
+
 
     @PostMapping("/editor/autoSave")
     @ResponseBody
