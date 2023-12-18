@@ -53,8 +53,8 @@
     <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
     <!--모달창으로 저장,다른이름으로 저장-->
         <div class="col-9 d-flex gx-5">
-            <input type="text" name="file" id="file" value="untitled" readonly>
-            <input type="text" name="downloadName" id="downloadName" readonly>
+<!--            <input type="text" name="file" id="file" value="untitled" readonly>-->
+            <input type="text" name="downloadName" value="untitled" id="downloadName" readonly>
             <div id="customExtensionInput" style="display: none;">
                 <label for="customExtension">직접입력 확장자</label>
                 <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">
@@ -174,7 +174,6 @@
                 <div class="col d-flex align-items-center mb-2">
                     <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
                     <select id="extension" class="form-select">
-                        <option selected>파일확장자</option>
                         <option value=".html">.html</option>
                         <option value=".txt">.txt</option>
                         <option value="">직접입력</option>

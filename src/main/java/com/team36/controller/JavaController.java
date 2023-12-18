@@ -46,6 +46,7 @@ public class JavaController {
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        FileNode root = new FileNode("user1", "/user1"); // 상대 경로 사용
 
+
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
@@ -103,7 +104,7 @@ public class JavaController {
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
 
         FileNode current = root;
-        String[] parts = path.split("\\\\");
+        String[] parts = path.split("/");
 //        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
@@ -117,7 +118,7 @@ public class JavaController {
                 current = found.get();
             } else {
 
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
