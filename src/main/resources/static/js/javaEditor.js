@@ -15,6 +15,8 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
             alert("한글, 영어, 숫자만 입력할 수 있습니다.");
             return false;
             // input.value = input.value.replace(/[^가-힣a-zA-Z0-9]/g, ''); // 유효하지 않은 문자 제거
+        } else {
+            return true;
         }
     }
     // 선택한 항목이 디렉토리라면 해당하는 디렉토리 하위에 디렉토리를 생성하고, 파일이면 그 파일이있는 경로에 디렉토리를 생성
@@ -442,7 +444,7 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal || event.target == modal2 || event.target == model3) {
+    if (event.target == modal || event.target == modal2 || event.target == modal3) {
         modal.style.display = "none";
         modal2.style.display = "none";
         modal3.style.display = "none";
@@ -492,9 +494,9 @@ icon2.addEventListener('mouseout', function (){
 
 
 /////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
-document.getElementById('saveZip').addEventListener('click', function() {
-    window.location.href = '/java/download-zip';
-});
+// document.getElementById('saveZip').addEventListener('click', function() {
+//     window.location.href = '/java/download-zip';
+// });
 
 
 
