@@ -118,10 +118,13 @@ public class EditorController {
         String rootDirectoryPath = "D:\\kimleeho";
 //        String rootDirectoryPath = "C:\\kimleeho";
         String targetDirectoryPath = rootDirectoryPath + "\\savef";
+        log.info("root"+rootDirectoryPath);
+        log.info("target" +targetDirectoryPath);
         FileNode root = new FileNode("savef", "savef"); // 상대 경로 사용
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();
-
+        log.info("directories"+directories);
+        log.info(files);
         try (Stream<Path> paths = Files.walk(Paths.get(targetDirectoryPath))) {
             paths.forEach(path -> {
                 if (!path.equals(Paths.get(targetDirectoryPath))) { // 루트 디렉토리 제외
