@@ -13,7 +13,10 @@ strong {
     font-family: 'GongGothicMedium';
 }
 
-#monaco { min-height:90vh; }
+#monaco {
+    min-height:90vh;
+}
+
 .file_name {
     cursor: pointer;
     text-decoration: underline;
