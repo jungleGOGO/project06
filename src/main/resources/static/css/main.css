@@ -193,7 +193,7 @@ label{
   margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 60%;
+  width: 100%;
 }
 
 .modal-dialog{
@@ -400,7 +400,7 @@ label{
 }
 
 #autoSaveCheck {
-  background-color: black;
+  background-color: #4e4e4e;
   color: white;
   border: black;
   font-size: 20px;
@@ -419,4 +419,5 @@ label{
 
 #checkCircle {
   padding-top: 9px;
+  cursor:default;
 }
