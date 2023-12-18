@@ -57,11 +57,6 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         });
     });
 
-
-
-
-
-
 /////////////////////////////////////// 자바 코드 실행 ////////////////////////////////////////
     function send_compiler() {
     console.log(monaco_test.getValue())
