@@ -54,6 +54,9 @@ img {
     width: 30px;
     margin-left: 5px;
 }
+#tree img {
+    width: 26px;
+}
 
 .split {
     display: flex;
@@ -86,6 +89,10 @@ img {
 }
 #selectedFileName {
     color: #eeeeee;
+    padding: 0;
+    margin: 0 !important;
+    font-size: 20px !important;
+    padding-left: 4px;
 }
 
 .tree-topbar {
@@ -106,7 +113,7 @@ img {
 }
 
 #newF {
-    margin-top: 6px;
+    margin-top: 2px;
     margin-right: 5px;
 }
 
@@ -325,4 +332,9 @@ img {
     cursor: pointer;
     color: #ffeba7;
     font-family: 'GongGothicMedium';
+}
+
+.gj-list-md-active {
+    background-color: #474747 !important;
+    color: #c7c7c7 !important;
 }

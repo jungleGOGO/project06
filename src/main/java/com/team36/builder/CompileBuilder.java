@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +39,15 @@ public class CompileBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
 
+    //전달받은 코드 컴파일하고 실행 결과 반환
     public String compileAndRunCode(String code) {
+        System.out.println(code);
+
+        // 악의적인 코드 유무 확인
+        if (!chkCode(code)) {
+            return "실행할 수 없는 코드입니다.";
+        }
+
         String uuid = UUID.randomUUID().toString();
         String uuidPath = path + uuid + "/";
         File newFolder = new File(uuidPath);
@@ -66,24 +76,31 @@ public class CompileBuilder {
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         // 비동기 작업 시작
+        // Future 객체는 비동기 작업의 결과를 저장
         Future<String> future = executor.submit(() -> {
             Process process = null;
             StringBuilder output = new StringBuilder();
+            // Stirng은 변경 불가능한 문자열을 생성하지만, StringBuilder는 변경 가능한 문자열을 만들어 주기 때문에
+            // StringBuilder를 사용
 
             try {
                 // 'javac'를 사용하여 Java 코드 컴파일
+                //ProcessBuilder는 하나의 프로세스를 시작하기 위한 클래스
                 ProcessBuilder processBuilder = new ProcessBuilder("javac", sourceFile.getAbsolutePath());
-                process = processBuilder.start();
+                process = processBuilder.start(); // start() 메서드는 새로운 프로세스를 시작
 
-                // 컴파일 작업에 대한 10초 타임아웃 설정
-                if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                // 컴파일 작업에 대한 5초 타임아웃 설정
+                // process.waitFor() 메서드는 지정된 시간동안 프로세스의 완료를 기다림
+                // 프로세스가 지정된 시간 내에 완료되지 않으면, if문이 실행
+                if (!process.waitFor(5, TimeUnit.SECONDS)) {
+
                     // 타임아웃 발생 시 프로세스 종료 및 예외 발생
-                    process.destroy();
+                    process.destroy(); //프로세스 강제 종료
                     throw new RuntimeException("컴파일 타임아웃");
                 }
 
                 // 컴파일 오류 검사
-                if (process.exitValue() != 0) {
+                if (process.exitValue() != 0) { //exitValue()는 프로세스의 종료 코드를 반환. 0이 아닌 값은 오류
                     // 컴파일 오류 메시지 캡처 및 반환
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                         String line;
@@ -95,12 +112,14 @@ public class CompileBuilder {
                 }
                 System.out.println("---- 자바 파일 컴파일 완료 ----");
 //////////////////////////////////////////////  코드실행  ////////////////////////////////////////////////////
-                // 컴파일된 클래스 실행
-                processBuilder = new ProcessBuilder("java", "-cp", uuidPath, "Test");
+                // 컴파일된 클래스 실행하는 부분
+                processBuilder = new ProcessBuilder("java", "-cp", uuidPath, "Test"); // ProcessBuilder를 재선언하여 자바 코드를 실행
                 process = processBuilder.start();
                 System.out.println("---- 프로세스 실행 시작 ---- " + process.isAlive());
+                long pid = process.pid();
+                System.out.println("프로세스 PID : " + pid);
 
-                // 표준 출력 스트림 캡처
+                // 정상 실행 시 결과 값 저장
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
                     while ((line = reader.readLine()) != null && process.waitFor(5, TimeUnit.SECONDS)) {
@@ -110,7 +129,7 @@ public class CompileBuilder {
 
                 }
 
-                // 표준 오류 스트림 캡처
+                // 오류 발생 시 결과 값 저장
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
@@ -157,8 +176,27 @@ public class CompileBuilder {
         }
     }
 
-}
 
+
+    //악의적인 코드 포함되어있는지 체크
+    public static boolean chkCode(String code) {
+        String[] patterns = {
+                "System\\.exit",
+                "Runtime\\.getRuntime\\(\\)\\.exec",
+                "java\\.io\\.",
+//                "import java.io.*;"
+        };
+
+        for (String patternStr : patterns) {
+            Pattern pattern = Pattern.compile(patternStr);
+            Matcher matcher = pattern.matcher(code);
+            if (matcher.find()) {
+                return false; //
+            }
+        }
+        return true; //
+    }
+}
 
 //    @SuppressWarnings({ "resource", "deprecation" })
 //    public Object compileCode(String body) throws Exception {
