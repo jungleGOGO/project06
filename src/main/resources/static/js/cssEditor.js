@@ -100,16 +100,19 @@ const balloon = document.getElementById('balloon');
 const icon2 = document.getElementById('moreNav');
 const balloon2 = document.getElementById('balloon2');
 
+const icon3 = document.getElementById('more2');
+const balloon3 = document.getElementById('balloon3');
+
 const btn = document.getElementById('popupBtn');
 const modal = document.getElementById('modalWrap');
 const closeBtn = document.getElementById('closeBtn');
+
 
 icon.addEventListener('mouseenter', function (){
     balloon.style.display = 'block';
 })
 
 icon.addEventListener('mouseover', function (){
-    console.log("bye");
     balloon.style.display = 'block';
 })
 
@@ -117,17 +120,21 @@ icon.addEventListener('mouseout', function (){
     balloon.style.display = 'none';
 })
 
-icon2.addEventListener('mouseenter', function (){
-    balloon2.style.display = 'block';
-})
+icon2.addEventListener('click', function (event) {
+    if (balloon2.style.display === 'none') {
+        balloon2.style.display = 'block';
+    } else if (balloon2.style.display === 'block') {
+        balloon2.style.display = 'none';
+    }
+});
 
-icon2.addEventListener('mouseover', function (){
-    balloon2.style.display = 'block';
-})
-
-icon2.addEventListener('mouseout', function (){
-    balloon2.style.display = 'none';
-})
+icon3.addEventListener('click', function (event) {
+    if (balloon3.style.display === 'none') {
+        balloon3.style.display = 'block';
+    } else if (balloon3.style.display === 'block') {
+        balloon3.style.display = 'none';
+    }
+});
 
 btn.onclick = function() {
     modal.style.display = 'block';
@@ -143,6 +150,16 @@ window.onclick = function(event) {
 }
 
 
+//////////////////////////////////// Split //////////////////////////////////////
+Split(['#top-pane', '#middle-pane', '#bottom-pane'], {
+    direction: 'vertical',
+    minSize: [30, 30, 140]
+});
+
+Split(['#split', '#view'], {
+    sizes: [25,75],
+    minSize: [230,0]
+});
 
 //마우스 우클릭으로 여는 메뉴
 $.contextMenu({
@@ -280,17 +297,16 @@ $.contextMenu({
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
+
     let cssExtension=".css";
     let jsExtension = ".js";
     let htmlExtension=".html";
     let savedFilename= name + htmlExtension;
     let savedCssname = name+ cssExtension;
     let savedJsname = name + jsExtension;
-        const htmlCode = htmlEditor.getValue();
-        const cssCode = cssEditor.getValue();
-        const jsCode = jsEditor.getValue();
-
-
+    const htmlCode = htmlEditor.getValue();
+    const cssCode = cssEditor.getValue();
+    const jsCode = jsEditor.getValue();
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
     const cssContent = `${cssCode}`;
     const jsContent = `${jsCode}`;
