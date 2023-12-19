@@ -40,8 +40,12 @@ public class CompileBuilder {
     private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
 
     //전달받은 코드 컴파일하고 실행 결과 반환
-    public String compileAndRunCode(String code) {
+    public String compileAndRunCode(String code, String fileName) {
         System.out.println(code);
+        System.out.println("fileName"+fileName);
+        int dotIndex = fileName.lastIndexOf(".");
+        String noExtensionFileName = fileName.substring(0, dotIndex); // 파일 확장자 잘라내기
+        System.out.println(noExtensionFileName);
 
         // 악의적인 코드 유무 확인
         if (!chkCode(code)) {
@@ -60,7 +64,7 @@ public class CompileBuilder {
             return "디렉토리를 생성할 수 없습니다.";
         }
         // 새 Java 소스 파일 생성
-        File sourceFile = new File(uuidPath + "Test.java");
+        File sourceFile = new File(uuidPath + fileName);
         // 제공된 코드를 파일에 쓰기
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(sourceFile))) {
             writer.write(code);
@@ -75,13 +79,14 @@ public class CompileBuilder {
         // 비동기 작업 실행을 위한 ExecutorService 생성
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
+        StringBuilder output = new StringBuilder();
+        // Stirng은 변경 불가능한 문자열을 생성하지만, StringBuilder는 변경 가능한 문자열을 만들어 주기 때문에
+        // StringBuilder를 사용
+
         // 비동기 작업 시작
         // Future 객체는 비동기 작업의 결과를 저장
         Future<String> future = executor.submit(() -> {
             Process process = null;
-            StringBuilder output = new StringBuilder();
-            // Stirng은 변경 불가능한 문자열을 생성하지만, StringBuilder는 변경 가능한 문자열을 만들어 주기 때문에
-            // StringBuilder를 사용
 
             try {
                 // 'javac'를 사용하여 Java 코드 컴파일
@@ -108,12 +113,16 @@ public class CompileBuilder {
                             output.append(line).append("\n");
                         }
                     }
-                    return "컴파일 오류:\n" + output;
+
+                    //파일 경로 잘라내기
+                    int compileErrorPath = output.lastIndexOf("error:");
+                    String compileError = output.substring(compileErrorPath, output.length());
+                    return "컴파일 오류:\n" + compileError;
                 }
                 System.out.println("---- 자바 파일 컴파일 완료 ----");
 //////////////////////////////////////////////  코드실행  ////////////////////////////////////////////////////
                 // 컴파일된 클래스 실행하는 부분
-                processBuilder = new ProcessBuilder("java", "-cp", uuidPath, "Test"); // ProcessBuilder를 재선언하여 자바 코드를 실행
+                processBuilder = new ProcessBuilder("java", "-cp", uuidPath, noExtensionFileName); // ProcessBuilder를 재선언하여 자바 코드를 실행
                 process = processBuilder.start();
                 System.out.println("---- 프로세스 실행 시작 ---- " + process.isAlive());
                 long pid = process.pid();
@@ -122,9 +131,15 @@ public class CompileBuilder {
                 // 정상 실행 시 결과 값 저장
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
-                    while ((line = reader.readLine()) != null && process.waitFor(5, TimeUnit.SECONDS)) {
+                    while ((line = reader.readLine()) != null ) {
+//                    while ((line = reader.readLine()) != null && process.waitFor(5, TimeUnit.SECONDS)) {
                         output.append(line).append("\n");
+                        Thread.sleep(20);
+
                     }
+//                    if (process.waitFor(5, TimeUnit.SECONDS)){
+//                        process.destroy();
+//                    }
                     System.out.println("inputStream , 프로세스 상태 " + process.isAlive());
 
                 }
@@ -166,7 +181,7 @@ public class CompileBuilder {
             // 타임아웃 발생 시 작업 취소 및 타임아웃 메시지 반환
             future.cancel(true);
 
-            return "실행 타임아웃: 코드 실행 시간이 5초를 초과했습니다.";
+            return  output.toString()+"\n실행 타임아웃: 코드 실행 시간이 5초를 초과했습니다.\n\n";
         } catch (Exception e) {
             // 실행 중 발생한 오류 메시지 반환
             return "실행 오류: " + e.getMessage();
