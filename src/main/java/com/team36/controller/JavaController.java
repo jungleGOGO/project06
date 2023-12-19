@@ -47,8 +47,8 @@ public class JavaController {
 
 
         // 준철
-//      String rootDirectoryPath = "/Users/juncheol/mounttest";
-        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+      String rootDirectoryPath = "/Users/juncheol/mounttest";
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
         String targetDirectoryPath = rootDirectoryPath + "/"+mid;
         FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
