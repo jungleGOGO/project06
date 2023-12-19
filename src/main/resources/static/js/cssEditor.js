@@ -286,13 +286,15 @@ $.contextMenu({
     let savedFilename= name + htmlExtension;
     let savedCssname = name+ cssExtension;
     let savedJsname = name + jsExtension;
-    const htmlCode = htmlEditor.value;
-    const cssCode = cssEditor.value;
-    const jsCode = jsEditor.value;
+        const htmlCode = htmlEditor.getValue();
+        const cssCode = cssEditor.getValue();
+        const jsCode = jsEditor.getValue();
+
+
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
     const cssContent = `${cssCode}`;
     const jsContent = `${jsCode}`;
-    const htmlContent = `<html>\n<head>\n<link rel="stylesheet" href="./${savedCssname}" />\n</head>\n<body>\n${htmlCode}\n</body>\n<script><script src="./${savedJsname}" ></script><\/script>\n</html>`;
+    const htmlContent = `<html>\n<head>\n<link rel="stylesheet" href="./${savedCssname}" />\n</head>\n<body>\n${htmlCode}\n</body>\n<script src="./${savedJsname}" ><\/script>\n</html>`;
     if (!isValidFilename(name)) {
     alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
     return; // 추가 실행 중단
@@ -441,6 +443,7 @@ $.contextMenu({
     if (htmlCode.trim() !== '') {
     htmlEditor.setValue(htmlCode);
 
+
 } else {
     // 기존 내용이 있으면 이전 내용을 유지합니다.
     htmlEditor.setValue(htmlEditor.getValue());
@@ -459,7 +462,6 @@ $.contextMenu({
 
 } else {
     jsEditor.setValue(jsEditor.getValue());
-
 }
 
 }
@@ -467,21 +469,38 @@ $.contextMenu({
     const treeArea = document.querySelector('#tree');
     // a태그일 경우 href로 이동하는 이벤트를 막음
     treeArea.addEventListener('click', function(event) {
-    if (event.target.closest('a')) {
+    if (event.target.closest('a')) { //closest는 현재 이벤트가 발생한 요소중 가장 가까운 a태그 요소를 찾는것
     event.preventDefault();
 }
 });
-    //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
-    treeArea.addEventListener('contextmenu', function(event) {
-    const anchor2 = event.target.closest('a');
-    if (anchor2) {
-    event.preventDefault();
-    const filename = anchor2.textContent.trim();
-    handleFileSelection(filename);
-    rehandleFileSelection(anchor2.getAttribute("href"));
-    console.log("파일폴더:"+rehandleFileSelection(anchor2.getAttribute("href")));
-}
-});
+        //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
+        treeArea.addEventListener('contextmenu', function(event) {
+            const anchor2 = event.target.closest('a');
+            if (anchor2) {
+                event.preventDefault();
+                const filename = anchor2.textContent.trim();
+                handleFileSelection(filename);
+                rehandleFileSelection(anchor2.getAttribute("href"));
+                console.log("파일폴더:"+rehandleFileSelection(anchor2.getAttribute("href")));
+            }
+        });
+
+        treeArea.addEventListener('contextmenu', function(event) {
+            const displayElement = event.target.closest('[data-role="node"]');
+
+            if (displayElement) {
+                event.preventDefault();
+
+                // 이전에 선택된 요소의 클래스와 속성 초기화
+                $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
+
+                // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
+                $(displayElement).addClass('gj-list-md-active');
+                $(displayElement).attr('data-selected', 'true');
+
+                // 추가로 필요한 로직을 수행
+            }
+        });
     treeArea.addEventListener('dblclick', function(event) {
     const anchor = event.target.closest('a');
     const folderAndfile = anchor.getAttribute('href');

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -66,18 +67,28 @@ public ResponseEntity<String> handleFileUpload(
         String savedCssname = formDataRequest.getCssfilename();
         String savedJsname = formDataRequest.getJsfilename();
 
-        // 중복 파일명 체크 함수
-//        if (isFileExists(filePath, savedFolderPath, savedHtmlname, savedCssname, savedJsname)) {
-//            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
-//            model.addAttribute("msg", msg);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-//        }
-//
-//        if (isFileExists(filePath,filename)) {
-//            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
-//            model.addAttribute("msg", msg);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-//        }
+//         중복 파일명 체크 함수
+        if (isFileExists(savedFolderPath, savedHtmlname)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.1(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+        if (isFileExists(savedFolderPath, savedCssname)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.2(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+        if (isFileExists(savedFolderPath, savedJsname)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.3(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+        if (isFileExists(filePath,filename)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.4(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
 
         // 파일 생성 및 쓰기
         writeFile(filePath, content);
@@ -92,13 +103,9 @@ public ResponseEntity<String> handleFileUpload(
     }
 }
 
-    private boolean isFileExists(String... paths) {
-        for (String path : paths) {
-            if (new File(path).exists()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isFileExists(String folderPath, String fileName) {
+        File file = new File(folderPath, fileName);
+        return file.exists() && file.isFile();
     }
 
     private void writeFile(String filePath, String content) throws IOException {
@@ -164,12 +171,17 @@ public ResponseEntity<String> handleFileUpload(
 
     @GetMapping("/editor/fileList")
     @ResponseBody
-    public FileNode fileList() throws Exception {
-//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
-        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
+    public List<FileNode> fileList(Principal principal) throws Exception {
+        String mid = principal.getName();
+        System.out.println("mid : "+mid);
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+                String targetDirectoryPath = rootDirectoryPath + "/"+mid;
+        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
+
+//        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
-        String targetDirectoryPath = rootDirectoryPath + "\\savef"; // 실제로 읽어올 대상 디렉토리 경로 설정
-        FileNode root = new FileNode("savef", "savef"); // 루트 노드를 생성하고 초기화. 루트 노드는 트리의 시작점이다. savef라는 이름을 가진 파일또는 디렉토리이며, savef라는 파일또는 디렉토리경로(상대경로)
+//        String targetDirectoryPath = rootDirectoryPath + "\\savef"; // 실제로 읽어올 대상 디렉토리 경로 설정
+//        FileNode root = new FileNode("savef", "savef"); // 루트 노드를 생성하고 초기화. 루트 노드는 트리의 시작점이다. savef라는 이름을 가진 파일또는 디렉토리이며, savef라는 파일또는 디렉토리경로(상대경로)
 
         /*  상대경로는 현재 작업 디렉토리 또는 기준 경로같은 특정 위치에서 시작하여 목표 위치까지의 경로를 상대적으로 설명한다.
   상대경로는 파일이나 디렉토리 간의 상대적인 위치를 나타내기 때문에, 현재 작업 디렉토리가 변경되더라도 해당 위치를 나타내는데 영향 받지 않는다.*/
@@ -215,23 +227,24 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             //디렉토리의 상대경로를 계산. rootDirectory는 루트 디렉토리의 경로이며 이를 기준으로 디렉토리의 상대경로를 계산한다.
             String dirRelativePath = dir.toString().substring(rootDirectoryPath.length());
 //           트리에 디렉토리 노드를추가하거나 이미 존재하는 노드를 찾는다. true는 디렉토리라는 것을 나타낸다
-            findOrCreateNode(root, dirRelativePath, true);
+            findOrCreateNode(root, dirRelativePath, true,principal);
         });
 
         // 파일 노드 추가
         files.forEach(file -> {
             String fileRelativePath = file.toString().substring(rootDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
-            FileNode parentNode = findOrCreateNode(root, parentDirPath, true); // 파일의 상위 디렉토리 노드 찾기
+            FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 상위 디렉토리에 파일 노드 추가
         });
 
-        return root;
+        return root.getChildren();
     }
 
 
 //주어진 FileNode 트리에서 특정 경로에 해당하는 노드를 찾거나 새로운 노드를 생성하여 반환하는 역할
-    private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory) {
+    private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory, Principal principal) {
+        String mid = principal.getName();
         FileNode current = root; //현재 노드를 루트 노드로 초기화
         String[] parts = path.split("\\\\"); // 주어진 경로를 \로 분할하여 배열로 저장.
 
@@ -265,7 +278,8 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
     public String deleteFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
         // 파일 또는 폴더를 삭제할 디렉토리 경로
-        String rootDirectoryPath = "D:\\kimleeho";
+//        String rootDirectoryPath = "D:\\kimleeho";
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";;
 //        String rootDirectoryPath = "C:\\kimleeho";
         String filePath = rootDirectoryPath + filename;
 
