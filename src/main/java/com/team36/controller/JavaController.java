@@ -47,7 +47,9 @@ public class JavaController {
 
 
         // 준철
-//      String rootDirectoryPath = "/Users/juncheol/mounttest";
+
+      String rootDirectoryPath = "/Users/juncheol/mounttest";
+
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
@@ -60,7 +62,7 @@ public class JavaController {
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
 //        FileNode root = new FileNode("savef", "\\savef");
         // 현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String targetDirectoryPath = rootDirectoryPath + "\\"+mid;
         FileNode root = new FileNode("mid", "\\mid");
 

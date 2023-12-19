@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class Memo {
     private String filename;
     private String monaco;
+    private String path;
 }
