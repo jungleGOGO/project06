@@ -38,8 +38,8 @@ public class MemberJoinDTO {
     @NotBlank(message = "**")
     private String code;
 
-    @ColumnDefault("0")
-    private Integer active;
+    @Column(name = "active", columnDefinition = "integer default 0")
+    private Integer active = 0;
 
     private LocalDateTime regDate;
     private String nowPassword;

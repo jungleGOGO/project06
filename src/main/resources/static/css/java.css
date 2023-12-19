@@ -108,9 +108,23 @@ img {
     height: 25px;
     padding: 0 10px;
     font-size: 14px;
+    font-family: 'GongGothicMedium';
+}
+
+#save {
+    height: 25px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-family: 'GongGothicMedium';
 }
 
 #compileImg {
+    width: 18px;
+    padding-bottom: 3px;
+    margin-left: 0px;
+}
+
+#saveImg {
     width: 18px;
     padding-bottom: 3px;
     margin-left: 0px;

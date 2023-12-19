@@ -12,8 +12,8 @@
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js}"></script>
     <script th:src="@{/static/node_modules/monaco-editor/min/vs/editor/editor.main.js}"></script>
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.css">
+    <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
 </head>
 <body>
 <!--헤더 -->
@@ -40,7 +40,7 @@
                     <div class="editor-info">
                         <p id="selectedFileName" title="파일경로" style="float: left; margin: 12px; font-size: 12px;"></p>
                         <div class="d-flex float-end mx-3 mt-1">
-<!--                            <img th:src="@{/static/img/icon/save.svg}" id="btn1" alt="저장" title="저장">-->
+                            <button type="button" class="btn btn-success float-end" id="save"><img th:src="@{/static/img/icon/save.svg}" alt="저장" id="saveImg" title="저장">저장</button>
                             <button onclick="send_compiler();" type="button" class="btn btn-danger float-end mx-2" id="run"><img th:src="@{/static/img/icon/play.svg}" alt="컴파일" id="compileImg" title="컴파일">&nbsp;RUN</button>
                             <div id="moreNav">
                                 <a><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></a>
