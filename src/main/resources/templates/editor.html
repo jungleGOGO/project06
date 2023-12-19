@@ -5,6 +5,7 @@
     <title>연습장</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
     <link rel="stylesheet" th:href="@{/static/css/main.css}" />
+    <script th:src="@{/static/js/split.min.js}"></script>
     <script th:src="@{/static/js/main.js}" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
@@ -29,7 +30,7 @@
 
 <!--사이드 메뉴 -->
 <div id="iconNav">
-    <a><i class="fa-solid fa-user" style="color:#fff;"></i></a>
+    <a id="icon"><i class="fa-solid fa-user" style="color:#fff;"></i></a>
     <div id="balloon-wrap">
         <ul id="balloon">
             <li><a th:href="@{/java/project}">프로젝트</a></li>
@@ -45,15 +46,14 @@
 </div>
 
 <main>
-    <div class="container-fluid" style="background-color:black;">
-    <div class="row gx-5 mt-2">
-    <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
-    <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
-    <!--불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
-    <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
-    <!--모달창으로 저장,다른이름으로 저장-->
-        <div class="col-9 d-flex gx-5">
-<!--            <input type="text" name="file" id="file" value="untitled" readonly>-->
+    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px;">
+        <div class="row gx-5 mt-2">
+        <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
+        <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
+        <!--불러오면 파일형식 또한 변화를 줘야됨. 확장자는 파일저장, 불러오기때만 input 창 존재-->
+        <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
+        <!--모달창으로 저장,다른이름으로 저장-->
+            <div class="col-9 d-flex gx-5" style=" margin-bottom: 5px; ">
             <input type="text" name="downloadName" value="untitled" id="downloadName" readonly>
             <div id="customExtensionInput" style="display: none;">
                 <label for="customExtension">직접입력 확장자</label>
@@ -63,143 +63,142 @@
             <div class="runBtn" id="clear"><span class="material-symbols-outlined" title="전체 지우기" style="font-size: 22px; margin: 0 6px;">ink_eraser</span>CLEAR</div>
         </div>
 
-        <div class="col-3">
+            <div class="col-3">
             <div class="d-flex float-end p-1" style="display: flex;">
-                <span id="checkCircle" class="material-symbols-outlined" >check_circle</span>
+                <span id="checkCircle" class="material-symbols-outlined" style="display:none;" >check_circle</span>
                 <button type="button" class="btn-sm btn-secondary" id="popupBtn"><span class="material-symbols-outlined" title="저장">save</span>저장</button>
                 <div id="moreNav">
                     <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
                     <div id="balloon-wrap2">
-                        <ul id="balloon2">
-                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck" checked></div></li>
+                        <ul id="balloon2" style="display: none;">
+                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
                         </ul>
                     </div>
                 </div>
-                <button type="button" class="btn-sm btn-secondary" id="loadFileBtn" onclick="showFileList()"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
-            </div>
-        </div>
-    </div>
+                <!-- 파일리스트 (저장소) -->
+                <div id="moreNav2">
+                    <button type="button" class="btn-sm btn-secondary" id="more2"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
+                    <div id="balloon-wrap3" >
+                        <div id="balloon3" style="display: none;">
+                            <p id="dnsName"><strong>저장소</strong>&nbsp;&nbsp;<i class="fa-solid fa-hard-drive" style="color: #7c7d7e;"></i></p>
+                            <div id="pane">
+                                <div id="tree"></div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!--코드 입력창 -->
-    <section class="boxes">
-        <div class="editor-container tab-pane">
-            <div class="editor-header tab" style="display:flex; justify-content: space-between;">
-                <h5 style="background-color:#e34f26;">HTML </h5><span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span>
-            </div>
-            <textarea data-html id="htmlTextarea"></textarea>
-        </div>
-        <div class="editor-container tab-pane">
-            <div class="editor-header tab" style="display:flex; justify-content: space-between;">
-                <h5 style="background-color:#1572b6;">CSS</h5><span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span>
-            </div>
-            <textarea data-css id="cssTextarea"></textarea>
-        </div>
-        <div class="editor-container tab-pane" style="border-right: 1px solid #5c5b5b;">
-            <div class="editor-header tab" style="padding-right: 0px; display:flex; justify-content: space-between;">
-                <h5 style="background-color:#f7df1e;">JS </h5><span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span>
-            </div>
-            <textarea data-js id="jsTextarea"></textarea>
-        </div>
-    </section>
-
-    <!--파일리스트 모달창-->
-    <div class="modal" id="fileListModal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="pane">
-                <div id="tree"></div>
-            </div>
-        </div>
-    </div>
-
-    <!--이름변경 모달창-->
-    <div class="modal" id="renameFileModal" >
-        <div class="modal-content" style="background: black">
-            <span class="close" onclick="closeRenameFileModal()">&times;</span>
-            <label for="selectedFile">현재 이름:</label>
-            <input class="form-label" type="text" id="selectedFile" name="selectedFile" readonly>
-            <label for="newFilename">변경할 이름:</label>
-            <input class="form-label" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
-            <label for="reextension">파일확장자</label>
-            <select id="reextension">
-                <option value=".html">.html</option>
-                <option value=".txt">.txt</option>
-                <option value="">직접입력</option>
-            </select>
-            <div id="recustomExtensionInput" style="display: none;">
-            <label for="recustomExtension">직접입력 확장자</label>
-            <input type="text" id="recustomExtension" name="recustomExtension" placeholder=".html, .txt, ...">
-            </div>
-            <button onclick="renameFile()">변경</button>
-        </div>
-    </div>
-
-    <!--도움말 모달창-->
-    <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: black">
-                    <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="background-color: black">
-                    <!-- 모달 내용 -->
-                    <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
-                    <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
-                    <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
-                    <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
-                    <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
-                    <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
-                    <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
-                    <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
-                    <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!--이름변경 모달창-->
+                    <div class="modal" id="renameFileModal" style="display: none; z-index: 9999;">
+                        <div class="modal-content" style="background: black; width: 20%; margin-left: 1427px; padding-left: 43px; padding-right: 43px;">
+                            <div class="row"><p style="padding: 0px;"><span class="close" onclick="closeRenameFileModal()">&times;</span></p></div>
+                            <div class="mb-3 row">
+                                <label for="selectedFile" class="col-sm-4 col-form-label">현재 이름</label>
+                                <input class="col-sm form-control" type="text" id="selectedFile" name="selectedFile" readonly>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="newFilename" class="col-sm-4 col-form-label">변경 이름</label>
+                                <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="reextension" class="col-sm-4 col-form-label">파일확장자</label>
+                                <select class="col-sm form-select" id="reextension">
+                                    <option value=".html">.html</option>
+                                    <option value=".txt">.txt</option>
+                                </select>
+                            </div>
+                            <div class="d-grid mb-3 row">
+                            <button class="btn btn-danger" onclick="renameFile()">변경</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+        <div id="split-container" style="display: flex; height: 100%;">
+        <!--코드 입력창 -->
+        <div class="boxes" id="split">
+            <div class="editor-container tab-pane" id="top-pane">
+                <div class="editor-header tab" style="display:flex; justify-content: space-between;">
+                    <h5 style="background-color:#e34f26;">HTML </h5><span class="material-symbols-outlined" id="clearHtml" title="html 지우기">ink_eraser</span>
+                </div>
+                <textarea data-html id="htmlTextarea"></textarea>
+            </div>
+            <div class="editor-container tab-pane" id="middle-pane">
+                <div class="editor-header tab" style="display:flex; justify-content: space-between;">
+                    <h5 style="background-color:#1572b6;">CSS</h5><span class="material-symbols-outlined" id="clearCss" title="css 지우기">ink_eraser</span>
+                </div>
+                <textarea data-css id="cssTextarea"></textarea>
+            </div>
+            <div class="editor-container tab-pane" id="bottom-pane">
+                <div class="editor-header tab" style="padding-right: 0px; display:flex; justify-content: space-between;">
+                    <h5 style="background-color:#f7df1e;">JS </h5><span class="material-symbols-outlined" id="clearJs" title="js 지우기">ink_eraser</span>
+                </div>
+                <textarea data-js id="jsTextarea"></textarea>
+            </div>
+        </div>
 
-    <!--저장 모달창-->
-    <div id="modalWrap">
-        <div id="modalBody">
-            <span id="closeBtn">&times;</span>
-            <form id="modalContent">
-                <div class="row mb-2">
-                    <strong >파일명</strong>
+
+        <!--도움말 모달창-->
+        <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: black">
+                        <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="background-color: black">
+                        <!-- 모달 내용 -->
+                        <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
+                        <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
+                        <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
+                        <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
+                        <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
+                        <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
+                        <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
+                        <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
+                        <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
-                <div class="col d-flex align-items-center mb-2">
-                    <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
-                    <select id="extension" class="form-select">
-                        <option value=".html">.html</option>
-                        <option value=".txt">.txt</option>
-                        <option value="">직접입력</option>
-                    </select>
-                </div>
-                <div class="d-grid gap-2 col-12 mx-auto">
-                    <button type="button" class="btn btn-secondary" id="save" style="font-family: 'GongGothicMedium';">파일 생성</button>
-                </div>
-            </form>
+            </div>
+        </div>
+
+        <!--저장 모달창-->
+        <div id="modalWrap">
+            <div id="modalBody">
+                <span id="closeBtn">&times;</span>
+                <form id="modalContent">
+                    <div class="row mb-2">
+                        <strong >파일명</strong>
+                    </div>
+                    <div class="col d-flex align-items-center mb-2">
+                        <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
+                        <select id="extension" class="form-select">
+                            <option value=".html">.html</option>
+                            <option value=".txt">.txt</option>
+                            <option value="">직접입력</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2 col-12 mx-auto">
+                        <button type="button" class="btn btn-secondary" id="save" style="font-family: 'GongGothicMedium';">파일 생성</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
+        <!-- data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
+        <!-- data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
+        <div id="view" style="background-color: #fff;">
+            <iframe data-code id="content"></iframe>
         </div>
     </div>
-
     </div>
-
-    <!--결과창 -->
-    <div style="background: black; padding-top: 14px;">
-        <p id="resultDiv">RESULT</p>
-    </div>
-
-    <!--    iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
-    <!--data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
-    <!--data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
-    <div style="height: 100%;">
-        <iframe data-code id="content"></iframe>
-    </div>
-
 </main>
 <script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
 </body>

@@ -66,6 +66,7 @@ public class MemoController {
                     .body("파일 생성 실패: " + e.getMessage());
         }
 
+
     }
 
     //파일 내용 읽기
@@ -75,10 +76,11 @@ public class MemoController {
 
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
         String filePath = "/Users/juncheol/mounttest" + filename2;
+
 //        String filePath = "\\\\Y:\\storage" + filename2
 
         // 첫번째거 : 새파일(모달창) 만들기 경로 || 두번째거 : 트리에서 파일 불러오는 경로 (현경)
-        // String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
+//         String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
 //        String filePath = "\\\\10.41.0.153\\storage" + filename2;
 
         File file = new File(filePath);

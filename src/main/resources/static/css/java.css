@@ -22,6 +22,7 @@ strong {
     text-decoration: underline;
     color: blue;
 }
+
 #split-container {
     display: flex;
     height: 95vh;  /* Adjust the height as needed */
