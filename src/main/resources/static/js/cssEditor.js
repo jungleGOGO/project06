@@ -328,7 +328,11 @@ $.contextMenu({
     let FormDataRequest = {'filename' : filename,'codeContent' : content,'cssfilename':savedCssname,'jsfilename':savedJsname,'htmlfilename':savedFilename,'cssContent':cssContent,'jsContent':jsContent,'htmlContent':htmlContent };
         axios.post("/editor/get", FormDataRequest)
             .then((response) => {
+                saveTreeState();
+                $('#tree').remove();
+                loadFileList();
                 alert("파일이 성공적으로 저장되었습니다");
+                closeModal();
             })
             .catch((error) => {
                 console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
@@ -368,12 +372,12 @@ $.contextMenu({
 
     //저장소 모달 열기 함수
     function openModal() {
-    document.getElementById('fileListModal').style.display = 'block';
+    document.getElementById('moreNav2').style.display = 'block';
 }
 
     //저장소 모달 닫기 함수
     function closeModal() {
-    document.getElementById('fileListModal').style.display = 'none';
+        modal.style.display = 'none';
 }
 
 <!--저장소에서 폴더 열림 닫힘 상태 저장하는 스크립트-->
@@ -419,7 +423,6 @@ $.contextMenu({
         if ($('#pane').find('#tree').length === 0) {
             $('#pane').append('<div id="tree"></div>');
         }
-
 
         // 새로운 파일 목록으로 트리뷰 재구성
         $('#tree').tree({
@@ -529,7 +532,9 @@ $.contextMenu({
         });
     treeArea.addEventListener('dblclick', function(event) {
     const anchor = event.target.closest('a');
+        console.log("폴더파일1:"+anchor)
     const folderAndfile = anchor.getAttribute('href');
+    console.log("폴더파일2:"+folderAndfile)
     htmlEditor.setValue("");
     cssEditor.setValue("");
     jsEditor.setValue("");
@@ -539,7 +544,7 @@ $.contextMenu({
     document.getElementById("downloadName").value = filename;
     console.log("filename")
     console.log(filename)
-    axios.post('/editor/test2', null, {
+    axios.post('/editor/read', null, {
     params: { filename2: folderAndfile }
 })
     .then(response => {
@@ -733,11 +738,12 @@ $.contextMenu({
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
+    console.log(filename)
 
-    // const htmlCode = htmlEditor.value;
-    // const cssCode = cssEditor.value;
-    // const jsCode = jsEditor.value;
-    const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+    const htmlCode2 = htmlEditor.getValue();
+    const cssCode2 = cssEditor.getValue();
+    const jsCode2 = jsEditor.getValue();
+    const content = `<html>\n<head>\n<style>\n${cssCode2}\n</style>\n</head>\n<body>\n${htmlCode2}\n</body>\n<script>\n${jsCode2}\n<\/script>\n</html>`;
     let local = setInterval(saveToLocalStorage, 4000);
 
     if (!isValidFilename(name)) {
@@ -745,7 +751,8 @@ $.contextMenu({
     return; // 추가 실행 중단
 }
     let code = {'filename' : filename,'content' : content };
-
+console.log("filename:"+filename);
+console.log("content:"+content);
     axios.post("/editor/autoSave", code)
     .then((response) => {
     // 서버 응답이 성공한 경우

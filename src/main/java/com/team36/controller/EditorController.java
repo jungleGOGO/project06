@@ -131,10 +131,12 @@ public ResponseEntity<String> handleFileUpload(
 
     @PostMapping("/editor/autoSave")
     @ResponseBody
-    public ResponseEntity<String> autoSave(@RequestBody Code code){
+    public ResponseEntity<String> autoSave(@RequestBody Code code,Principal principal){
+        String mid = principal.getName();
         String filename = code.getFilename();
         String content = code.getContent();
-        String filePath = "D:\\kimleeho\\autosave\\" + filename;
+        String html = "html";
+        String filePath = "//10.41.0.153/storage/" + mid + "/" + html+"/" + filename;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(content);
@@ -147,7 +149,7 @@ public ResponseEntity<String> handleFileUpload(
         return ResponseEntity.ok("파일이 자동 저장되었습니다.");
     }
 
-    @PostMapping("/editor/test2")
+    @PostMapping("/editor/read")
     @ResponseBody
     public String getFile(@RequestParam("filename2") String filename2) throws IOException {
         // 파일 경로
@@ -343,7 +345,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+"html";;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
