@@ -690,12 +690,12 @@ $.contextMenu({
 
 }
 });
-
-    // "직접입력" 값이 변경될 때 처리
-    recustomExtension.addEventListener("input", function () {
-    // 직접 입력 값을 select's value로 설정
-    reextensionSelect.value = recustomEx.value;
-});
+//     //
+//     // // "직접입력" 값이 변경될 때 처리
+//     // recustomExtension.addEventListener("input", function () {
+//     // // 직접 입력 값을 select's value로 설정
+//     // reextensionSelect.value = recustomEx.value;
+// });
 
 
 <!--링크는 새창으로 띄우게함-->

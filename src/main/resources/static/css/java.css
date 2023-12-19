@@ -110,7 +110,19 @@ img {
     font-size: 14px;
 }
 
+#save {
+    height: 25px;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
 #compileImg {
+    width: 18px;
+    padding-bottom: 3px;
+    margin-left: 0px;
+}
+
+#saveImg {
     width: 18px;
     padding-bottom: 3px;
     margin-left: 0px;

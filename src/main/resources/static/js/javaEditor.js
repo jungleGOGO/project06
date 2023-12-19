@@ -4,6 +4,56 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     minSize: [0, 200, 0]
 });
 
+///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
+$.contextmenu({
+    selector: '[data-role="display"]',
+    items: {
+        item1: {
+            name: '폴더생성',
+            callback: function (key, options) {
+
+            }
+        },
+        item2: {
+            name: '파일 생성',
+            callback: function (key, options) {
+
+            }
+        },
+        item3: {
+            name: '이름바꾸기',
+            callback: function (key, options) {
+
+            }
+        },
+        item4: {
+            name: 'ZIP 다운로드',
+            callback: function (key, options) {
+
+            }
+        },
+        item5: {
+            name: '파일 삭제',
+            callback: function (key, options) {
+                // 메뉴 아이템을 클릭한 경우의 동작
+                console.log("key", key);
+                console.log("options", options);
+
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/java/delete", { filename: filename }).then((response) => {
+
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        }
+    }
+});
+
 
 //////////////////////////////////// 폴더 생성 //////////////////////////////////////
 // 폴더명 입력 문자만 입력 가능하도록 처리
@@ -288,7 +338,6 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         console.log(fileList);
 
 
-
         // 새로운 파일 목록으로 트리뷰 재구성
         $('#tree').tree({
             primaryKey: 'id',
@@ -322,6 +371,7 @@ function convertNode(fileNode, treeData, nodeId) {
         text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
         flagUrl: fileNode.flagUrl,
         children: []
+
     };
 
     fileNode.children.forEach(function(child) {
@@ -543,6 +593,67 @@ icon2.addEventListener('mouseout', function (){
 // document.getElementById('saveZip').addEventListener('click', function() {
 //     window.location.href = '/java/download-zip';
 // });
+
+
+
+
+
+function treeEvent() {
+    const treeArea = document.querySelector('#tree');
+
+    // a태그일 경우 href로 이동하는 이벤트를 막음
+    treeArea.addEventListener('click', function (event) {
+        if (event.target.closest('a')) {
+            event.preventDefault();
+        }
+    });
+
+    //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
+    treeArea.addEventListener('contextmenu', function (event) {
+        const anchor2 = event.target.closest('a');
+        if (anchor2) {
+            event.preventDefault();
+            const filename = anchor2.textContent.trim();
+            console.log(filename);
+            handleFileSelection(filename);
+            rehandleFileSelection(anchor2.getAttribute("href"));
+            console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
+        }
+    });
+
+    let selectedFile = null;
+
+    function handleFileSelection(filename) {
+        selectedFile = filename;
+        // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
+    }
+
+    <!--우클릭으로 이름변경시 값을 추출-->
+    let reselectedFile = null;
+
+    function rehandleFileSelection(anchor2) {
+        if (selectedFile) {
+            reselectedFile = anchor2;
+
+            return reselectedFile;
+            // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+        }
+    }
+
+    // 현재 선택된 파일의 이름을 가져오는 함수 (수정이 필요할 수 있음)
+    function getSelectedFile() {
+        if (selectedFile) {
+            return selectedFile;
+        } else {
+            const selectedNode = document.querySelector('#tree [data-role="node"][data-selected="true"]');
+            if (selectedNode) {
+                return selectedNode.textContent.trim();
+            } else {
+                return null;
+            }
+        }
+    }
+}
 
 
 
