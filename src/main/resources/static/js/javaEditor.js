@@ -5,7 +5,154 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
 });
 
 
+//////////////////////////////////// 우클릭 메뉴(contextmenu) //////////////////////////////////////
+// $.contextmenu({
+//     selector: '[data-role="display"]',
+//     items: {
+//         item1: {
+//             name: '폴더생성',
+//             callback: function (key, options) {
+//
+//             }
+//         },
+//         item2: {
+//             name: '파일 생성',
+//             callback: function (key, options) {
+//
+//             }
+//         },
+//         item3: {
+//             name: '이름바꾸기',
+//             callback: function (key, options) {
+//
+//             }
+//         },
+//         item4: {
+//             name: 'ZIP 다운로드',
+//             callback: function (key, options) {
+//
+//             }
+//         },
+//         item5: {
+//             name: '파일 삭제',
+//             callback: function (key, options) {
+//                 // // 메뉴 아이템을 클릭한 경우의 동작
+//                 // console.log("key", key);
+//                 // console.log("options", options);
+//                 //
+//                 // var $trigger = options.$trigger;
+//                 // var filename = $trigger.find('a').attr('href')
+//                 // // span 안의 a 태그의 텍스트를 가져옴
+//                 // console.log("Clicked on " + key + " for element with filename: " + filename);
+//                 //
+//                 // axios.post("/java/delete", {filename: filename}).then((response) => {
+//                 //
+//                 // }).catch((error) => {
+//                 //     console.log(error);
+//                 // });
+//             }
+//         }
+//     }
+// });
+//
 
+$(function(){
+    $.contextMenu({
+        selector: '[data-role="display"]',
+        items: {
+            // <input type="text">
+            name: {
+                name: "Text",
+                type: 'text',
+                value: "Hello World",
+                events: {
+                    keyup: function(e) {
+                        // add some fancy key handling here?
+                        window.console && console.log('key: '+ e.keyCode);
+                    }
+                }
+            },
+            sep1: "---------",
+            // <input type="checkbox">
+            yesno: {
+                name: "Boolean",
+                type: 'checkbox',
+                selected: true
+            },
+            sep2: "---------",
+            // <input type="radio">
+            radio1: {
+                name: "Radio1",
+                type: 'radio',
+                radio: 'radio',
+                value: '1'
+            },
+            radio2: {
+                name: "Radio2",
+                type: 'radio',
+                radio: 'radio',
+                value: '2',
+                selected: true
+            },
+            radio3: {
+                name: "Radio3",
+                type: 'radio',
+                radio: 'radio',
+                value: '3'
+            },
+            radio4: {
+                name: "Radio3",
+                type: 'radio',
+                radio: 'radio',
+                value: '4',
+                disabled: true
+            },
+            sep3: "---------",
+            // <select>
+            select: {
+                name: "Select",
+                type: 'select',
+                options: {1: 'one', 2: 'two', 3: 'three'},
+                selected: 2
+            },
+            // <textarea>
+            area1: {
+                name: "Textarea with height",
+                type: 'textarea',
+                value: "Hello World",
+                height: 40
+            },
+            area2: {
+                name: "Textarea",
+                type: 'textarea',
+                value: "Hello World"
+            },
+            sep4: "---------",
+            key: {
+                name: "Something Clickable",
+                callback: $.noop
+            }
+        },
+        events: {
+            show: function(opt) {
+                // this is the trigger element
+                var $this = this;
+                // import states from data store
+                $.contextMenu.setInputValues(opt, $this.data());
+                // this basically fills the input commands from an object
+                // like {name: "foo", yesno: true, radio: "3", &hellip;}
+            },
+            hide: function(opt) {
+                // this is the trigger element
+                var $this = this;
+                // export states to data store
+                $.contextMenu.getInputValues(opt, $this.data());
+                // this basically dumps the input commands' values to an object
+                // like {name: "foo", yesno: true, radio: "3", &hellip;}
+            }
+        }
+    });
+});
 
 //////////////////////////////////// 폴더 생성 //////////////////////////////////////
 // 폴더명 입력 문자만 입력 가능하도록 처리
@@ -606,51 +753,5 @@ function treeEvent() {
     }
 }
 
-$.contextmenu({
-    selector: '[data-role="display"]',
-    items: {
-        item1: {
-            name: '폴더생성',
-            callback: function (key, options) {
 
-            }
-        },
-        item2: {
-            name: '파일 생성',
-            callback: function (key, options) {
 
-            }
-        },
-        item3: {
-            name: '이름바꾸기',
-            callback: function (key, options) {
-
-            }
-        },
-        item4: {
-            name: 'ZIP 다운로드',
-            callback: function (key, options) {
-
-            }
-        },
-        item5: {
-            name: '파일 삭제',
-            callback: function (key, options) {
-                // 메뉴 아이템을 클릭한 경우의 동작
-                console.log("key", key);
-                console.log("options", options);
-
-                var $trigger = options.$trigger;
-                var filename = $trigger.find('a').attr('href')
-                // span 안의 a 태그의 텍스트를 가져옴
-                console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                axios.post("/java/delete", { filename: filename }).then((response) => {
-
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
-        }
-    }
-});

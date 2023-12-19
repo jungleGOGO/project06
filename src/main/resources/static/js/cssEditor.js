@@ -165,33 +165,38 @@ Split(['#split', '#view'], {
 $.contextMenu({
     selector: '[data-role="display"]',
     items: {
-    item1: {
-    name: '삭제',
-    callback: function (key, options) {
-    // 메뉴 아이템을 클릭한 경우의 동작
-    console.log("key", key);
-    console.log("options", options);
+        item1: {
+            name: '삭제',
+            callback: function (key, options) {
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href');
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
 
-    var $trigger = options.$trigger;
-    var filename = $trigger.find('a').attr('href')
-    // span 안의 a 태그의 텍스트를 가져옴
-    console.log("Clicked on " + key + " for element with filename: " + filename);
+                var confirmed = confirm("정말로 삭제하시겠습니까?");
+                if (confirmed) {
+                    console.log("Confirmed deletion for element with filename: " + filename);
 
-    axios.post("/editor/delete", { filename: filename }).then((response) => {
-    showFileList()
-    console.log("삭제됨");
-}).catch((error) => {
-    console.log(error);
-});
-}
-},
-    item2: {
-    name: '이름 변경',
-    callback: function (key, options) {
-    openRenameFileModal(); // 모달 열기
-}
-}
-}
+                    axios.post("/editor/delete", { filename: filename })
+                        .then((response) => {
+                            showFileList();
+                            console.log("삭제됨");
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                } else {
+                    console.log("Deletion cancelled.");
+                }
+            }
+        },
+        item2: {
+            name: '이름 변경',
+            callback: function (key, options) {
+                openRenameFileModal(); // 모달 열기
+            }
+        }
+    }
 });
 
 <!--파일 확장자를 선택자로 추가해서 파일 만들기-->
@@ -237,9 +242,9 @@ $.contextMenu({
 }
 
     // 사용자가 입력한 파일명과 조합된 확장자를 설정
-    const htmlCode = htmlEditor.value; //html에 입력한 값
-    const cssCode = cssEditor.value;  //css에 입력한 값
-    const jsCode = jsEditor.value;  //js에 입력한 값
+    const htmlCode = htmlEditor.getValue(); //html에 입력한 값
+    const cssCode = cssEditor.getValue();  //css에 입력한 값
+    const jsCode = jsEditor.getValue();  //js에 입력한 값
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
 //Blob는 binary large object의 약자. content는 BLob에 들어갈 데이터를 담은 배열.
@@ -321,20 +326,26 @@ $.contextMenu({
     let jsFile = {'filename': filename, 'content':jsContent};
     let htmlFile = {'filename': filename, 'content':htmlContent};
     let FormDataRequest = {'filename' : filename,'codeContent' : content,'cssfilename':savedCssname,'jsfilename':savedJsname,'htmlfilename':savedFilename,'cssContent':cssContent,'jsContent':jsContent,'htmlContent':htmlContent };
-        axios.post("/editor/get", FormDataRequest) // code 객체를 전달
-    .then((response) => {
-    alert("파일이 성공적으로 저장되었습니다");
-})
-    .catch((error) => {
-    if (error.response && error.response.data) {
-    if (error.response.data.msg) {
-    alert(error.response.data.msg);
-} else {
-    alert(error.response.data);
-}
-} else {
-    console.error("에러:", error.message);
-}
+        axios.post("/editor/get", FormDataRequest)
+            .then((response) => {
+                saveTreeState();
+                $('#tree').remove();
+                loadFileList();
+                alert("파일이 성공적으로 저장되었습니다");
+            })
+            .catch((error) => {
+                console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
+
+                if (error.response && error.response.data) {
+                    if (error.response.data.msg) {
+                        alert(error.response.data.msg);
+                    } else {
+                        alert(JSON.stringify(error.response.data, null, 2)); // 에러 응답 자세히 보기
+                    }
+                } else {
+                    alert("에러 발생! 자세한 내용은 콘솔을 확인해주세요.");
+                    console.error("에러:", error.message);
+                }
 });
 });
 
@@ -360,12 +371,12 @@ $.contextMenu({
 
     //저장소 모달 열기 함수
     function openModal() {
-    document.getElementById('fileListModal').style.display = 'block';
+    document.getElementById('moreNav2').style.display = 'block';
 }
 
     //저장소 모달 닫기 함수
     function closeModal() {
-    document.getElementById('fileListModal').style.display = 'none';
+    document.getElementById('moreNav2').style.display = 'none';
 }
 
 <!--저장소에서 폴더 열림 닫힘 상태 저장하는 스크립트-->
@@ -404,12 +415,13 @@ $.contextMenu({
     // 페이지 로드 시에 실행되도록
     function loadFileList() {
     axios.get('/editor/fileList').then(response => {
+        console.log("실행됨!")
         const fileList = response.data;
+        console.log("결과값:"+fileList);
         // 이미 트리가 있는지 여부 확인하고 없다면 새로운 div요소를 생성하여 해당요소에 트리뷰 추가
         if ($('#pane').find('#tree').length === 0) {
             $('#pane').append('<div id="tree"></div>');
         }
-
 
         // 새로운 파일 목록으로 트리뷰 재구성
         $('#tree').tree({
@@ -519,7 +531,9 @@ $.contextMenu({
         });
     treeArea.addEventListener('dblclick', function(event) {
     const anchor = event.target.closest('a');
+        console.log("폴더파일1:"+anchor)
     const folderAndfile = anchor.getAttribute('href');
+    console.log("폴더파일2:"+folderAndfile)
     htmlEditor.setValue("");
     cssEditor.setValue("");
     jsEditor.setValue("");
@@ -529,7 +543,7 @@ $.contextMenu({
     document.getElementById("downloadName").value = filename;
     console.log("filename")
     console.log(filename)
-    axios.post('/editor/test2', null, {
+    axios.post('/editor/read', null, {
     params: { filename2: folderAndfile }
 })
     .then(response => {
@@ -690,13 +704,13 @@ $.contextMenu({
 
 }
 });
-//     //
-//     // // "직접입력" 값이 변경될 때 처리
-//     // recustomExtension.addEventListener("input", function () {
-//     // // 직접 입력 값을 select's value로 설정
-//     // reextensionSelect.value = recustomEx.value;
-// });
 
+//     // "직접입력" 값이 변경될 때 처리
+//     recustomExtension.addEventListener("input", function () {
+//     // 직접 입력 값을 select's value로 설정
+//     reextensionSelect.value = recustomEx.value;
+// });
+//
 
 <!--링크는 새창으로 띄우게함-->
 
@@ -723,11 +737,12 @@ $.contextMenu({
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
+    console.log(filename)
 
-    // const htmlCode = htmlEditor.value;
-    // const cssCode = cssEditor.value;
-    // const jsCode = jsEditor.value;
-    const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+    const htmlCode2 = htmlEditor.getValue();
+    const cssCode2 = cssEditor.getValue();
+    const jsCode2 = jsEditor.getValue();
+    const content = `<html>\n<head>\n<style>\n${cssCode2}\n</style>\n</head>\n<body>\n${htmlCode2}\n</body>\n<script>\n${jsCode2}\n<\/script>\n</html>`;
     let local = setInterval(saveToLocalStorage, 4000);
 
     if (!isValidFilename(name)) {
@@ -735,7 +750,8 @@ $.contextMenu({
     return; // 추가 실행 중단
 }
     let code = {'filename' : filename,'content' : content };
-
+console.log("filename:"+filename);
+console.log("content:"+content);
     axios.post("/editor/autoSave", code)
     .then((response) => {
     // 서버 응답이 성공한 경우
