@@ -19,11 +19,12 @@ public class CompileController {
     @PostMapping("/compile")
     public Map<String, Object> compileAndRun(@RequestBody Map<String, String> request) {
         String code = request.get("code");
+        String fileName = request.get("fileName");
         LocalDateTime dateTime = LocalDateTime.now();
         String output;
 
         try {
-            output = compileBuilder.compileAndRunCode(code);
+            output = compileBuilder.compileAndRunCode(code,fileName);
 
         } catch (Exception e) {
             output = "Error during execution: " + e.getMessage();

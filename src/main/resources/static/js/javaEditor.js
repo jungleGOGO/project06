@@ -71,7 +71,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
 /////////////////////////////////////// 자바 코드 실행 ////////////////////////////////////////
     function send_compiler() {
     console.log(monaco_test.getValue())
-
+        var fileName = document.getElementById('selectedFileName').textContent;
 
         $("#run").blur();
     $("#output").html("<div style='text-align: center; width: 100%'><div class='spinner-border text-secondary' role='status' >\n" +
@@ -81,7 +81,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     $.ajax({
     type: "POST",
     url: "/compile",
-    data: JSON.stringify({ "code": monaco_test.getValue() }),
+    data: JSON.stringify({ "code": monaco_test.getValue() ,"fileName":fileName}),
     contentType: "application/json",
     success: function(response) {
     $("#output").html(response.output.replace(/\n/g, "<br>"));
