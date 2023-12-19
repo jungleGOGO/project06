@@ -4,55 +4,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     minSize: [0, 200, 0]
 });
 
-///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
-$.contextmenu({
-    selector: '[data-role="display"]',
-    items: {
-        item1: {
-            name: '폴더생성',
-            callback: function (key, options) {
 
-            }
-        },
-        item2: {
-            name: '파일 생성',
-            callback: function (key, options) {
-
-            }
-        },
-        item3: {
-            name: '이름바꾸기',
-            callback: function (key, options) {
-
-            }
-        },
-        item4: {
-            name: 'ZIP 다운로드',
-            callback: function (key, options) {
-
-            }
-        },
-        item5: {
-            name: '파일 삭제',
-            callback: function (key, options) {
-                // 메뉴 아이템을 클릭한 경우의 동작
-                console.log("key", key);
-                console.log("options", options);
-
-                var $trigger = options.$trigger;
-                var filename = $trigger.find('a').attr('href')
-                // span 안의 a 태그의 텍스트를 가져옴
-                console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                axios.post("/java/delete", { filename: filename }).then((response) => {
-
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
-        }
-    }
-});
 
 
 //////////////////////////////////// 폴더 생성 //////////////////////////////////////
@@ -595,8 +547,7 @@ icon2.addEventListener('mouseout', function (){
 // });
 
 
-
-
+///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
 
 function treeEvent() {
     const treeArea = document.querySelector('#tree');
@@ -655,5 +606,51 @@ function treeEvent() {
     }
 }
 
+$.contextmenu({
+    selector: '[data-role="display"]',
+    items: {
+        item1: {
+            name: '폴더생성',
+            callback: function (key, options) {
 
+            }
+        },
+        item2: {
+            name: '파일 생성',
+            callback: function (key, options) {
 
+            }
+        },
+        item3: {
+            name: '이름바꾸기',
+            callback: function (key, options) {
+
+            }
+        },
+        item4: {
+            name: 'ZIP 다운로드',
+            callback: function (key, options) {
+
+            }
+        },
+        item5: {
+            name: '파일 삭제',
+            callback: function (key, options) {
+                // 메뉴 아이템을 클릭한 경우의 동작
+                console.log("key", key);
+                console.log("options", options);
+
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/java/delete", { filename: filename }).then((response) => {
+
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        }
+    }
+});
