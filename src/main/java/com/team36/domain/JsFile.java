@@ -5,10 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Memo {
+@NoArgsConstructor
+public class JsFile {
     private String filename;
-    private String monaco;
-    private String path;
+    private String content;
 }

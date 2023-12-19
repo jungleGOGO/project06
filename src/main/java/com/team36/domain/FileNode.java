@@ -22,9 +22,12 @@ public class FileNode {
 //        System.out.println("text : "+text);
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
 
-//        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+text);
+        // TODO : 경로 수정
+        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+text);
 //        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/storage/"+text);
-        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage"+text);
+//        this.flagUrl = determineFlagUrl("Y:\\storage\\"+text);
+//        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage"+text);
+
 //        System.out.println("flagUrl : "+text);
 
     }

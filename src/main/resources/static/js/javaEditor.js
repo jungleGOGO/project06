@@ -118,8 +118,96 @@ $.contextmenu({
         });
     });
 
+/////////////////////////////////////////////////// 새 파일 생성 /////////////////////////////////////////////////////////////////
+    // 선택된 경로에 따라 새 파일 생성
+    // 중복 파일 처리 해야됨
+    // 어디서 처리?
+    document.getElementById("btn1").addEventListener("click", function() {
+        saveTreeState();
+        let filename = document.getElementById("filename").value;
+        // let monaco =  monaco_test.getValue();
+        // let memo = { 'filename': filename, 'monaco': monaco };
+
+        //
+        const selectedElement = document.querySelector('[data-selected="true"]');
+
+        var anchor;
+        var href;
+        if (selectedElement) {
+            // data-id 값을 추출
+            const dataId = selectedElement.getAttribute('data-id');
+
+            // 선택된 요소 내부의 a 태그
+            anchor = selectedElement.querySelector('a');
+            href = anchor ? anchor.getAttribute('href') : null;
+
+            console.log('Data ID:', dataId);
+            console.log('Href:', href);
+        } else {
+            console.log('선택된 요소가 없습니다.');
+
+            var mid = document.getElementById("user_mid").value;
+            href = '/'+mid
+            console.log('mid : '+href);
+        }
+
+        //현재 선택된 경로
+        let path = href;
+        let dir = { 'filename': filename, 'path': path };
+
+        axios.post("/api/test1", dir).then((response) => {
+            // 저장 후 파일 목록 다시 불러오기
+            $('#tree').remove(); // 트리를 완전히 제거합니다.
+            loadFileList();
+            modal2.style.display = 'none';
+            console.log(response)
+
+        }).catch((error) => {
+            console.log("에러 : "+error.response.data);
+            // console.log("에러 : "+error.response.status);
+            if (error.response.status === 409) {
+                $('#btn1').blur();
+                alert("이미 같은 이름으로 생성된 파일이 존재합니다.")
+            }
+
+        });
+
+    });
+
+//////////////// 새로 생성된 파일 더블클릭 처리 테스트 ////////////////////
+    // function linkDoubleClick(createdFile) {
+    //     console.log('link createdFile : '+createdFile)
+    //     // href 속성이 createdFile과 일치하는 a 태그 찾기
+    //     var link = document.querySelector('a[href="' + createdFile + '"]');
+    //     console.log('link : ',link)
+    //     // 해당 요소가 존재하면 더블클릭 이벤트 발생시키기
+    //     if (link) {
+    //         var dblClickEvent = new MouseEvent('dblclick', {
+    //             bubbles: true,
+    //             cancelable: true,
+    //             view: window
+    //         });
+    //         link.dispatchEvent(dblClickEvent);
+    //     } else {
+    //         console.log('해당 href 값을 가진 a 태그가 없습니다.');
+    //     }
+    // }
+
+
 /////////////////////////////////////// 자바 코드 실행 ////////////////////////////////////////
     function send_compiler() {
+
+        if (document.getElementById('selectedFileName').textContent === '') {
+            alert("파일을 선택해 주세요.");
+            $("#run").blur();
+            return false;
+        }
+        if (!document.getElementById('selectedFileName').textContent.endsWith(".java")) {
+            alert("자바 파일만 실행 가능합니다.")
+            return false;
+        }
+
+
     console.log(monaco_test.getValue())
         var fileName = document.getElementById('selectedFileName').textContent;
 
@@ -145,36 +233,7 @@ $.contextmenu({
 
 
 
-    // 클래스 이름이 "file_name"인 모든 요소를 선택합니다.
-    // const fileListContainer = document.querySelector('#fileListContainer');
-    // const filename2Input = document.getElementById('filename2');
-    // const filename3Input = document.getElementById('downloadName');
-    // fileListContainer.addEventListener('dblclick', (event) => {
-    //     const targetElement = event.target;
-    //     if (targetElement.classList.contains('file_name')) {
-    //         // 파일 경로에서 파일명만 추출하여 filename2Input에 설정
-    //         const filePath = targetElement.textContent;
-    //         const fileName = filePath.split('/').pop();
-    //         filename2Input.value = fileName;
-    //         filename3Input.value = fileName;
-    //
-    //         let filename2 = document.getElementById("filename2").value;
-    //         console.log(filename2)
-    //
-    //         axios.post("/api/test2", null, {
-    //             params: {
-    //                 filename2: filename2
-    //             }
-    //         })  // 객체 형태로 전달
-    //             .then((response) => {
-    //                 console.log(response.data);
-    //                 monaco_test.setValue(response.data.toString());// Monaco 에디터 내용 설정
-    //             })
-    //             .catch((error) => {
-    //                 console.log(error);
-    //             });
-    //     }
-    // });
+
 
 
 
@@ -269,20 +328,6 @@ $.contextmenu({
 
 
 
-    // 저장 버튼 클릭 시 파일을 저장하고 목록을 다시 불러옴
-    document.getElementById("btn1").addEventListener("click", function() {
-    saveTreeState();
-    let filename = document.getElementById("filename").value;
-    let monaco =  monaco_test.getValue();
-    let memo = { 'filename': filename, 'monaco': monaco };
-    axios.post("/api/test1", memo).then((response) => {
-    // 저장 후 파일 목록 다시 불러오기
-    $('#tree').remove(); // 트리를 완전히 제거합니다.
-    loadFileList();
-    }).catch((error) => {
-        console.log(error);
-    });
-    });
 
     function loadFileList() {
     axios.get('/java/fileList').then(response => {
@@ -374,7 +419,7 @@ function convertNode(fileNode, treeData, nodeId) {
                 console.log("filename")
                 console.log(filepath)
                 console.log(filename)
-                axios.post('/api/test2', null, {
+                axios.post('/api/readFile', null, {
                     params: { filename2: filepath }
                 })
                     .then(response => {
@@ -451,7 +496,7 @@ document.getElementById("newFile2").addEventListener("click", function (){
 });
 
 function fileload(filename) {
-    axios.post('/api/test2', null, {
+    axios.post('/api/readFile', null, {
         params: { filename2: filename }
     }).then((response) => {
             const fileContent = response.data;
@@ -503,6 +548,7 @@ window.onclick = function(event) {
 
 btn2.onclick = function() {
     modal2.style.display = 'block';
+    document.getElementById('filename').focus();
 }
 closeBtn2.onclick = function() {
     modal2.style.display = 'none';

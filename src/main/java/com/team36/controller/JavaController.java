@@ -45,31 +45,31 @@ public class JavaController {
         String mid = principal.getName();
         System.out.println("mid : "+mid);
 
-
+        // TODO : 경로 수정
         // 준철
-//      String rootDirectoryPath = "/Users/juncheol/mounttest";
+      String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
 //        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
-//
-//        // File 객체 생성
-//        File targetDirectory = new File(targetDirectoryPath);
-//
-//        // 디렉토리가 존재하지 않으면 생성
-//        if (!targetDirectory.exists()) {
-//            targetDirectory.mkdirs();
-//        }
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
 //        FileNode root = new FileNode("savef", "\\savef");
 
-        // 현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
-        String targetDirectoryPath = rootDirectoryPath + "\\"+mid;
-        FileNode root = new FileNode(mid, "\\"+mid); // 상대 경로 사용
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
+        FileNode root = new FileNode("mid", "/"+mid);
+
+        // File 객체 생성
+        File targetDirectory = new File(targetDirectoryPath);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
+        }
+
 
 
         List<Path> directories = new ArrayList<>();
@@ -125,7 +125,7 @@ public class JavaController {
 
         String mid = principal.getName();
 
-
+        // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
 //        String[] parts = path.split("/");
         String[] parts = path.split("\\\\");

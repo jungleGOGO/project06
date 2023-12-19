@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Memo {
+public class HtmlFile {
     private String filename;
-    private String monaco;
-    private String path;
+    private String content;
 }
