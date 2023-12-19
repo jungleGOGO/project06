@@ -113,7 +113,13 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
             console.log(response)
 
         }).catch((error) => {
-            console.log(error);
+            console.log("에러 : "+error.response.data);
+            // console.log("에러 : "+error.response.status);
+            if (error.response.status === 409) {
+                $('#btn1').blur();
+                alert("이미 같은 이름으로 생성된 파일이 존재합니다.")
+            }
+
         });
 
     });
@@ -146,6 +152,11 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
             $("#run").blur();
             return false;
         }
+        if (!document.getElementById('selectedFileName').textContent.endsWith(".java")) {
+            alert("자바 파일만 실행 가능합니다.")
+            return false;
+        }
+
 
     console.log(monaco_test.getValue())
         var fileName = document.getElementById('selectedFileName').textContent;

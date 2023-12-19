@@ -38,6 +38,7 @@ public class MemoController {
 
         String webPath = memo.getPath(); // 웹 경로 (/user1/dir1 형식)
         // 웹 경로를 파일 시스템 경로로 변환
+        // TODO : 경로 수정
         String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
@@ -54,6 +55,13 @@ public class MemoController {
             directoryPath = file.toPath().getParent().resolve(filename);
         }
         System.out.println("directoryPath : "+directoryPath);
+
+        if (Files.exists(directoryPath)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("파일 생성 실패: 파일이 이미 존재합니다.");
+        }
+
+
         try {
 //            Files.createDirectories(directoryPath);
             OutputStream newFile = new FileOutputStream(directoryPath.toString());
@@ -74,6 +82,7 @@ public class MemoController {
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
 
+        // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
         String filePath = "/Users/juncheol/mounttest" + filename2;
 
@@ -143,7 +152,7 @@ public class MemoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 폴더명입니다.");
         }
 
-
+        // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
         String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
@@ -179,8 +188,8 @@ public class MemoController {
         String monaco = memo.getMonaco();
 
         String mid = principal.getName();
-
-//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename); //
+        // TODO : 경로 수정
+//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
         OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 

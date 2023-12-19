@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @Component
 public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
+    // TODO : 경로 수정
     private final String path = "/Users/juncheol/Desktop/compile/";
 //    private final String path = "D:\\hk\\project\\compile\\";
 
