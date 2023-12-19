@@ -100,20 +100,19 @@ const balloon = document.getElementById('balloon');
 const icon2 = document.getElementById('moreNav');
 const balloon2 = document.getElementById('balloon2');
 
+const icon3 = document.getElementById('more2');
+const balloon3 = document.getElementById('balloon3');
+
 const btn = document.getElementById('popupBtn');
 const modal = document.getElementById('modalWrap');
 const closeBtn = document.getElementById('closeBtn');
 
-const btn2 = document.getElementById('popupBtn2');
-const modal2 = document.getElementById('modalWrap2');
-const closeBtn2 = document.getElementById('closeBtn2');
 
 icon.addEventListener('mouseenter', function (){
     balloon.style.display = 'block';
 })
 
 icon.addEventListener('mouseover', function (){
-    console.log("bye");
     balloon.style.display = 'block';
 })
 
@@ -129,6 +128,14 @@ icon2.addEventListener('click', function (event) {
     }
 });
 
+icon3.addEventListener('click', function (event) {
+    if (balloon3.style.display === 'none') {
+        balloon3.style.display = 'block';
+    } else if (balloon3.style.display === 'block') {
+        balloon3.style.display = 'none';
+    }
+});
+
 btn.onclick = function() {
     modal.style.display = 'block';
 }
@@ -137,26 +144,20 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal || event.target == modal2) {
+    if (event.target == modal) {
         modal.style.display = "none";
     }
 }
 
-btn2.onclick = function() {
-    modal2.style.display = 'block';
-}
-closeBtn2.onclick = function() {
-    modal2.style.display = 'none';
-}
 
 //////////////////////////////////// Split //////////////////////////////////////
 Split(['#top-pane', '#middle-pane', '#bottom-pane'], {
     direction: 'vertical',
-    minSize: [30, 30, 100]
+    minSize: [30, 30, 140]
 });
 
 Split(['#split', '#view'], {
-    sizes: [30,70],
+    sizes: [25,75],
     minSize: [230,0]
 });
 
@@ -296,9 +297,9 @@ $.contextMenu({
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
-    // const htmlCode = htmlCodeEl.value;
-    // const cssCode = cssCodeEl.value;
-    // const jsCode = jsCodeEl.value;
+    const htmlCode = htmlCodeEl.value;
+    const cssCode = cssCodeEl.value;
+    const jsCode = jsCodeEl.value;
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
 
     if (!isValidFilename(name)) {

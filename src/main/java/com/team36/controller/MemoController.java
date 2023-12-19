@@ -29,8 +29,8 @@ public class MemoController {
 
         String mid = principal.getName();
 
-        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -45,12 +45,12 @@ public class MemoController {
     @ResponseBody
     public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
 
-        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
+//        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
 //        String filePath = "\\\\Y:\\storage" + filename2
 
         // 첫번째거 : 새파일(모달창) 만들기 경로 || 두번째거 : 트리에서 파일 불러오는 경로 (현경)
-        // String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
-//        String filePath = "\\\\10.41.0.153\\storage" + filename2;
+//         String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
+        String filePath = "\\\\10.41.0.153\\storage" + filename2;
 
         File file = new File(filePath);
         Path path = Path.of(filePath);

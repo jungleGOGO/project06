@@ -42,6 +42,15 @@ strong {
   font-family: 'GongGothicMedium';
   color:#fff;
 }
+
+.col-form-label {
+  font-family: 'GongGothicMedium';
+}
+
+button {
+  font-family: 'GongGothicMedium';
+}
+
 #logoImage {
   width: 30px!important;
 }
@@ -237,6 +246,11 @@ label{
   cursor: pointer;
 }
 
+#tree {
+  border: 2px solid #555;
+  border-radius: 5px;
+}
+
 #tree a {
   text-decoration: none;
   color: #FFFFFF;
@@ -291,40 +305,6 @@ label{
 
 #modalContent {
   margin-top: 70px;
-}
-
-#modalWrap2 {
-  position: fixed;
-  z-index: 1;
-  padding-top: 150px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-  display: none;
-}
-
-#modalBody2 {
-  width: 600px;
-  height: 500px;
-  padding: 15px 30px;
-  margin: 0 auto;
-  background-color: #1e1e1e;
-  border-radius: 5px;
-}
-
-#closeBtn2 {
-  float:right;
-  font-weight: bold;
-  color: #777;
-  font-size:25px;
-  cursor: pointer;
-}
-
-#modalContent2 {
-  margin-top: 80px;
 }
 
 /*--------------------------------------------------------------
@@ -385,7 +365,7 @@ label{
   /*position: relative;*/
   width: 4px;
   padding-left: 6px;
-  margin-right: 24px;
+  margin-right: 16px;
   /*z-index: 9999;*/
 
 }
@@ -421,6 +401,32 @@ label{
   font-family: 'GongGothicMedium';
 }
 
+#moreNav2 {
+  /*position: relative;*/
+  padding-left: 6px;
+  /*z-index: 9999;*/
+
+}
+
+#balloon-wrap3 {
+  width: 90px;
+  /*top: 38px!important;*/
+  right: 520px!important;
+  position: fixed;
+  z-index: 9999;
+}
+
+#balloon3 {
+  width: 590px;
+  background: #2a2a2a;
+  padding-left: 5px;
+  border-radius: 5px;
+  border: 0.1em solid gray;
+  color:#fff;
+  display: none;
+}
+
+
 #popupBtn {
   font-family: 'GongGothicMedium';
   border-top-right-radius: 0px;
@@ -436,6 +442,12 @@ label{
   margin-left: -6px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
+}
+
+#more2 {
+  font-family: 'GongGothicMedium';
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 .runBtn {
@@ -476,4 +488,24 @@ label{
 #checkCircle {
   padding-top: 9px;
   cursor:default;
+}
+
+#dnsName {
+  margin-top: 15px;
+  margin-left: 20px;
+}
+
+#pane {
+  margin-left: 14px;
+  width: 90%;
+  margin-bottom: 30px;
+}
+
+.gj-list-md-active {
+  background-color: #474747 !important;
+  color: #c7c7c7 !important;
+}
+
+ul.gj-list-md {
+  margin-bottom: 0px;
 }

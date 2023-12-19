@@ -30,7 +30,7 @@
 
 <!--사이드 메뉴 -->
 <div id="iconNav">
-    <a><i class="fa-solid fa-user" style="color:#fff;"></i></a>
+    <a id="icon"><i class="fa-solid fa-user" style="color:#fff;"></i></a>
     <div id="balloon-wrap">
         <ul id="balloon">
             <li><a th:href="@{/java/project}">프로젝트</a></li>
@@ -46,7 +46,7 @@
 </div>
 
 <main>
-    <div class="container-fluid" style=" background-color:black; height: 100%;">
+    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px;">
         <div class="row gx-5 mt-2">
         <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
         <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
@@ -77,7 +77,43 @@
                         </ul>
                     </div>
                 </div>
-                <button type="button" class="btn-sm btn-secondary" id="popupBtn2"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
+                <!-- 파일리스트 (저장소) -->
+                <div id="moreNav2">
+                    <button type="button" class="btn-sm btn-secondary" id="more2"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
+                    <div id="balloon-wrap3" >
+                        <div id="balloon3" style="display: none;">
+                            <p id="dnsName"><strong>저장소</strong>&nbsp;&nbsp;<i class="fa-solid fa-hard-drive" style="color: #7c7d7e;"></i></p>
+                            <div id="pane">
+                                <div id="tree"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--이름변경 모달창-->
+                    <div class="modal" id="renameFileModal" style="display: none; z-index: 9999;">
+                        <div class="modal-content" style="background: black; width: 20%; margin-left: 1427px; padding-left: 43px; padding-right: 43px;">
+                            <div class="row"><p style="padding: 0px;"><span class="close" onclick="closeRenameFileModal()">&times;</span></p></div>
+                            <div class="mb-3 row">
+                                <label for="selectedFile" class="col-sm-4 col-form-label">현재 이름</label>
+                                <input class="col-sm form-control" type="text" id="selectedFile" name="selectedFile" readonly>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="newFilename" class="col-sm-4 col-form-label">변경 이름</label>
+                                <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="reextension" class="col-sm-4 col-form-label">파일확장자</label>
+                                <select class="col-sm form-select" id="reextension">
+                                    <option value=".html">.html</option>
+                                    <option value=".txt">.txt</option>
+                                </select>
+                            </div>
+                            <div class="d-grid mb-3 row">
+                            <button class="btn btn-danger" onclick="renameFile()">변경</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         </div>
@@ -104,40 +140,6 @@
             </div>
         </div>
 
-        <!--파일리스트 모달창-->
-        <div id="modalWrap2">
-            <div id="modalBody2">
-                <span id="closeBtn2">&times;</span>
-                <form class="row g-3" id="modalContent2">
-                    <div id="pane">
-                        <div id="tree"></div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-
-        <!--이름변경 모달창-->
-        <div class="modal" id="renameFileModal" >
-            <div class="modal-content" style="background: black">
-                <span class="close" onclick="closeRenameFileModal()">&times;</span>
-                <label for="selectedFile">현재 이름:</label>
-                <input class="form-label" type="text" id="selectedFile" name="selectedFile" readonly>
-                <label for="newFilename">변경할 이름:</label>
-                <input class="form-label" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
-                <label for="reextension">파일확장자</label>
-                <select id="reextension">
-                    <option value=".html">.html</option>
-                    <option value=".txt">.txt</option>
-                    <option value="">직접입력</option>
-                </select>
-                <div id="recustomExtensionInput" style="display: none;">
-                <label for="recustomExtension">직접입력 확장자</label>
-                <input type="text" id="recustomExtension" name="recustomExtension" placeholder=".html, .txt, ...">
-                </div>
-                <button onclick="renameFile()">변경</button>
-            </div>
-        </div>
 
         <!--도움말 모달창-->
         <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
