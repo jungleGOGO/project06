@@ -43,8 +43,10 @@ public class EditorController {
 @PostMapping("/editor/get")
 @ResponseBody
 public ResponseEntity<String> handleFileUpload(
-        @RequestBody FormDataRequest formDataRequest, Model model) {
-
+        @RequestBody FormDataRequest formDataRequest, Model model, Principal principal) {
+    String mid = principal.getName();
+    String html = "html";
+    String project="project";
     log.info("filename: {}", formDataRequest.getFilename());
     log.info("cssfilename: {}", formDataRequest.getCssfilename());
     log.info("jsfilename: {}", formDataRequest.getJsfilename());
@@ -61,11 +63,19 @@ public ResponseEntity<String> handleFileUpload(
         String cssContent = formDataRequest.getCssContent();
         String jsContent = formDataRequest.getJsContent();
 
-        String filePath = "D:\\kimleeho\\savef\\" + filename;
-        String savedFolderPath = "D:\\kimleeho\\savef\\savedFolder\\";
+        String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+        String savedFolderPath = "//10.41.0.153/storage/" + mid + "/" + project+"/";
+        File targetDirectorys = new File(savedFolderPath);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!targetDirectorys.exists()) {
+            targetDirectorys.mkdirs();
+        }
+
         String savedHtmlname = formDataRequest.getHtmlfilename();  // 수정된 부분
         String savedCssname = formDataRequest.getCssfilename();
         String savedJsname = formDataRequest.getJsfilename();
+        System.out.println("경로확인:"+savedFolderPath+savedHtmlname);
 
 //         중복 파일명 체크 함수
         if (isFileExists(savedFolderPath, savedHtmlname)) {
@@ -91,7 +101,7 @@ public ResponseEntity<String> handleFileUpload(
         }
 
         // 파일 생성 및 쓰기
-        writeFile(filePath, content);
+        writeFile(filePath+filename, content);
         writeFile(savedFolderPath + savedHtmlname, htmlContent);
         writeFile(savedFolderPath + savedCssname, cssContent);
         writeFile(savedFolderPath + savedJsname, jsContent);
@@ -112,6 +122,9 @@ public ResponseEntity<String> handleFileUpload(
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(content);
             fileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외가 발생하면 콘솔에 출력
+            throw e; // 예외를 다시 던져서 상위 메서드로 전파
         }
     }
 
@@ -171,12 +184,14 @@ public ResponseEntity<String> handleFileUpload(
 
     @GetMapping("/editor/fileList")
     @ResponseBody
-    public List<FileNode> fileList(Principal principal) throws Exception {
+    public FileNode fileList(Principal principal) throws Exception {
         String mid = principal.getName();
+        String html = "html";
         System.out.println("mid : "+mid);
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
-                String targetDirectoryPath = rootDirectoryPath + "/"+mid;
-        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+        String targetDirectoryPath = rootDirectoryPath + "\\"+html;
+        System.out.println("target:"+targetDirectoryPath);
+        FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용
 
 //        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
@@ -186,6 +201,13 @@ public ResponseEntity<String> handleFileUpload(
         /*  상대경로는 현재 작업 디렉토리 또는 기준 경로같은 특정 위치에서 시작하여 목표 위치까지의 경로를 상대적으로 설명한다.
   상대경로는 파일이나 디렉토리 간의 상대적인 위치를 나타내기 때문에, 현재 작업 디렉토리가 변경되더라도 해당 위치를 나타내는데 영향 받지 않는다.*/
 
+        // File 객체 생성
+        File targetDirectory = new File(targetDirectoryPath);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
+        }
         //Path는 NIO패키지 인터페이스이며 파일 또는 디렉토리의 경로를 나타내는데 사용.
         List<Path> directories = new ArrayList<>(); // 디렉토리를 저장할 리스트
         List<Path> files = new ArrayList<>(); // 파일을 저장할리스트
@@ -238,14 +260,17 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 상위 디렉토리에 파일 노드 추가
         });
 
-        return root.getChildren();
+        System.out.println("respin"+root.getChildren());
+        return root;
     }
 
 
 //주어진 FileNode 트리에서 특정 경로에 해당하는 노드를 찾거나 새로운 노드를 생성하여 반환하는 역할
     private FileNode findOrCreateNode(FileNode root, String path, boolean isDirectory, Principal principal) {
         String mid = principal.getName();
+        String html="html";
         FileNode current = root; //현재 노드를 루트 노드로 초기화
+        System.out.println("current:"+current);
         String[] parts = path.split("\\\\"); // 주어진 경로를 \로 분할하여 배열로 저장.
 
         // 반복문을 통해 각 경로의 구성요소에 대해 처리. 만약 디렉토리인 경우 모든 구성요소 처리. 파일인 경우에는 마지막 구성요소를 제외하고 처리
@@ -254,12 +279,13 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         */
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i]; // 현재 반복에서 처리할 경로의 일부를 가져온다
-            if (part.isEmpty() || part.equals("savef")) continue;
+            if (part.isEmpty() || part.equals(html)) continue;
 
             // current.getChildren()는 current에 해당하는 FileNode객체의 자식 노드 목록을 가져옴
             Optional<FileNode> found = current.getChildren().stream()
                     .filter(node -> node.getName().equals(part)) // 노드의 이름이 part와 같은지 확인하고 필터링한다.
                     .findFirst(); //필터링된 노드 중 첫번째 것을 선택
+            System.out.println("이건가?:"+found);
             if (found.isPresent()) { // 일치하는 노드가 존재하면 현재 노드를 해당노드로 업데이트
                 current = found.get();
             } else {// 일치하는 노드가 없으면 새로운 노드를 생성
@@ -267,19 +293,22 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 //                새로운 노드를 생성
                 FileNode newNode = new FileNode(part, nodePath);
+                System.out.println("current진짜:"+newNode);
                 current.addChild(newNode);//현재 노드에 새로운 노드를 자식으로 추가
                 current = newNode; //현재 노드를 새로운 노드로 업데이트
             }
         }
+
         return current;
     }
 
     @PostMapping("/editor/delete")
-    public String deleteFile(@RequestBody Map<String, String> payload) throws Exception {
+    public String deleteFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
         String filename = payload.get("filename");
         // 파일 또는 폴더를 삭제할 디렉토리 경로
 //        String rootDirectoryPath = "D:\\kimleeho";
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";;
+        String mid = principal.getName();
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
 //        String rootDirectoryPath = "C:\\kimleeho";
         String filePath = rootDirectoryPath + filename;
 
@@ -308,12 +337,13 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             @RequestParam("currentFilename") String currentFilename,
             @RequestParam("newFilename") String newFilename,
             @RequestParam("currentFolder") String currentFolder,
-            Model model) {
+            Model model,Principal principal) {
         System.out.println("현재 파일 이름: " + currentFilename);
         System.out.println("바꿀 파일 이름: " + newFilename);
         System.out.println("현재 디렉토리: " + currentFolder);
 
-        String rootDirectoryPath = "D:\\kimleeho";
+        String mid = principal.getName();
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+"html";;
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
