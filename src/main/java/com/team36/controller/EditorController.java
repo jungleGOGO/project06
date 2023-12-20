@@ -193,6 +193,7 @@ public ResponseEntity<String> handleFileUpload(
         String html = "html";
         System.out.println("mid : "+mid);
         String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+
         String targetDirectoryPath = rootDirectoryPath + "\\"+html;
         System.out.println("target:"+targetDirectoryPath);
         FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용
@@ -347,7 +348,9 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
+
         String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
+
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);

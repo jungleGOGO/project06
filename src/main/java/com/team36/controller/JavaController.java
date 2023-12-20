@@ -47,7 +47,7 @@ public class JavaController {
 
         // TODO : 경로 수정
         // 준철
-      String rootDirectoryPath = "/Users/juncheol/mounttest";
+//      String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
@@ -57,8 +57,9 @@ public class JavaController {
 //        String rootDirectoryPath = "D:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef";
 //        FileNode root = new FileNode("savef", "\\savef");
-        // 현경
-//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+
+        //현경
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String targetDirectoryPath = rootDirectoryPath + "/"+mid;
         FileNode root = new FileNode("mid", "/"+mid);
 
@@ -69,6 +70,7 @@ public class JavaController {
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
         }
+
 
 
         List<Path> directories = new ArrayList<>();
@@ -93,11 +95,13 @@ public class JavaController {
         directories.sort(pathComparator);
         files.sort(pathComparator);
 
+
         // 디렉토리 노드 추가
         directories.forEach(dir -> {
             String dirRelativePath = dir.toString().substring(rootDirectoryPath.length());
             findOrCreateNode(root, dirRelativePath, true,principal);
         });
+
 
         // 파일 노드 추가
         files.forEach(file -> {
@@ -107,7 +111,10 @@ public class JavaController {
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
         });
 
-//        System.out.println(root.getChildren());
+
+
+        System.out.println(root.getChildren());
+
 //        return root;
 //        return root;
         return root.getChildren();
@@ -121,10 +128,11 @@ public class JavaController {
 
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
-        String[] parts = path.split("/");
 //        String[] parts = path.split("/");
+        String[] parts = path.split("\\\\");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
+
             if (part.isEmpty() || part.equals(mid)) continue;
 
 
@@ -133,15 +141,18 @@ public class JavaController {
                     .findFirst();
             if (found.isPresent()) {
                 current = found.get();
+
             } else {
 
-                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+//                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
                 current = newNode;
             }
         }
+
         return current;
     }
     @GetMapping("/download-zip")

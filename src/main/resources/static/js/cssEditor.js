@@ -247,6 +247,7 @@ $.contextMenu({
                     } else {
                         console.log("Deletion cancelled.");
                     }
+
                 }
             }
         },
@@ -442,11 +443,13 @@ $.contextMenu({
     //저장소 모달 열기 함수
     function openModal() {
     document.getElementById('balloon3').style.display = 'block';
+
 }
 
     //저장소 모달 닫기 함수
     function closeModal() {
         modal.style.display = 'none';
+
 }
 
 <!--저장소에서 폴더 열림 닫힘 상태 저장하는 스크립트-->
