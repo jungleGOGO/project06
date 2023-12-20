@@ -190,7 +190,7 @@ public ResponseEntity<String> handleFileUpload(
         String mid = principal.getName();
         String html = "html";
         System.out.println("mid : "+mid);
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+        String rootDirectoryPath = "//10.41.0.153/storage/"+mid;
         String targetDirectoryPath = rootDirectoryPath + "\\"+html;
         System.out.println("target:"+targetDirectoryPath);
         FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용

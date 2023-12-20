@@ -4,156 +4,6 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     minSize: [0, 200, 0]
 });
 
-
-//////////////////////////////////// 우클릭 메뉴(contextmenu) //////////////////////////////////////
-// $.contextmenu({
-//     selector: '[data-role="display"]',
-//     items: {
-//         item1: {
-//             name: '폴더생성',
-//             callback: function (key, options) {
-//
-//             }
-//         },
-//         item2: {
-//             name: '파일 생성',
-//             callback: function (key, options) {
-//
-//             }
-//         },
-//         item3: {
-//             name: '이름바꾸기',
-//             callback: function (key, options) {
-//
-//             }
-//         },
-//         item4: {
-//             name: 'ZIP 다운로드',
-//             callback: function (key, options) {
-//
-//             }
-//         },
-//         item5: {
-//             name: '파일 삭제',
-//             callback: function (key, options) {
-//                 // // 메뉴 아이템을 클릭한 경우의 동작
-//                 // console.log("key", key);
-//                 // console.log("options", options);
-//                 //
-//                 // var $trigger = options.$trigger;
-//                 // var filename = $trigger.find('a').attr('href')
-//                 // // span 안의 a 태그의 텍스트를 가져옴
-//                 // console.log("Clicked on " + key + " for element with filename: " + filename);
-//                 //
-//                 // axios.post("/java/delete", {filename: filename}).then((response) => {
-//                 //
-//                 // }).catch((error) => {
-//                 //     console.log(error);
-//                 // });
-//             }
-//         }
-//     }
-// });
-//
-
-$(function(){
-    $.contextMenu({
-        selector: '[data-role="display"]',
-        items: {
-            // <input type="text">
-            name: {
-                name: "Text",
-                type: 'text',
-                value: "Hello World",
-                events: {
-                    keyup: function(e) {
-                        // add some fancy key handling here?
-                        window.console && console.log('key: '+ e.keyCode);
-                    }
-                }
-            },
-            sep1: "---------",
-            // <input type="checkbox">
-            yesno: {
-                name: "Boolean",
-                type: 'checkbox',
-                selected: true
-            },
-            sep2: "---------",
-            // <input type="radio">
-            radio1: {
-                name: "Radio1",
-                type: 'radio',
-                radio: 'radio',
-                value: '1'
-            },
-            radio2: {
-                name: "Radio2",
-                type: 'radio',
-                radio: 'radio',
-                value: '2',
-                selected: true
-            },
-            radio3: {
-                name: "Radio3",
-                type: 'radio',
-                radio: 'radio',
-                value: '3'
-            },
-            radio4: {
-                name: "Radio3",
-                type: 'radio',
-                radio: 'radio',
-                value: '4',
-                disabled: true
-            },
-            sep3: "---------",
-            // <select>
-            select: {
-                name: "Select",
-                type: 'select',
-                options: {1: 'one', 2: 'two', 3: 'three'},
-                selected: 2
-            },
-            // <textarea>
-            area1: {
-                name: "Textarea with height",
-                type: 'textarea',
-                value: "Hello World",
-                height: 40
-            },
-            area2: {
-                name: "Textarea",
-                type: 'textarea',
-                value: "Hello World"
-            },
-            sep4: "---------",
-            key: {
-                name: "Something Clickable",
-                callback: $.noop
-            }
-        },
-        events: {
-            show: function(opt) {
-                // this is the trigger element
-                var $this = this;
-                // import states from data store
-                $.contextMenu.setInputValues(opt, $this.data());
-                // this basically fills the input commands from an object
-                // like {name: "foo", yesno: true, radio: "3", &hellip;}
-            },
-            hide: function(opt) {
-                // this is the trigger element
-                var $this = this;
-                // export states to data store
-                $.contextMenu.getInputValues(opt, $this.data());
-                // this basically dumps the input commands' values to an object
-                // like {name: "foo", yesno: true, radio: "3", &hellip;}
-            }
-        }
-    });
-});
-
 //////////////////////////////////// 폴더 생성 //////////////////////////////////////
 // 폴더명 입력 문자만 입력 가능하도록 처리
     function validateInput(input) {
@@ -696,62 +546,79 @@ icon2.addEventListener('mouseout', function (){
 
 ///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
 
+$.contextMenu({
+    selector: '[data-role="display"]',
+    items: {
+        item1: {
+            name: '삭제',
+            callback: function (key, options) {
+                // 메뉴 아이템을 클릭한 경우의 동작
+                console.log("key", key);
+                console.log("options", options);
+
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/api/deleteFile", { filename: filename }).then((response) => {
+                    $('#tree').remove();
+                    loadFileList();
+                    console.log("삭제됨");
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        },
+        item2: {
+            name: '이름 변경',
+            callback: function (key, options) {
+                openRenameFileModal(); // 모달 열기
+            }
+        }
+    }
+});
+
+
 function treeEvent() {
     const treeArea = document.querySelector('#tree');
-
     // a태그일 경우 href로 이동하는 이벤트를 막음
     treeArea.addEventListener('click', function (event) {
         if (event.target.closest('a')) {
             event.preventDefault();
         }
     });
-
     //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
     treeArea.addEventListener('contextmenu', function (event) {
         const anchor2 = event.target.closest('a');
         if (anchor2) {
             event.preventDefault();
             const filename = anchor2.textContent.trim();
-            console.log(filename);
             handleFileSelection(filename);
             rehandleFileSelection(anchor2.getAttribute("href"));
             console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
         }
     });
-
-    let selectedFile = null;
-
-    function handleFileSelection(filename) {
-        selectedFile = filename;
-        // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
-    }
-
-    <!--우클릭으로 이름변경시 값을 추출-->
-    let reselectedFile = null;
-
-    function rehandleFileSelection(anchor2) {
-        if (selectedFile) {
-            reselectedFile = anchor2;
-
-            return reselectedFile;
-            // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
-        }
-    }
-
-    // 현재 선택된 파일의 이름을 가져오는 함수 (수정이 필요할 수 있음)
-    function getSelectedFile() {
-        if (selectedFile) {
-            return selectedFile;
-        } else {
-            const selectedNode = document.querySelector('#tree [data-role="node"][data-selected="true"]');
-            if (selectedNode) {
-                return selectedNode.textContent.trim();
-            } else {
-                return null;
-            }
-        }
-    }
 }
 
 
+<!--선택한 파일 이름을 받음-->
+let selectedFile = null;
 
+function handleFileSelection(filename) {
+    selectedFile = filename;
+    // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
+}
+
+
+<!--우클릭으로 이름변경시 값을 추출-->
+let reselectedFile = null;
+
+function rehandleFileSelection(anchor2) {
+    if (selectedFile) {
+        reselectedFile = anchor2;
+
+        return reselectedFile;
+        // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+    }
+}

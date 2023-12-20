@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -85,12 +87,8 @@ public class MemoController {
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
         String filePath = "/Users/juncheol/mounttest" + filename2;
-
 //        String filePath = "\\\\Y:\\storage" + filename2
 
-        // 첫번째거 : 새파일(모달창) 만들기 경로 || 두번째거 : 트리에서 파일 불러오는 경로 (현경)
-//         String filePath  = "\\\\10.41.0.153\\storage\\user1\\"+ filename2;
-//        String filePath = "\\\\10.41.0.153\\storage" + filename2;
 
         File file = new File(filePath);
         Path path = Path.of(filePath);
@@ -200,4 +198,28 @@ public class MemoController {
         log.info("content : "+monaco);
         return filename;
     }
+
+    @PostMapping("/deleteFile")
+    public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
+        String filename = payload.get("filename");
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String filePath = rootDirectoryPath +filename;
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists()) {
+            // 디렉토리인 경우 내용물을 먼저 삭제
+            if (fileToDelete.isDirectory()) {
+                FileSystemUtils.deleteRecursively(fileToDelete);
+            } else {
+                // 파일인 경우 바로 삭제
+                fileToDelete.delete();
+            }
+            System.out.println("삭제 성공: " + filePath);
+        } else {
+            System.out.println("삭제할 파일 또는 폴더가 존재하지 않습니다: " + filePath);
+            //
+        }
+        return "redirect:/java/project";
+    }
+
 }
