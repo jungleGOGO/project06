@@ -94,18 +94,18 @@ data-checked:
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
 
-const icon = document.getElementById('iconNav');
+const icon = document.getElementById('iconNav'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
-const icon2 = document.getElementById('moreNav');
-const balloon2 = document.getElementById('balloon2');
+const icon2 = document.getElementById('moreNav'); //저장버튼 옆에 ... 버튼
+const balloon2 = document.getElementById('balloon2');// ...버튼 안의 버튼들
 
-const icon3 = document.getElementById('more2');
-const balloon3 = document.getElementById('balloon3');
+const icon3 = document.getElementById('more2'); //저장소 버튼
+const balloon3 = document.getElementById('balloon3'); //저장소 창
 
-const btn = document.getElementById('popupBtn');
-const modal = document.getElementById('modalWrap');
-const closeBtn = document.getElementById('closeBtn');
+const btn = document.getElementById('popupBtn'); //저장 버튼
+const modal = document.getElementById('modalWrap'); //저장 모달창
+const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 버튼
 
 
 icon.addEventListener('mouseenter', function (){
@@ -122,19 +122,73 @@ icon.addEventListener('mouseout', function (){
 
 icon2.addEventListener('click', function (event) {
     if (balloon2.style.display === 'none') {
+        balloon3.style.display='none';
         balloon2.style.display = 'block';
     } else if (balloon2.style.display === 'block') {
         balloon2.style.display = 'none';
     }
 });
 
-icon3.addEventListener('click', function (event) {
+// 이벤트 핸들러 함수 정의
+function handleIcon3Click(event) {
+
+    console.log('handleIcon3Click called');
     if (balloon3.style.display === 'none') {
         balloon3.style.display = 'block';
+        balloon2.style.display = 'none';
+        // 클릭 이벤트가 document까지 전파되지 않도록 중지
     } else if (balloon3.style.display === 'block') {
         balloon3.style.display = 'none';
     }
+}
+
+// function handleDocumentClick(event) {
+//
+//     var balloonWrap = document.getElementById('closeall')
+//
+//     // 클릭된 요소가 balloon-wrap3 외부이면서
+//     // balloon-wrap3 내부의 자식 요소도 아니며 balloon3이 block 상태인 경우에만 display를 none으로 변경
+//     if (!balloonWrap.contains(event.target) && event.target !== balloonWrap && balloon3.style.display === 'block') {
+//         balloon3.style.display = 'none';
+//     }
+// }
+
+document.addEventListener('click', function (event) {
+    // 부트스트랩 모달과 관련된 처리
+
+    // 직접 구현한 "balloon"과 관련된 처리
+    var balloonWrap = document.getElementById('balloon-wrap3');
+    var balloon = document.getElementById('balloon3');
+
+    // 추가된 부분: tree 요소와 그 하위 요소들에 대한 처리
+    var tree = document.getElementById('tree');
+    var chevronRightIcon = document.querySelector('.gj-icon.chevron-right'); // 추가된 부분
+    var chevronDownIcon = document.querySelector('.gj-icon.chevron-down'); // 추가된 부분
+
+    if (tree && tree.contains(event.target)) {
+        return; // tree 요소 또는 하위 요소가 클릭되면 아무 동작도 하지 않음
+    }
+
+
+  // 추가된 부분
+        // tree 요소를 클릭한 경우와 chevron 아이콘을 클릭한 경우에 대한 처리 추가
+        if (!balloonWrap.contains(event.target) && event.target !== icon3 && event.target !== chevronRightIcon && event.target !== chevronDownIcon && balloon.style.display === 'block') {
+            balloon.style.display = 'none';
+        }
 });
+
+// tree 요소 내부의 chevron 아이콘에 대한 클릭 이벤트 처리
+document.getElementById('tree').addEventListener('click', function(event) {
+    var chevronRightIcon = event.target.closest('.gj-icon.chevron-right');
+    var chevronDownIcon = event.target.closest('.gj-icon.chevron-down');
+    if (chevronRightIcon || chevronDownIcon) {
+        event.stopPropagation(); // 이벤트 전파 막기
+    }
+});
+
+icon3.addEventListener('click', handleIcon3Click);
+// document.addEventListener('click', handleDocumentClick);
+
 
 btn.onclick = function() {
     modal.style.display = 'block';
@@ -144,7 +198,7 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal) {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
 }
@@ -163,37 +217,52 @@ Split(['#split', '#view'], {
 
 //마우스 우클릭으로 여는 메뉴
 $.contextMenu({
-    selector: '[data-role="display"]',
+    selector: '[data-role="node"]',
     items: {
         item1: {
             name: '삭제',
             callback: function (key, options) {
                 var $trigger = options.$trigger;
                 var filename = $trigger.find('a').attr('href');
-                // span 안의 a 태그의 텍스트를 가져옴
-                console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                var confirmed = confirm("정말로 삭제하시겠습니까?");
-                if (confirmed) {
-                    console.log("Confirmed deletion for element with filename: " + filename);
-
-                    axios.post("/editor/delete", { filename: filename })
-                        .then((response) => {
-                            showFileList();
-                            console.log("삭제됨");
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
+                var dataId = $trigger.attr('data-id');
+                console.log("dataId 뜨나?" + dataId)
+                if (dataId === '1') {
+                    alert("해당 파일 변경에 대한 권한이 없습니다.")
                 } else {
-                    console.log("Deletion cancelled.");
+                    // span 안의 a 태그의 텍스트를 가져옴
+                    console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                    var confirmed = confirm("정말로 삭제하시겠습니까?");
+                    if (confirmed) {
+                        console.log("Confirmed deletion for element with filename: " + filename);
+
+                        axios.post("/editor/delete", {filename: filename})
+                            .then((response) => {
+                                showFileList();
+                                console.log("삭제됨");
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    } else {
+                        console.log("Deletion cancelled.");
+                    }
                 }
             }
         },
         item2: {
             name: '이름 변경',
             callback: function (key, options) {
-                openRenameFileModal(); // 모달 열기
+                var $trigger = options.$trigger;
+                var dataId = $trigger.attr('data-id');
+                console.log("dataId 뜨나?"+dataId)
+                // data-id가 1이 아닌 경우에만 동작 수행
+                if (dataId !== '1') {
+                    console.log("여기까지 들어는 와짐?"+dataId)
+                    openRenameFileModal(); // 모달 열기
+                }else {
+                    alert("해당 파일 변경에 대한 권한이 없습니다.")
+                }
             }
         }
     }
@@ -372,7 +441,7 @@ $.contextMenu({
 
     //저장소 모달 열기 함수
     function openModal() {
-    document.getElementById('moreNav2').style.display = 'block';
+    document.getElementById('balloon3').style.display = 'block';
 }
 
     //저장소 모달 닫기 함수
@@ -517,7 +586,7 @@ $.contextMenu({
         treeArea.addEventListener('contextmenu', function(event) {
             const displayElement = event.target.closest('[data-role="node"]');
 
-            if (displayElement) {
+            if (displayElement && displayElement.dataset.id !== '1') {
                 event.preventDefault();
 
                 // 이전에 선택된 요소의 클래스와 속성 초기화
@@ -528,8 +597,18 @@ $.contextMenu({
                 $(displayElement).attr('data-selected', 'true');
 
                 // 추가로 필요한 로직을 수행
+                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
+                console.log('Additional logic for data-id not equal to 1');
+            } else {
+                // displayElement가 없거나 dataset.id가 '1'인 경우의 로직
+                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
+                console.log('Additional logic for data-id equal to 1 or no displayElement');
+
+                // 초기화 로직
+                $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
             }
         });
+
     treeArea.addEventListener('dblclick', function(event) {
     const anchor = event.target.closest('a');
         console.log("폴더파일1:"+anchor)
@@ -616,10 +695,13 @@ $.contextMenu({
 <!--파일 이름 바꾸는 스크립트-->
     // 모달 열기 함수
     function openRenameFileModal() {
+
     const selectedFile = getSelectedFile();
+        console.log("selectedFile1:"+selectedFile);
     if (selectedFile) {
     document.getElementById('selectedFile').value = selectedFile;
-    document.getElementById('renameFileModal').style.display = 'block';
+    console.log("selectedFile값:"+selectedFile)
+        document.getElementById('renameFileModal').style.display = 'block';
 } else {
     alert('파일을 선택해주세요.');
 }
@@ -638,6 +720,8 @@ $.contextMenu({
 }
 }
 }
+
+
 
     // 모달 닫기 함수
     function closeRenameFileModal() {
