@@ -1,5 +1,6 @@
 package com.team36.controller;
 
+import com.team36.domain.Code;
 import com.team36.domain.Directory;
 import com.team36.domain.Memo;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.security.Principal;
+import java.util.Set;
+import java.util.stream.Stream;
 import java.util.Map;
 
 @Controller
@@ -48,6 +54,22 @@ public class MemoController {
         String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
+        System.out.println("chk filePath : " + baseDir+mid);
+
+        long count=0;
+        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid))) {
+            count = files.count();
+            System.out.println("파일/디렉토리 개수: " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 파일/폴더 30개 제한
+        if (count>30){
+            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
+                    .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
+        }
+
+
 
         Path directoryPath;
 
@@ -66,19 +88,41 @@ public class MemoController {
                     .body("파일 생성 실패: 파일이 이미 존재합니다.");
         }
 
+//      기존 파일 생성 처리 부분
+//        try {
+////            Files.createDirectories(directoryPath);
+//            OutputStream newFile = new FileOutputStream(directoryPath.toString());
+//            byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
+//            newFile.write(bt);
+//            newFile.close();
+//            return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("파일 생성 실패: " + e.getMessage());
+//        }
 
+        //파일 생성시 권한 777 부여
         try {
-//            Files.createDirectories(directoryPath);
-            OutputStream newFile = new FileOutputStream(directoryPath.toString());
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+
+            Path filePermission = Files.createFile(directoryPath, attr);
+
+//            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+            Files.setPosixFilePermissions(filePermission, perms);
+
+
+            OutputStream newFile = new FileOutputStream(filePermission.toFile());
             byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
             newFile.write(bt);
+
+
             newFile.close();
             return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 생성 실패: " + e.getMessage());
         }
-
 
     }
 
@@ -89,9 +133,9 @@ public class MemoController {
 
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
-//        String filePath = "/Users/juncheol/mounttest" + filename2;
+        String filePath = "/Users/juncheol/mounttest" + filename2;
 //        String filePath = "\\\\Y:\\storage" + filename2;
-        String filePath = "\\\\10.41.0.153\\storage" +filename2;
+//        String filePath = "\\\\10.41.0.153\\storage" +filename2;
 
 
         File file = new File(filePath);
@@ -142,10 +186,11 @@ public class MemoController {
 
     //폴더 생성
     @PostMapping("/mkdir")
-    public ResponseEntity<?>  createDirectory(@RequestBody Directory directory) {
+    public ResponseEntity<?>  createDirectory(@RequestBody Directory directory, Principal principal) {
 
         String webPath = directory.getPath(); // 웹 경로 (/user1/dir1 형식)
         String mkdirname = directory.getMkdirname(); // 생성할 디렉토리 이름
+        String mid = principal.getName();
 
         if (mkdirname.contains("..") || mkdirname.contains("/") || mkdirname.contains("\\") ||
                 mkdirname.contains(":") || mkdirname.contains("*") || mkdirname.contains("?") ||
@@ -161,6 +206,20 @@ public class MemoController {
 //        String baseDir = "\\\\Y:\\storage";
         String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
+
+        long count=0;
+        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid))) {
+            count = files.count();
+            System.out.println("파일/디렉토리 개수: " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 파일/폴더 30개 제한
+        if (count>30){
+            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
+                    .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
+        }
+
 
 
         Path directoryPath;
@@ -261,4 +320,41 @@ public class MemoController {
 
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
     }
+
+
+    // 파일 저장 버튼
+    @PostMapping("/saveFile")
+    public ResponseEntity<String> saveFile(@RequestBody Code code, Principal principal) {
+
+        String mid = principal.getName();
+
+        // TODO : 경로 수정
+        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+//        String baseDir = "\\\\Y:\\storage";
+//        String baseDir = "\\\\10.41.0.153\\storage";
+        String filePath = baseDir + code.getFilename().replace("/", File.separator);
+
+
+
+        System.out.println(code.getFilename());
+        System.out.println(code.getContent());
+        System.out.println("save filePath : "+filePath);
+        try {
+            Path path = Paths.get(filePath);
+
+            // 파일 존재 여부 확인
+            if (!Files.exists(path)) {
+                return ResponseEntity.badRequest().body("파일이 존재하지 않습니다.");
+            }
+
+            // 파일에 내용 쓰기
+            Files.write(path, code.getContent().getBytes());
+
+            return ResponseEntity.ok("파일 저장 완료");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("파일 저장 실패: " + e.getMessage());
+        }
+    }
+
 }
