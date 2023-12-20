@@ -12,6 +12,7 @@ public class FileNode {
     private String text;
     private List<FileNode> children;
     private String flagUrl;
+    private String mid;
 
 
 

@@ -74,6 +74,7 @@
                             <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
+
                         </ul>
                     </div>
                 </div>
@@ -86,6 +87,24 @@
                             <div id="pane">
                                 <div id="tree"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="modalWrap2">
+                        <div id="modalBody2">
+                            <span id="closeBtn2">&times;</span>
+                            <form class="row g-3" id="modalContent2">
+                                <div class="col-auto">
+                                    <strong>폴더명</strong>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" >
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" id="mkdir2" class="btn btn-secondary mb-3" style="font-family: 'GongGothicMedium';">폴더 생성</button>
+                                </div>
+                            </form>
+                            <p id="infoModal">* 선택한 위치 기준으로 생성</p>
                         </div>
                     </div>
 

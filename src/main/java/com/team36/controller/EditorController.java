@@ -4,8 +4,10 @@ import com.team36.domain.*;
 import com.team36.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 @Log4j2
@@ -40,7 +44,7 @@ public class EditorController {
     //ResponseEntity는 상태코드, 헤더, 본문 등을 세밀하게 제어가능
     //ResponseBody는 메서드가 직접 응답의 본문만을 반환한다
     //클라이언트에서 객체 형식으로 데이터를 보냈을때는 @RequestParam보다는 @RequestBody를 사용한다.
-@PostMapping("/editor/get")
+@PostMapping("/editor/save")
 @ResponseBody
 public ResponseEntity<String> handleFileUpload(
         @RequestBody FormDataRequest formDataRequest, Model model, Principal principal) {
@@ -78,21 +82,6 @@ public ResponseEntity<String> handleFileUpload(
         System.out.println("경로확인:"+savedFolderPath+savedHtmlname);
 
 //         중복 파일명 체크 함수
-        if (isFileExists(savedFolderPath, savedHtmlname)) {
-            String msg = "해당 파일명으로 저장하실 수 없습니다.1(파일명 중복)";
-            model.addAttribute("msg", msg);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
-        if (isFileExists(savedFolderPath, savedCssname)) {
-            String msg = "해당 파일명으로 저장하실 수 없습니다.2(파일명 중복)";
-            model.addAttribute("msg", msg);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
-        if (isFileExists(savedFolderPath, savedJsname)) {
-            String msg = "해당 파일명으로 저장하실 수 없습니다.3(파일명 중복)";
-            model.addAttribute("msg", msg);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
 
         if (isFileExists(filePath,filename)) {
             String msg = "해당 파일명으로 저장하실 수 없습니다.4(파일명 중복)";
@@ -102,9 +91,6 @@ public ResponseEntity<String> handleFileUpload(
 
         // 파일 생성 및 쓰기
         writeFile(filePath+filename, content);
-        writeFile(savedFolderPath + savedHtmlname, htmlContent);
-        writeFile(savedFolderPath + savedCssname, cssContent);
-        writeFile(savedFolderPath + savedJsname, jsContent);
 
         return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
     } catch (IOException e) {
@@ -188,7 +174,7 @@ public ResponseEntity<String> handleFileUpload(
 
     @GetMapping("/editor/fileList")
     @ResponseBody
-    public FileNode fileList(Principal principal) throws Exception {
+    public List<FileNode> fileList(Principal principal) throws Exception {
         String mid = principal.getName();
         String html = "html";
         System.out.println("mid : "+mid);
@@ -252,21 +238,21 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         // 디렉토리 노드 추가
         directories.forEach(dir -> {
             //디렉토리의 상대경로를 계산. rootDirectory는 루트 디렉토리의 경로이며 이를 기준으로 디렉토리의 상대경로를 계산한다.
-            String dirRelativePath = dir.toString().substring(rootDirectoryPath.length());
+            String dirRelativePath = dir.toString().substring(targetDirectoryPath.length());
 //           트리에 디렉토리 노드를추가하거나 이미 존재하는 노드를 찾는다. true는 디렉토리라는 것을 나타낸다
             findOrCreateNode(root, dirRelativePath, true,principal);
         });
 
         // 파일 노드 추가
         files.forEach(file -> {
-            String fileRelativePath = file.toString().substring(rootDirectoryPath.length());//파일의 상대 경로를 계산
+            String fileRelativePath = file.toString().substring(targetDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 상위 디렉토리에 파일 노드 추가
         });
 
         System.out.println("respin"+root.getChildren());
-        return root;
+        return root.getChildren();
     }
 
 
@@ -307,13 +293,16 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         return current;
     }
 
+
+
     @PostMapping("/editor/delete")
     public String deleteFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
         String filename = payload.get("filename");
+        String html = "html";
         // 파일 또는 폴더를 삭제할 디렉토리 경로
 //        String rootDirectoryPath = "D:\\kimleeho";
         String mid = principal.getName();
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+html;
 //        String rootDirectoryPath = "C:\\kimleeho";
         String filePath = rootDirectoryPath + filename;
 
@@ -436,5 +425,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         }
     }
 }
+
+
 
 

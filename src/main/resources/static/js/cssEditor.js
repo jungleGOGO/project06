@@ -107,6 +107,8 @@ const btn = document.getElementById('popupBtn'); //저장 버튼
 const modal = document.getElementById('modalWrap'); //저장 모달창
 const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 버튼
 
+const modal2 = document.getElementById('modalWrap2');
+const closeBtn2 = document.getElementById('closeBtn2');
 
 icon.addEventListener('mouseenter', function (){
     balloon.style.display = 'block';
@@ -128,6 +130,10 @@ icon2.addEventListener('click', function (event) {
         balloon2.style.display = 'none';
     }
 });
+
+closeBtn2.onclick = function() {
+    modal2.style.display = 'none';
+}
 
 // 이벤트 핸들러 함수 정의
 function handleIcon3Click(event) {
@@ -216,54 +222,92 @@ Split(['#split', '#view'], {
 });
 
 //마우스 우클릭으로 여는 메뉴
+// $.contextMenu({
+//     selector: '[data-role="node"]',
+//     items: {
+//         item1: {
+//             name: '삭제',
+//             callback: function (key, options) {
+//                 var $trigger = options.$trigger;
+//                 var filename = $trigger.find('a').attr('href');
+//                 var dataId = $trigger.attr('data-id');
+//                 console.log("dataId 뜨나?" + dataId)
+//                     // span 안의 a 태그의 텍스트를 가져옴
+//                     console.log("Clicked on " + key + " for element with filename: " + filename);
+//
+//                     var confirmed = confirm("정말로 삭제하시겠습니까?");
+//                     if (confirmed) {
+//                         console.log("Confirmed deletion for element with filename: " + filename);
+//
+//                         axios.post("/editor/delete", {filename: filename})
+//                             .then((response) => {
+//                                 showFileList();
+//                                 console.log("삭제됨");
+//                             })
+//                             .catch((error) => {
+//                                 console.log(error);
+//                             });
+//                     } else {
+//                         console.log("Deletion cancelled.");
+//                     }
+//
+//
+//             }
+//         },
+//         item2: {
+//             name: '이름 변경',
+//             callback: function (key, options) {
+//                 var $trigger = options.$trigger;
+//                 var dataId = $trigger.attr('data-id');
+//                 console.log("dataId 뜨나?"+dataId)
+//                 // data-id가 1이 아닌 경우에만 동작 수행
+//                     console.log("여기까지 들어는 와짐?"+dataId)
+//                     openRenameFileModal(); // 모달 열기
+//
+//             }
+//         }
+//     }
+// });
+
+
 $.contextMenu({
-    selector: '[data-role="node"]',
+    selector: '[data-role="display"]',
     items: {
         item1: {
-            name: '삭제',
+            name: '폴더 생성',
             callback: function (key, options) {
-                var $trigger = options.$trigger;
-                var filename = $trigger.find('a').attr('href');
-                var dataId = $trigger.attr('data-id');
-                console.log("dataId 뜨나?" + dataId)
-                if (dataId === '1') {
-                    alert("해당 파일 변경에 대한 권한이 없습니다.")
-                } else {
-                    // span 안의 a 태그의 텍스트를 가져옴
-                    console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                    var confirmed = confirm("정말로 삭제하시겠습니까?");
-                    if (confirmed) {
-                        console.log("Confirmed deletion for element with filename: " + filename);
-
-                        axios.post("/editor/delete", {filename: filename})
-                            .then((response) => {
-                                showFileList();
-                                console.log("삭제됨");
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    } else {
-                        console.log("Deletion cancelled.");
-                    }
-
-                }
+                console.log("key", key);
+                console.log("options", options);
+                modal2.style.display = 'block';
             }
         },
         item2: {
             name: '이름 변경',
             callback: function (key, options) {
+                console.log(key);
+                console.log(options);
+                openRenameFileModal(); // 모달 열기
+            }
+        },
+        item3: {
+            name: '삭제',
+            callback: function (key, options) {
+                // 메뉴 아이템을 클릭한 경우의 동작
+                console.log("key", key);
+                console.log("options", options);
+
                 var $trigger = options.$trigger;
-                var dataId = $trigger.attr('data-id');
-                console.log("dataId 뜨나?"+dataId)
-                // data-id가 1이 아닌 경우에만 동작 수행
-                if (dataId !== '1') {
-                    console.log("여기까지 들어는 와짐?"+dataId)
-                    openRenameFileModal(); // 모달 열기
-                }else {
-                    alert("해당 파일 변경에 대한 권한이 없습니다.")
-                }
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/api/deleteFile", { filename: filename }).then((response) => {
+                    $('#tree').remove();
+                    loadFileList();
+                    console.log("삭제됨");
+                }).catch((error) => {
+                    console.log(error);
+                });
             }
         }
     }
@@ -296,47 +340,71 @@ $.contextMenu({
 });
 
 <!--다운로드 버튼 작동하는 스크립트-->
-
-    document.getElementById("saveBtn").addEventListener("click", () => {
-
-    let filename = document.getElementById("downloadName").value; //현재출력중인 파일명 값
-    let extension = document.getElementById("extension").value; //확장자 값
+document.getElementById("saveBtn").addEventListener("click", () => {
+    let filename = document.getElementById("downloadName").value; // 현재 출력 중인 파일명 값
+    let extension = document.getElementById("extension").value; // 확장자 값
 
     // 사용자가 입력한 파일명과 조합된 확장자를 설정
     let fullFilename = filename + extension;
+    let cssExtension = ".css";
+    let jsExtension = ".js";
+    let htmlExtension = ".html";
+    let savedFilename = filename+"_html" + htmlExtension;
+    let savedCssname = filename +"_css" +cssExtension;
+    let savedJsname = filename+"_js" + jsExtension;
 
     // 파일 이름이 유효한지 확인
     if (!isValidFilename(filename)) {
-    alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
-    return; // 추가 실행 중단
-}
+        alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+        return; // 추가 실행 중단
+    }
 
     // 사용자가 입력한 파일명과 조합된 확장자를 설정
-    const htmlCode = htmlEditor.getValue(); //html에 입력한 값
-    const cssCode = cssEditor.getValue();  //css에 입력한 값
-    const jsCode = jsEditor.getValue();  //js에 입력한 값
+    const htmlCode = htmlEditor.getValue(); // html에 입력한 값
+    const cssCode = cssEditor.getValue(); // css에 입력한 값
+    const jsCode = jsEditor.getValue(); // js에 입력한 값
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+    const cssContent = `${cssCode}`;
+    const jsContent = `${jsCode}`;
+    const htmlContent = `<html>\n<head>\n<link rel="stylesheet" href="./${savedCssname}" />\n</head>\n<body>\n${htmlCode}\n</body>\n<script src="./${savedJsname}" ><\/script>\n</html>`;
 
-//Blob는 binary large object의 약자. content는 BLob에 들어갈 데이터를 담은 배열.
-//type은 객체의 특성. text/plain은 텍스트로 생성
-    var blob = new Blob([content], { type: "text/plain" });
+    // Blob 생성
+    const blob = new Blob([content], { type: "text/plain" });
+    const htmlBlob = new Blob([htmlContent], { type: "text/plain" });
+    const jsBlob = new Blob([jsContent], { type: "text/plain" });
+    const cssBlob = new Blob([cssContent], { type: "text/plain" });
 
-    //anchor는 a태그를 나타낸다.
+    // a 태그를 생성하고 클릭 이벤트를 발생시켜 다운로드
+    const downloadLink = document.createElement("a");
 
-    var a = document.createElement("a"); //새로운 a태그 생성
-    a.style.display = "none";
-    a.href = window.URL.createObjectURL(blob); //blob객체를 url로 변환, a요소의 href로 설정
-        //blob로 href를 설정한 이유는 바이너리 데이터(0,1 이진형태로 표현되는 데이터)(이미지, 파일등)을 다룰때 blob를 사용하기 떄문이다.
-    a.download = fullFilename; //다운로드할때 로컬에 저장될 파일의 이름
+    // HTML 파일 다운로드
+    downloadLink.href = window.URL.createObjectURL(htmlBlob);
+    downloadLink.download = savedFilename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 
-    document.body.appendChild(a); // <a>요소를 문서의 body에 추가합니다.
-    a.click(); // 클릭하면 링크클릭한것처럼 동작.
+    // JavaScript 파일 다운로드
+    downloadLink.href = window.URL.createObjectURL(jsBlob);
+    downloadLink.download = savedJsname;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 
-    window.URL.revokeObjectURL(a.href); // createObjectUrl을 통해 생성된 URL을 해제(revoke)한다. Blob Url을 생성하면 브라우저는 이를 메모리에 유지함.
-        //이 코드는 그 url을 브라우저에게 알려 더 이상 필요하지 않다고 알려 메모리에서 해제한다. blob url을 사용한 후 메모리 누수 방지위함이다
-    document.body.removeChild(a); // 더 이상 필요하지 않은 DOM요소를 삭제하여 페이지의 가독성을 유지, 메모리 효율적 관리에 도움된다.
-    //DOM은 Document Object Model의 약자. html 문서의 전체구조를 표현하는 모델.
-    });
+    // CSS 파일 다운로드
+    downloadLink.href = window.URL.createObjectURL(cssBlob);
+    downloadLink.download = savedCssname;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // 전체 파일 다운로드
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = fullFilename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+});
 
 <!--파일이름에 사용할수 없는 문자들-->
     function isValidFilename(filename) {
@@ -396,7 +464,7 @@ $.contextMenu({
     let jsFile = {'filename': filename, 'content':jsContent};
     let htmlFile = {'filename': filename, 'content':htmlContent};
     let FormDataRequest = {'filename' : filename,'codeContent' : content,'cssfilename':savedCssname,'jsfilename':savedJsname,'htmlfilename':savedFilename,'cssContent':cssContent,'jsContent':jsContent,'htmlContent':htmlContent };
-        axios.post("/editor/get", FormDataRequest)
+        axios.post("/editor/save", FormDataRequest)
             .then((response) => {
                 saveTreeState();
                 $('#tree').remove();
@@ -513,9 +581,11 @@ $.contextMenu({
 }
 
     // FileNode 객체를 트리뷰 형식으로 변환
-    function transformToTreeViewFormat(fileNode) {
+function transformToTreeViewFormat(fileList) {
     var treeData = [];
-    convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+    fileList.forEach(function(fileNode) {
+        convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+    });
     return treeData;
 }
 
@@ -755,7 +825,7 @@ $.contextMenu({
     params: {
     currentFilename: currentFilename,
     newFilename: newFilename,
-    currentFolder: currentFolder
+    currentFolder: currentFolder+"html"+"\\"
 }
 })
     .then((response) => {
@@ -1074,19 +1144,19 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     // validateInput 함수를 사용하여 입력 검증
     validateInput(mkdirnameInput);
 
-    const selectedElement = document.querySelector('[data-selected="true"]');
-
+    const selectedElement =  getSelectedFile();
+    console.log("폴더생성엘리멘트:"+selectedElement);
     var anchor;
     var href;
     if (selectedElement) {
         // data-id 값을 추출
-        const dataId = selectedElement.getAttribute('data-id');
+        // const dataId = selectedElement.getAttribute('data-id');
 
         // 선택된 요소 내부의 a 태그
-        anchor = selectedElement.querySelector('a');
+        anchor = selectedElement2.querySelector('a');
         href = anchor ? anchor.getAttribute('href') : null;
 
-        console.log('Data ID:', dataId);
+        // console.log('Data ID:', dataId);
         console.log('Href:', href);
     } else {
         console.log('선택된 요소가 없습니다.');
@@ -1096,17 +1166,84 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     let mkdirname = document.getElementById("mkdirname").value;
     //현재 선택된 경로
     let path = href;
+    console.log("폴더추가 경로"+path)
     let dir = { 'mkdirname': mkdirname, 'path': path };
     axios.post("/api/mkdir", dir).then((response) => {
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
-        modal.style.display = 'none';
+        modal2.style.display = 'none';
 
     }).catch((error) => {
         console.log(error);
     });
 });
+
+
+//
+// //////////////////////////////////// 폴더 생성 //////////////////////////////////////
+// // 폴더명 입력 문자만 입력 가능하도록 처리
+// function validateInput(input) {
+//     const validChars = /^[가-힣a-zA-Z0-9]+$/; // 한글, 영어, 숫자만 허용하는 정규 표현식
+//
+//     // 입력된 값이 유효한 문자만 포함하고 있는지 검사합니다.
+//     if (!validChars.test(input.value)) {
+//         alert("한글, 영어, 숫자만 입력할 수 있습니다.");
+//         return false;
+//         // input.value = input.value.replace(/[^가-힣a-zA-Z0-9]/g, ''); // 유효하지 않은 문자 제거
+//     } else {
+//         return true;
+//     }
+// }
+// // 선택한 항목이 디렉토리라면 해당하는 디렉토리 하위에 디렉토리를 생성하고, 파일이면 그 파일이있는 경로에 디렉토리를 생성
+//     function openNewFolderModal() {
+//     saveTreeState();
+//     let mkdirnameInput = document.getElementById("mkdirname");
+//
+//     // validateInput 함수를 사용하여 입력 검증
+//     if (!validateInput(mkdirnameInput)) {
+//         this.blur();
+//         return false;
+//     }
+//
+//     const selectedElement = document.querySelector('[data-selected="true"]');
+//
+//     var anchor;
+//     var href;
+//     if (selectedElement) {
+//         // data-id 값을 추출
+//         const dataId = selectedElement.getAttribute('data-id');
+//
+//         // 선택된 요소 내부의 a 태그
+//         anchor = selectedElement.querySelector('a');
+//         href = anchor ? anchor.getAttribute('href') : null;
+//
+//         console.log('Data ID:', dataId);
+//         console.log('Href:', href);
+//     } else {
+//         console.log('선택된 요소가 없습니다.');
+//
+//         var mid = document.getElementById("user_mid").value;
+//         href = '/'+mid
+//         console.log('mid : '+href);
+//     }
+//
+//     //작성한 폴더명
+//     let mkdirname = document.getElementById("mkdirname").value;
+//     //현재 선택된 경로
+//     let path = href;
+//     let dir = { 'mkdirname': mkdirname, 'path': path };
+//     axios.post("/api/mkdir", dir).then((response) => {
+//         // 저장 후 파일 목록 다시 불러오기
+//         $('#tree').remove(); // 트리를 완전히 제거합니다.
+//         loadFileList();
+//         modal.style.display = 'none';
+//
+//     }).catch((error) => {
+//         console.log(error);
+//     });
+// };
+//
 
 
 
