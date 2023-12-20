@@ -307,6 +307,107 @@ label{
   margin-top: 70px;
 }
 
+#renameFileModal {
+  position: fixed;
+  z-index: 1;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody2 {
+  width: 470px;
+  height: 335px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e2022;
+  border-radius: 30px;
+}
+
+#closeBtn2 {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent2 {
+  margin-top: 60px;
+}
+
+#moreNav {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  padding-top: 150px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: none;
+}
+
+#modalBody3 {
+  top: -60px!important;
+  right: -752px!important;
+  position: relative;
+  width: 10%;
+  margin: 0 auto;
+  background-color: #2a2a2a;
+  border-radius: 5px;
+  border: 0.1em solid gray;
+}
+
+#balloon2 {
+  padding-left: 5px;
+  margin-bottom: 3px;
+}
+
+#balloon2 li {
+  cursor: pointer;
+  list-style: none;
+  padding: 4px!important;
+  color:#fff;
+  font-family: 'GongGothicMedium';
+}
+
+#balloon2 li:hover {
+  cursor: pointer;
+  color: #ffeba7;
+  font-family: 'GongGothicMedium';
+}
+
+
+#moreNav2 {
+  position: fixed;
+  z-index: 1;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: none;
+}
+
+#modalBody4 {
+  top: -60px!important;
+  right: -650px!important;
+  position: relative;
+  width: 590px;
+  padding-left: 10px;
+  margin: 0 auto;
+  background-color: #2a2a2a;
+  border-radius: 5px;
+  border: 0.1em solid gray;
+}
+
 /*--------------------------------------------------------------
 # Menu
 --------------------------------------------------------------*/
@@ -360,73 +461,6 @@ label{
   font-size: 10px;
 }
 
-
-#moreNav {
-  /*position: relative;*/
-  width: 4px;
-  padding-left: 6px;
-  margin-right: 16px;
-  /*z-index: 9999;*/
-
-}
-
-#balloon-wrap2 {
-  width: 90px;
-  /*top: 38px!important;*/
-  right: 218px!important;
-  position: fixed;
-  z-index: 9999;
-}
-
-#balloon2 {
-  width: 190px;
-  background: #2a2a2a;
-  padding-left: 5px;
-  border-radius: 5px;
-  border: 0.1em solid gray;
-  color:#fff;
-  display: none;
-}
-
-#balloon2 li {
-  cursor: pointer;
-  list-style: none;
-  padding: 4px!important;
-  font-family: 'GongGothicMedium';
-}
-
-#balloon2 li:hover {
-  cursor: pointer;
-  color: #ffeba7;
-  font-family: 'GongGothicMedium';
-}
-/*파일리스트 부분*/
-#moreNav2 {
-  /*position: relative;*/
-  padding-left: 6px;
-  /*z-index: 9999;*/
-
-}
-
-#balloon-wrap3 {
-  width: 90px;
-  /*top: 38px!important;*/
-  right: 520px!important;
-  position: fixed;
-  z-index: 9999;
-}
-
-#balloon3 {
-  width: 590px;
-  background: #2a2a2a;
-  padding-left: 5px;
-  border-radius: 5px;
-  border: 0.1em solid gray;
-  color:#fff;
-  display: none;
-}
-
-
 #popupBtn {
   font-family: 'GongGothicMedium';
   border-top-right-radius: 0px;
@@ -436,15 +470,16 @@ label{
   font-family: 'GongGothicMedium';
 }
 
-#more {
+#popupBtn2 {
   width: 18px!important;
-  padding: 8px 0;
-  margin-left: -6px;
+  padding: 3px 0;
+  margin-left: 0px;
+  margin-right: 5px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
 }
 
-#more2 {
+#popupBtn3 {
   font-family: 'GongGothicMedium';
   padding-top: 7px;
   padding-bottom: 7px;

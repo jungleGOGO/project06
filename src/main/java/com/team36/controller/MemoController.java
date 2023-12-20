@@ -51,8 +51,8 @@ public class MemoController {
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage";
-        String filePath = baseDir + webPath.replace("/", File.separator);
+        String baseDir = "\\\\10.41.0.153\\storage\\";
+        String filePath = baseDir + webPath.replace("\\", File.separator);
 
         System.out.println("chk filePath : " + baseDir+mid);
 
@@ -89,40 +89,40 @@ public class MemoController {
         }
 
 //      기존 파일 생성 처리 부분
-//        try {
-////            Files.createDirectories(directoryPath);
-//            OutputStream newFile = new FileOutputStream(directoryPath.toString());
-//            byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
-//            newFile.write(bt);
-//            newFile.close();
-//            return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("파일 생성 실패: " + e.getMessage());
-//        }
-
-        //파일 생성시 권한 777 부여
         try {
-            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
-            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
-
-            Path filePermission = Files.createFile(directoryPath, attr);
-
-//            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
-            Files.setPosixFilePermissions(filePermission, perms);
-
-
-            OutputStream newFile = new FileOutputStream(filePermission.toFile());
+//            Files.createDirectories(directoryPath);
+            OutputStream newFile = new FileOutputStream(directoryPath.toString());
             byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
             newFile.write(bt);
-
-
             newFile.close();
             return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 생성 실패: " + e.getMessage());
         }
+
+        //파일 생성시 권한 777 부여
+//        try {
+//            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+//            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+//
+//            Path filePermission = Files.createFile(directoryPath, attr);
+//
+////            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+//            Files.setPosixFilePermissions(filePermission, perms);
+//
+//
+//            OutputStream newFile = new FileOutputStream(filePermission.toFile());
+//            byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
+//            newFile.write(bt);
+//
+//
+//            newFile.close();
+//            return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("파일 생성 실패: " + e.getMessage());
+//        }
 
     }
 
@@ -133,9 +133,9 @@ public class MemoController {
 
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
-        String filePath = "/Users/juncheol/mounttest" + filename2;
+//        String filePath = "/Users/juncheol/mounttest" + filename2;
 //        String filePath = "\\\\Y:\\storage" + filename2;
-//        String filePath = "\\\\10.41.0.153\\storage" +filename2;
+        String filePath = "\\\\10.41.0.153\\storage" +filename2;
 
 
         File file = new File(filePath);
@@ -252,8 +252,8 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
-        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -329,16 +329,12 @@ public class MemoController {
         String mid = principal.getName();
 
         // TODO : 경로 수정
-        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
-//        String baseDir = "\\\\10.41.0.153\\storage";
-        String filePath = baseDir + code.getFilename().replace("/", File.separator);
+        String baseDir = "\\\\10.41.0.153\\storage";
+        String filePath = baseDir + code.getFilename().replace("/", "\\");
 
 
-
-        System.out.println(code.getFilename());
-        System.out.println(code.getContent());
-        System.out.println("save filePath : "+filePath);
         try {
             Path path = Paths.get(filePath);
 

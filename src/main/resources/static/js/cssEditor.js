@@ -97,16 +97,17 @@ data-checked:
 const icon = document.getElementById('iconNav'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
-const icon2 = document.getElementById('moreNav'); //저장버튼 옆에 ... 버튼
-const balloon2 = document.getElementById('balloon2');// ...버튼 안의 버튼들
-
-const icon3 = document.getElementById('more2'); //저장소 버튼
-const balloon3 = document.getElementById('balloon3'); //저장소 창
-
 const btn = document.getElementById('popupBtn'); //저장 버튼
 const modal = document.getElementById('modalWrap'); //저장 모달창
 const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 버튼
 
+const modal2 = document.getElementById('renameFileModal'); //이름변경 모달창
+
+const btn3 = document.getElementById('popupBtn2'); //저장 버튼
+const modal3 = document.getElementById('moreNav'); //저장 모달창
+
+const btn4 = document.getElementById('popupBtn3'); //저장 버튼
+const modal4 = document.getElementById('moreNav2'); //저장 모달창
 
 icon.addEventListener('mouseenter', function (){
     balloon.style.display = 'block';
@@ -120,76 +121,6 @@ icon.addEventListener('mouseout', function (){
     balloon.style.display = 'none';
 })
 
-icon2.addEventListener('click', function (event) {
-    if (balloon2.style.display === 'none') {
-        balloon3.style.display='none';
-        balloon2.style.display = 'block';
-    } else if (balloon2.style.display === 'block') {
-        balloon2.style.display = 'none';
-    }
-});
-
-// 이벤트 핸들러 함수 정의
-function handleIcon3Click(event) {
-
-    console.log('handleIcon3Click called');
-    if (balloon3.style.display === 'none') {
-        balloon3.style.display = 'block';
-        balloon2.style.display = 'none';
-        // 클릭 이벤트가 document까지 전파되지 않도록 중지
-    } else if (balloon3.style.display === 'block') {
-        balloon3.style.display = 'none';
-    }
-}
-
-// function handleDocumentClick(event) {
-//
-//     var balloonWrap = document.getElementById('closeall')
-//
-//     // 클릭된 요소가 balloon-wrap3 외부이면서
-//     // balloon-wrap3 내부의 자식 요소도 아니며 balloon3이 block 상태인 경우에만 display를 none으로 변경
-//     if (!balloonWrap.contains(event.target) && event.target !== balloonWrap && balloon3.style.display === 'block') {
-//         balloon3.style.display = 'none';
-//     }
-// }
-
-document.addEventListener('click', function (event) {
-    // 부트스트랩 모달과 관련된 처리
-
-    // 직접 구현한 "balloon"과 관련된 처리
-    var balloonWrap = document.getElementById('balloon-wrap3');
-    var balloon = document.getElementById('balloon3');
-
-    // 추가된 부분: tree 요소와 그 하위 요소들에 대한 처리
-    var tree = document.getElementById('tree');
-    var chevronRightIcon = document.querySelector('.gj-icon.chevron-right'); // 추가된 부분
-    var chevronDownIcon = document.querySelector('.gj-icon.chevron-down'); // 추가된 부분
-
-    if (tree && tree.contains(event.target)) {
-        return; // tree 요소 또는 하위 요소가 클릭되면 아무 동작도 하지 않음
-    }
-
-
-  // 추가된 부분
-        // tree 요소를 클릭한 경우와 chevron 아이콘을 클릭한 경우에 대한 처리 추가
-        if (!balloonWrap.contains(event.target) && event.target !== icon3 && event.target !== chevronRightIcon && event.target !== chevronDownIcon && balloon.style.display === 'block') {
-            balloon.style.display = 'none';
-        }
-});
-
-// tree 요소 내부의 chevron 아이콘에 대한 클릭 이벤트 처리
-document.getElementById('tree').addEventListener('click', function(event) {
-    var chevronRightIcon = event.target.closest('.gj-icon.chevron-right');
-    var chevronDownIcon = event.target.closest('.gj-icon.chevron-down');
-    if (chevronRightIcon || chevronDownIcon) {
-        event.stopPropagation(); // 이벤트 전파 막기
-    }
-});
-
-icon3.addEventListener('click', handleIcon3Click);
-// document.addEventListener('click', handleDocumentClick);
-
-
 btn.onclick = function() {
     modal.style.display = 'block';
 }
@@ -197,9 +128,20 @@ closeBtn.onclick = function() {
     modal.style.display = 'none';
 }
 
+btn3.onclick = function() {
+    modal3.style.display = 'block';
+}
+
+btn4.onclick = function() {
+    modal4.style.display = 'block';
+}
+
 window.onclick = function(event) {
-    if (event.target === modal) {
+    if (event.target === modal || event.target === modal2 || event.target === modal3 || event.target === modal4 ) {
         modal.style.display = "none";
+        modal2.style.display = "none";
+        modal3.style.display = "none";
+        modal4.style.display = "none";
     }
 }
 
