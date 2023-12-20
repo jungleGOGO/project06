@@ -309,7 +309,7 @@ label{
 
 #renameFileModal {
   position: fixed;
-  z-index: 1;
+  z-index: 999;
   padding-top: 150px;
   left: 0;
   top: 0;
@@ -386,7 +386,7 @@ label{
 
 #moreNav2 {
   position: fixed;
-  z-index: 1;
+  z-index: 998;
   padding-top: 150px;
   left: 0;
   top: 0;
@@ -413,26 +413,22 @@ label{
 --------------------------------------------------------------*/
 
 #iconNav {
-  position: fixed;
+  position: absolute;
   background-color: #102770;
   top:3px;
   right: 45px;
   padding-top: 5px;
-  border-radius: 100px;
+  border-radius: 50px;
   padding-right: 10px;
   padding-left: 10px;
   padding-bottom: 5px;
 }
 
-#balloon-wrap {
-  width:90px;
+#balloon {
+  width:130px;
   top: 50px!important;
   right: -13px!important;
   z-index: 999;
-}
-
-#balloon {
-  width: 90px;
 }
 
 #balloon li {
@@ -447,21 +443,28 @@ label{
   content:"";
   position:absolute;
   top:-10px;
-  left:52px;
+  left:92px;
 }
 
 #balloon li a {
+  color: #fff;
   font-family: 'GongGothicMedium';
-  font-size: 10px;
+  font-size: 16px;
 }
 
 #balloon li:hover a{
   color: #ffeba7;
   font-family: 'GongGothicMedium';
-  font-size: 10px;
+  font-size: 16px;
 }
 
 #popupBtn {
+  font-family: 'GongGothicMedium';
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+#popupBtn5 {
   font-family: 'GongGothicMedium';
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
@@ -479,10 +482,27 @@ label{
   border-bottom-left-radius: 0px;
 }
 
+#popupBtn6 {
+  width: 18px!important;
+  padding: 3px 0;
+  margin-left: 0px;
+  margin-right: 5px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
 #popupBtn3 {
   font-family: 'GongGothicMedium';
   padding-top: 7px;
   padding-bottom: 7px;
+  /*z-index: 990;*/
+}
+
+#popupBtn4 {
+  font-family: 'GongGothicMedium';
+  padding-top: 7px;
+  padding-bottom: 7px;
+  /*z-index: 990;*/
 }
 
 .runBtn {

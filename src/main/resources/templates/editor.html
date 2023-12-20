@@ -31,18 +31,21 @@
 <!--사이드 메뉴 -->
 <div id="iconNav">
     <a id="icon"><i class="fa-solid fa-user" style="color:#fff;"></i></a>
-    <div id="balloon-wrap">
-        <ul id="balloon">
+    <ul id="balloon" style="display: none;">
+        <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/login}">로그인</a></li>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
             <li><a th:href="@{/java/project}">프로젝트</a></li>
-            <th:block sec:authorize="hasRole('USER')">
-                <li><a th:href="@{/member/mypage}">마이페이지</a></li>
-            </th:block>
-            <th:block sec:authorize="hasRole('ADMIN')">
-                <li><a th:href="@{/admin/dash}">관리자페이지</a></li>
-            </th:block>
+        <th:block sec:authorize="hasRole('USER')">
+            <li><a th:href="@{/member/mypage}">마이페이지</a></li>
+        </th:block>
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <li><a th:href="@{/admin/dash}">관리자페이지</a></li>
+        </th:block>
             <li><a th:href="@{/logout}">로그아웃</a></li>
-        </ul>
-    </div>
+        </th:block>
+    </ul>
 </div>
 
 <main>
@@ -62,8 +65,7 @@
             <div class="runBtn" id="run" style="margin-left:4px;"><span class="material-symbols-outlined "  title="실행" style="font-size: 22px; margin: 0 6px;">play_circle</span>RUN</div>
             <div class="runBtn" id="clear"><span class="material-symbols-outlined" title="전체 지우기" style="font-size: 22px; margin: 0 6px;">ink_eraser</span>CLEAR</div>
         </div>
-
-            <div class="col-3">
+        <div class="col-3">
             <div class="d-flex float-end p-1" style="display: flex;">
                 <span id="checkCircle" class="material-symbols-outlined" style="display:none;" >check_circle</span>
                 <button type="button" class="btn-sm btn-secondary" id="popupBtn"><span class="material-symbols-outlined" title="저장">save</span>저장</button>
@@ -205,7 +207,7 @@
         </div>
 
 
-            <!-- iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
+        <!-- iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
         <!-- data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
         <!-- data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
         <div id="view" style="background-color: #fff;">

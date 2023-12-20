@@ -93,8 +93,7 @@ data-checked:
 
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
-
-const icon = document.getElementById('iconNav'); //헤더 버튼
+const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
 const btn = document.getElementById('popupBtn'); //저장 버튼
@@ -103,23 +102,20 @@ const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 �
 
 const modal2 = document.getElementById('renameFileModal'); //이름변경 모달창
 
-const btn3 = document.getElementById('popupBtn2'); //저장 버튼
-const modal3 = document.getElementById('moreNav'); //저장 모달창
+const btn3 = document.getElementById('popupBtn2'); //저장 옆 더보기 버튼
+const modal3 = document.getElementById('moreNav'); //저장 옆 더보기 모달창
 
-const btn4 = document.getElementById('popupBtn3'); //저장 버튼
-const modal4 = document.getElementById('moreNav2'); //저장 모달창
+const btn4 = document.getElementById('popupBtn3'); //저장소 버튼
+const modal4 = document.getElementById('moreNav2'); //저장소 모달창
 
-icon.addEventListener('mouseenter', function (){
-    balloon.style.display = 'block';
-})
+icon.addEventListener('click', function (){
+    if(balloon.style.display === 'none') {
+        balloon.style.display = 'block';
+    }else if(balloon.style.display === 'block' ) {
+        balloon.style.display = 'none';
+    }
+});
 
-icon.addEventListener('mouseover', function (){
-    balloon.style.display = 'block';
-})
-
-icon.addEventListener('mouseout', function (){
-    balloon.style.display = 'none';
-})
 
 btn.onclick = function() {
     modal.style.display = 'block';

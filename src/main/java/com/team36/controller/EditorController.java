@@ -32,7 +32,6 @@ public class EditorController {
 
     @GetMapping("/editor")
     public String getEditor() throws Exception{
-
         return "editor";
     }
 //@ResponseBody는 Spring mvc 컨트롤러 매서드가 http 응답의 본문(body)으로 직접 데이터 반환시 사용.
