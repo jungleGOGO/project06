@@ -47,7 +47,7 @@ public class JavaController {
 
         // TODO : 경로 수정
         // 준철
-//      String rootDirectoryPath = "/Users/juncheol/mounttest";
+      String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
@@ -59,7 +59,7 @@ public class JavaController {
 //        FileNode root = new FileNode("savef", "\\savef");
 
         //현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String targetDirectoryPath = rootDirectoryPath + "/"+mid;
         FileNode root = new FileNode("mid", "/"+mid);
 
@@ -129,7 +129,7 @@ public class JavaController {
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
 //        String[] parts = path.split("/");
-        String[] parts = path.split("\\\\");
+        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
 
@@ -144,8 +144,8 @@ public class JavaController {
 
             } else {
 
-//                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+//                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
