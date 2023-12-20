@@ -151,12 +151,14 @@ public ResponseEntity<String> handleFileUpload(
 
     @PostMapping("/editor/read")
     @ResponseBody
-    public String getFile(@RequestParam("filename2") String filename2) throws IOException {
+    public String getFile(@RequestParam("filename2") String filename2,Principal principal) throws IOException {
+      String mid = principal.getName();
         // 파일 경로
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
 //        String filePath = "D:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
-        String filePath = "D:\\kimleeho\\" + filename2;
+//        String filePath = "D:\\kimleeho\\" + filename2;
+        String filePath = "//10.41.0.153/storage/" + mid  + filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
@@ -190,7 +192,8 @@ public ResponseEntity<String> handleFileUpload(
         String mid = principal.getName();
         String html = "html";
         System.out.println("mid : "+mid);
-        String rootDirectoryPath = "//10.41.0.153/storage/"+mid;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+
         String targetDirectoryPath = rootDirectoryPath + "\\"+html;
         System.out.println("target:"+targetDirectoryPath);
         FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용
@@ -345,7 +348,9 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+"html";;
+
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
+
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
