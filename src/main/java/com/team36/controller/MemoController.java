@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
+import java.util.stream.Stream;
 
 @Controller
 @Slf4j
@@ -42,6 +43,21 @@ public class MemoController {
         String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
+
+        System.out.println("chk filePath : " + baseDir+mid);
+
+        long count=0;
+        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid))) {
+            count = files.count();
+            System.out.println("파일/디렉토리 개수: " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (count>10){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
+        }
+
 
 
         Path directoryPath;

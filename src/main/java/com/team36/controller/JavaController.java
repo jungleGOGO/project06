@@ -128,7 +128,7 @@ public class JavaController {
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
 //        String[] parts = path.split("/");
-        String[] parts = path.split("\\\\");
+        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
 
@@ -143,8 +143,8 @@ public class JavaController {
 
             } else {
 
-//                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+//                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 
                 FileNode newNode = new FileNode(part, nodePath);
                 current.addChild(newNode);
