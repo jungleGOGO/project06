@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
 import java.util.Map;
@@ -41,8 +43,9 @@ public class MemoController {
         String webPath = memo.getPath(); // 웹 경로 (/user1/dir1 형식)
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
-        String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
+//        String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
+        String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
 
@@ -153,9 +156,10 @@ public class MemoController {
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
+        String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
 
@@ -223,4 +227,38 @@ public class MemoController {
         return "redirect:/java/project";
     }
 
+    @PostMapping("/rename")
+    public ResponseEntity<String> renameFile(
+            @RequestParam("currentFilename") String currentFilename,
+            @RequestParam("newFilename") String newFilename,
+            @RequestParam("currentFolder") String currentFolder,
+            Model model, Principal principal) {
+        System.out.println("현재 파일 이름: " + currentFilename);
+        System.out.println("바꿀 파일 이름: " + newFilename);
+        System.out.println("현재 디렉토리: " + currentFolder);
+
+        String mid = principal.getName();
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+
+        String filePath = rootDirectoryPath + currentFolder + newFilename;
+        Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
+        Path newFile = Paths.get(filePath);
+
+        if (Files.exists(newFile)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+        try {
+            Path newFilePath = Files.move(file, newFile, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println(newFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 파일 이동 중 에러가 발생한 경우 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 이동 중 에러 발생");
+        }
+
+        return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
+    }
 }

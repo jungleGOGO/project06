@@ -256,6 +256,43 @@ img {
     margin-top: 80px;
 }
 
+#renameFileModal {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody4 {
+    width: 470px;
+    height: 250px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+
+#closeBtn4 {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#modalContent4 {
+    margin-top: 60px;
+}
+
+button {
+    font-family: 'GongGothicMedium';
+}
 /*--------------------------------------------------------------
 # Menu
 --------------------------------------------------------------*/
