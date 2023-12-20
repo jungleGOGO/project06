@@ -31,8 +31,16 @@ public class EditorController {
     private final FileService fileService;
 
     @GetMapping("/editor")
-    public String getEditor() throws Exception{
+    public String getEditor(Principal principal, Model model) throws Exception{
+        boolean loginCheck = false;
+        if(principal == null) {
+            loginCheck = false;
 
+        } else {
+            loginCheck = true;
+
+        }
+        model.addAttribute("loginCheck", loginCheck);
         return "editor";
     }
 //@ResponseBody는 Spring mvc 컨트롤러 매서드가 http 응답의 본문(body)으로 직접 데이터 반환시 사용.
@@ -196,7 +204,8 @@ public ResponseEntity<String> handleFileUpload(
 
         String targetDirectoryPath = rootDirectoryPath + "\\"+html;
         System.out.println("target:"+targetDirectoryPath);
-        FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용
+
+        FileNode root = new FileNode(html, "\\"+html, mid); // 상대 경로 사용
 
 //        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
@@ -262,7 +271,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             String fileRelativePath = file.toString().substring(rootDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 상위 디렉토리에 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath, mid)); // 상위 디렉토리에 파일 노드 추가
         });
 
         System.out.println("respin"+root.getChildren());
@@ -297,7 +306,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 //초기 루트 노드이고 첫 번째 구성요소인 경우에는 \를 추가하고, 그렇지 않은 경우에는 현재 노드의 텍스트와 구성요소를 결합.
                 String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 //                새로운 노드를 생성
-                FileNode newNode = new FileNode(part, nodePath);
+                FileNode newNode = new FileNode(part, nodePath, mid);
                 System.out.println("current진짜:"+newNode);
                 current.addChild(newNode);//현재 노드에 새로운 노드를 자식으로 추가
                 current = newNode; //현재 노드를 새로운 노드로 업데이트
