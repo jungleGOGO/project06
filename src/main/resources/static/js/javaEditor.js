@@ -673,6 +673,7 @@ $.contextMenu({
     items: {
         item1: {
             name: '파일 생성',
+            icon: 'fa-solid fa-file',
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
@@ -684,6 +685,7 @@ $.contextMenu({
         },
         item2: {
             name: '폴더 생성',
+            icon: 'fa-solid fa-folder',
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
@@ -694,6 +696,7 @@ $.contextMenu({
         },
         item3: {
             name: '이름 변경',
+            icon: 'fa-solid fa-pen-to-square',
             callback: function (key, options) {
                 console.log(key);
                 console.log(options);
@@ -702,6 +705,7 @@ $.contextMenu({
         },
         item4: {
             name: '삭제',
+            icon:'fa-solid fa-trash',
             callback: function (key, options) {
                 // 메뉴 아이템을 클릭한 경우의 동작
                 console.log("key", key);
