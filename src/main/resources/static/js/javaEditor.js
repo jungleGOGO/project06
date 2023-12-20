@@ -352,12 +352,46 @@ function convertNode(fileNode, treeData, nodeId) {
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
 
-//////////////////////////// a 태그 이동 막기 /////////////////////////////
+        //////////////////////////// a 태그 이동 막기 /////////////////////////////
         treeArea.addEventListener('click', function(event) {
             if (event.target.closest('a')) {
                 event.preventDefault();
             }
         });
+
+        //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
+        treeArea.addEventListener('contextmenu', function (event) {
+            const anchor2 = event.target.closest('a');
+            if (anchor2) {
+                event.preventDefault();
+                const filename = anchor2.textContent.trim();
+                handleFileSelection(filename);
+                rehandleFileSelection(anchor2.getAttribute("href"));
+                console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
+            }
+        });
+
+
+        <!--선택한 파일 이름을 받음-->
+        let selectedFile = null;
+
+        function handleFileSelection(filename) {
+            selectedFile = filename;
+            // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
+        }
+
+
+        <!--우클릭으로 이름변경시 값을 추출-->
+        let reselectedFile = null;
+
+        function rehandleFileSelection(anchor2) {
+            if (selectedFile) {
+                reselectedFile = anchor2;
+
+                return reselectedFile;
+                // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+            }
+        }
 
 /////////////////////////////////////// 더블클릭해서 파일 내용 불러오기 ////////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
@@ -580,45 +614,3 @@ $.contextMenu({
 });
 
 
-function treeEvent() {
-    const treeArea = document.querySelector('#tree');
-    // a태그일 경우 href로 이동하는 이벤트를 막음
-    treeArea.addEventListener('click', function (event) {
-        if (event.target.closest('a')) {
-            event.preventDefault();
-        }
-    });
-    //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
-    treeArea.addEventListener('contextmenu', function (event) {
-        const anchor2 = event.target.closest('a');
-        if (anchor2) {
-            event.preventDefault();
-            const filename = anchor2.textContent.trim();
-            handleFileSelection(filename);
-            rehandleFileSelection(anchor2.getAttribute("href"));
-            console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
-        }
-    });
-}
-
-
-<!--선택한 파일 이름을 받음-->
-let selectedFile = null;
-
-function handleFileSelection(filename) {
-    selectedFile = filename;
-    // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
-}
-
-
-<!--우클릭으로 이름변경시 값을 추출-->
-let reselectedFile = null;
-
-function rehandleFileSelection(anchor2) {
-    if (selectedFile) {
-        reselectedFile = anchor2;
-
-        return reselectedFile;
-        // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
-    }
-}

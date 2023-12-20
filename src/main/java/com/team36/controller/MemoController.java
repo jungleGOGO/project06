@@ -86,8 +86,9 @@ public class MemoController {
 
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
-        String filePath = "/Users/juncheol/mounttest" + filename2;
-//        String filePath = "\\\\Y:\\storage" + filename2
+//        String filePath = "/Users/juncheol/mounttest" + filename2;
+//        String filePath = "\\\\Y:\\storage" + filename2;
+        String filePath = "\\\\10.41.0.153\\storage" +filename2;
 
 
         File file = new File(filePath);
