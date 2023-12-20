@@ -1,5 +1,6 @@
 package com.team36.controller;
 
+import com.team36.domain.Code;
 import com.team36.domain.Directory;
 import com.team36.domain.Memo;
 import lombok.extern.slf4j.Slf4j;
@@ -62,8 +63,8 @@ public class MemoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 파일/폴더 50개 제한
-        if (count>45){
+        // 파일/폴더 30개 제한
+        if (count>30){
             return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
                     .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
         }
@@ -213,8 +214,8 @@ public class MemoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 파일/폴더 50개 제한
-        if (count>50){
+        // 파일/폴더 30개 제한
+        if (count>30){
             return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
                     .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
         }
@@ -319,4 +320,41 @@ public class MemoController {
 
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
     }
+
+
+    // 파일 저장 버튼
+    @PostMapping("/saveFile")
+    public ResponseEntity<String> saveFile(@RequestBody Code code, Principal principal) {
+
+        String mid = principal.getName();
+
+        // TODO : 경로 수정
+        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+//        String baseDir = "\\\\Y:\\storage";
+//        String baseDir = "\\\\10.41.0.153\\storage";
+        String filePath = baseDir + code.getFilename().replace("/", File.separator);
+
+
+
+        System.out.println(code.getFilename());
+        System.out.println(code.getContent());
+        System.out.println("save filePath : "+filePath);
+        try {
+            Path path = Paths.get(filePath);
+
+            // 파일 존재 여부 확인
+            if (!Files.exists(path)) {
+                return ResponseEntity.badRequest().body("파일이 존재하지 않습니다.");
+            }
+
+            // 파일에 내용 쓰기
+            Files.write(path, code.getContent().getBytes());
+
+            return ResponseEntity.ok("파일 저장 완료");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("파일 저장 실패: " + e.getMessage());
+        }
+    }
+
 }

@@ -119,7 +119,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
             }
             if (error.response.status === 507) {
                 $('#btn1').blur();
-                alert("더 이상 파일 및 폴더를 생성할 수 없습니다.\n (최대 50개의 파일 및 폴더 생성 가능)")
+                alert("더 이상 파일 및 폴더를 생성할 수 없습니다.\n (최대 30개의 파일 및 폴더 생성 가능)")
             }
 
         });
@@ -161,6 +161,7 @@ function saveFile() {
     var fileName = document.getElementById('selectedFileName').title // 파일 경로
     var mid = document.getElementById("user_mid").value;
     var filePath = "/"+mid + fileName;
+    var fileContent = monaco_test.getValue();
 
     console.log("파일 경로 : "+filePath)
     console.log("에디터 내용 : "+monaco_test.getValue())
@@ -168,13 +169,13 @@ function saveFile() {
     $.ajax({
         type: "POST",
         url: "/api/saveFile",
-        data: JSON.stringify({ "code": monaco_test.getValue() ,"filePath":filePath}),
+        data: JSON.stringify({ "content": fileContent ,"filename":filePath}),
         contentType: "application/json",
         success: function(response) {
-
+            alert('파일 저장 성공');
         },
         error: function(error) {
-
+            alert('파일 저장 실패: ' + error.responseText);
         }
     });
 
