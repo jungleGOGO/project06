@@ -275,8 +275,10 @@ public class MemoController {
     @PostMapping("/deleteFile")
     public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
+        log.info("============삭제"+filename);
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String filePath = rootDirectoryPath +filename;
+
         File fileToDelete = new File(filePath);
 
         if (fileToDelete.exists()) {
