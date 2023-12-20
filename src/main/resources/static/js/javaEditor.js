@@ -184,13 +184,6 @@ function saveFile() {
 
 
 
-
-
-
-
-
-
-
 /////////////////////////////////////// 자바 코드 실행 ////////////////////////////////////////
     function send_compiler() {
 
@@ -352,7 +345,10 @@ function saveFile() {
     // FileNode 객체를 트리뷰 형식으로 변환
 function transformToTreeViewFormat(fileList) {
     var treeData = [];
-        convertNode(fileNode, treeData, 1);// 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+        // convertNode(fileNode, treeData, 1);// 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+    fileList.forEach(function(fileNode) {
+        convertNode(fileNode, treeData, 1);
+    });
     return treeData;
 }
 
