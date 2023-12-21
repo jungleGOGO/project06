@@ -68,11 +68,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public void changeActive(Integer active, Integer mid) {
+    public boolean changeActive(Integer active, Integer mid) {
         Optional<Member> result = memberRepository.findById(String.valueOf(mid));
         Member member = result.orElseThrow();
         member.changeActive(active, mid);
         memberRepository.save(member);
+        return true;
     }
 
     @Override

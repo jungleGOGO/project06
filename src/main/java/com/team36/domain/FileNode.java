@@ -20,13 +20,15 @@ public class FileNode {
         this.name = name;
         this.text = text;
         this.children = new ArrayList<>();
+        this.mid = mid;
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
 
         // TODO : 경로 수정
-        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+mid+text);
+//        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+mid+text);
 //        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/storage/"+text);
 //        this.flagUrl = determineFlagUrl("Y:\\storage\\"+text);
-//        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage"+text);
+        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage\\"+mid+text);
+
     }
 
     public void addChild(FileNode child) {

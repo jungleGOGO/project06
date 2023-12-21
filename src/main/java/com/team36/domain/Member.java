@@ -44,6 +44,6 @@ public class Member extends BaseEntity {
     public void addRole(MemberRole memberRole){
         this.roleSet.add(memberRole);
     }
-    public void changeActive(Integer active, Integer mid) { this.active=active; }
+    public void changeActive(Integer active, Integer mid) { this.active=active; this.mid=mid; }
 
 }
