@@ -47,11 +47,7 @@ public class JavaController {
         // 준철
 
 //      String rootDirectoryPath = "/Users/juncheol/mounttest";
-//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
-//        String targetDirectoryPath = rootDirectoryPath + "/user1";
-//        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
-//        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
-
+//      String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
@@ -59,10 +55,9 @@ public class JavaController {
 //        FileNode root = new FileNode("savef", "\\savef");
 
         //현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
-
 
         // File 객체 생성
         File targetDirectory = new File(targetDirectoryPath);
@@ -70,8 +65,6 @@ public class JavaController {
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
         }
-
-
 
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();

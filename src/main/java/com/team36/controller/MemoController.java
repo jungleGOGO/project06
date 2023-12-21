@@ -47,14 +47,13 @@ public class MemoController {
                 "}";
 
         String webPath = memo.getPath(); // 웹 경로 (/user1/dir1 형식)
+        System.out.println(webPath);
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
         String filePath = baseDir + webPath.replace("\\", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
-
-
 
 
         long count=0;
@@ -134,7 +133,7 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
-        String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
+        String filePath = "\\\\10.41.0.153\\storage" + mid+"\\java"+filename2;
 
 
         File file = new File(filePath);
@@ -196,9 +195,9 @@ public class MemoController {
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
-//        String baseDir = "\\\\10.41.0.153\\storage";
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
         long count=0;
@@ -245,7 +244,7 @@ public class MemoController {
         // TODO : 경로 수정
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\"+mid+"\\"+filename);
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -255,10 +254,10 @@ public class MemoController {
 
     //파일 삭제
     @PostMapping("/deleteFile")
-    public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
+    public String deleteJavaFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
+        String mid = principal.getName();
         String filename = payload.get("filename");
-        log.info("============삭제"+filename);
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+ "\\java";
         String filePath = rootDirectoryPath +filename;
 
         File fileToDelete = new File(filePath);
@@ -288,7 +287,7 @@ public class MemoController {
             Model model, Principal principal) {
 
         String mid = principal.getName();
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
@@ -320,7 +319,7 @@ public class MemoController {
 
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
 
         String filePath = baseDir + code.getFilename().replace("/", "\\");
 
