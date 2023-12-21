@@ -55,40 +55,31 @@ public class EditorController {
 @PostMapping("/editor/save")
 @ResponseBody
 public ResponseEntity<String> handleFileUpload(
-        @RequestBody FormDataRequest formDataRequest, Model model, Principal principal) {
+        @RequestBody Code code, Model model, Principal principal) {
     String mid = principal.getName();
     String html = "html";
-    String project="project";
-
 
     try {
-        String filename = formDataRequest.getFilename();
-        String content = formDataRequest.getCodeContent();
-        String htmlContent = formDataRequest.getHtmlContent();
-        String cssContent = formDataRequest.getCssContent();
-        String jsContent = formDataRequest.getJsContent();
+        String filename = code.getFilename();
+        String content = code.getContent();
+        System.out.println("저장기능 파일이름: "+filename);
 
         String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
-        String savedFolderPath = "//10.41.0.153/storage/" + mid + "/" + project+"/";
-        File targetDirectorys = new File(savedFolderPath);
-
+        File targetDirectorys = new File(filePath);
+        System.out.println(filePath);
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectorys.exists()) {
             targetDirectorys.mkdirs();
         }
 
-        String savedHtmlname = formDataRequest.getHtmlfilename();  // 수정된 부분
-        String savedCssname = formDataRequest.getCssfilename();
-        String savedJsname = formDataRequest.getJsfilename();
-
 
 //         중복 파일명 체크 함수
 
-        if (isFileExists(filePath,filename)) {
-            String msg = "해당 파일명으로 저장하실 수 없습니다.4(파일명 중복)";
-            model.addAttribute("msg", msg);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
-        }
+//        if (isFileExists(filePath,filename)) {
+//            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+//            model.addAttribute("msg", msg);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+//        }
 
         // 파일 생성 및 쓰기
         writeFile(filePath+filename, content);
@@ -115,6 +106,85 @@ public ResponseEntity<String> handleFileUpload(
         }
     }
 
+    @PostMapping("/editor/renamesave")
+    @ResponseBody
+    public ResponseEntity<String> renamesave(
+            @RequestBody Code code, Model model, Principal principal) {
+        String mid = principal.getName();
+        String html = "html";
+
+        try {
+            String filename = code.getFilename();
+            String content = code.getContent();
+
+            String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+            File targetDirectorys = new File(filePath);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!targetDirectorys.exists()) {
+                targetDirectorys.mkdirs();
+            }
+
+
+//         중복 파일명 체크 함수
+
+        if (isFileExists(filePath,filename)) {
+            String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+            // 파일 생성 및 쓰기
+            writeFile(filePath+filename, content);
+
+            return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+        }
+    }
+
+    @PostMapping("/editor/newsave")
+    @ResponseBody
+    public ResponseEntity<String> newsave(
+            @RequestBody Code code, Model model, Principal principal) {
+        String mid = principal.getName();
+        String html = "html";
+
+        try {
+            String filename = code.getFilename();
+            String content = code.getContent();
+
+            String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+            File targetDirectorys = new File(filePath);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!targetDirectorys.exists()) {
+                targetDirectorys.mkdirs();
+            }
+
+
+//         중복 파일명 체크 함수
+
+            if (isFileExists(filePath,filename)) {
+                String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+                model.addAttribute("msg", msg);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+            }
+
+            // 파일 생성 및 쓰기
+            writeFile(filePath+filename, content);
+
+            return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+        }
+    }
+
+
+
+
 
     @PostMapping("/editor/autoSave")
     @ResponseBody
@@ -122,6 +192,7 @@ public ResponseEntity<String> handleFileUpload(
         String mid = principal.getName();
         String filename = code.getFilename();
         String content = code.getContent();
+        System.out.println("자동저장 파일이름:"+filename);
         String html = "html";
         String filePath = "//10.41.0.153/storage/" + mid + "/" + html+"/" + filename;
 
@@ -140,12 +211,13 @@ public ResponseEntity<String> handleFileUpload(
     @ResponseBody
     public String getFile(@RequestParam("filename2") String filename2,Principal principal) throws IOException {
       String mid = principal.getName();
+      String html = "html";
         // 파일 경로
 //        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
 //        String filePath = "D:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
 //        String filePath = "D:\\kimleeho\\" + filename2;
-        String filePath = "//10.41.0.153/storage/" + mid  + filename2;
+        String filePath = "//10.41.0.153/storage/" + mid +"/"+html+"/" + filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
@@ -330,8 +402,9 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             Model model,Principal principal) {
 
         String mid = principal.getName();
+        String html = "html";
 
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+html;
 
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
@@ -416,11 +489,12 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
     }
 
     @PostMapping("/editor/mkdir")
-    public ResponseEntity<?>  createDirectory(@RequestBody Directory directory) {
+    public ResponseEntity<?>  createDirectory(@RequestBody Directory directory,Principal principal) {
         System.out.println("받아온 디레고리 경로 값:"+directory.getPath());
         String webPath = directory.getPath(); // 웹 경로 (/user1/dir1 형식)
         String mkdirname = directory.getMkdirname(); // 생성할 디렉토리 이름
-
+        String mid = principal.getName();
+        String html = "html";
         if (mkdirname.contains("..") || mkdirname.contains("/") || mkdirname.contains("\\") ||
                 mkdirname.contains(":") || mkdirname.contains("*") || mkdirname.contains("?") ||
                 mkdirname.contains("\"") || mkdirname.contains("<") || mkdirname.contains(">") ||
@@ -433,7 +507,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 //        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage\\html";
+        String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
         String filePath = baseDir + webPath.replace("\\", File.separator);
         System.out.println("폴더생성 filepath:"+filePath);
 

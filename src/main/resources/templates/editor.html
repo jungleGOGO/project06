@@ -136,8 +136,9 @@
                         <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
                         <select id="extension" class="form-select">
                             <option value=".html">.html</option>
+                            <option value=".css">.css</option>
+                            <option value=".js">.js</option>
                             <option value=".txt">.txt</option>
-                            <option value="">직접입력</option>
                         </select>
                     </div>
                     <div class="d-grid gap-2 col-12 mx-auto">
@@ -146,6 +147,32 @@
                 </form>
             </div>
         </div>
+
+
+            <!--다른이름으로 저장 모달창-->
+            <div id="modalWrap6">
+                <div id="modalBody6">
+                    <span id="closeBtn6">&times;</span>
+                    <form id="modalContent6">
+                        <div class="row mb-2">
+                            <strong >파일명</strong>
+                        </div>
+                        <div class="col d-flex align-items-center mb-2">
+                            <input type="text" class="form-control me-2" name="filename3" id="filename3" value="untitled">
+                            <select id="extension6" class="form-select">
+                                <option value=".html">.html</option>
+                                <option value=".css">.css</option>
+                                <option value=".js">.js</option>
+                                <option value=".txt">.txt</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2 col-12 mx-auto">
+                            <button type="button" class="btn btn-secondary" id="resave" style="font-family: 'GongGothicMedium';">다른이름으로 저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
 
         <!--이름변경 모달창-->
         <div id="renameFileModal">
@@ -164,6 +191,8 @@
                         <label for="reextension" class="col-sm-4 col-form-label">파일확장자</label>
                         <select class="col-sm form-select" id="reextension">
                             <option value=".html">.html</option>
+                            <option value=".css">.css</option>
+                            <option value=".js">.js</option>
                             <option value=".txt">.txt</option>
                         </select>
                     </div>
@@ -171,6 +200,25 @@
                         <button class="btn btn-danger" onclick="renameFile()">변경</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!--폴더 생성 모달창 -->
+        <div id="modalWrap5">
+            <div id="modalBody5">
+                <span id="closeBtn5">&times;</span>
+                <form class="row g-3" id="modalContent5">
+                    <div class="col-auto">
+                        <strong>폴더명</strong>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="mkdirname" id="mkdirname" placeholder="폴더명" >
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="mkdir2" class="btn btn-secondary mb-3" style="font-family: 'GongGothicMedium';">폴더 생성</button>
+                    </div>
+                </form>
+                <p id="infoModal">* 선택한 위치 기준으로 생성</p>
             </div>
         </div>
 
@@ -183,6 +231,7 @@
                             <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
                             <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
                             <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
+                            <li id="changeName"><span class="material-symbols-outlined" title="다른이름으로 저장">save_as</span>다른이름으로 저장</li>
                         </ul>
                     </div>
                 </div>

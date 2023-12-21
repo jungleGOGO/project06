@@ -98,6 +98,13 @@ const loginCheck = document.getElementById('loginCheck').value;
 const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
+const modal5 = document.getElementById('modalWrap5'); //폴더생성
+const closeBtn5 = document.getElementById('closeBtn5'); //폴더생성
+
+const modal6 = document.getElementById('modalWrap6'); //다른이름으로저장
+const closeBtn6 = document.getElementById('closeBtn6'); //다른이름으로저장
+
+
 const btn = document.getElementById('popupBtn'); //저장 버튼
 const modal = document.getElementById('modalWrap'); //저장 모달창
 const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 버튼
@@ -118,14 +125,14 @@ icon.addEventListener('click', function (){
     }
 });
 
-
-btn.onclick = function() {
-    if(loginCheck == 'true') {
-        modal.style.display = 'block';
-    } else if(loginCheck == 'false') {
-        alert("로그인 후 사용 가능합니다:)");
-    }
+closeBtn6.onclick = function() {
+    modal6.style.display = 'none';
 }
+
+closeBtn5.onclick = function() {
+    modal5.style.display = 'none';
+}
+
 closeBtn.onclick = function() {
     modal.style.display = 'none';
 }
@@ -148,11 +155,16 @@ btn4.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target === modal || event.target === modal2 || event.target === modal3 || event.target === modal4 ) {
+
+    if (event.target === modal || event.target === modal2 || event.target === modal3 || event.target === modal4 ||event.target === modal5 || event.target === modal6 ) {
+
         modal.style.display = "none";
         modal2.style.display = "none";
         modal3.style.display = "none";
         modal4.style.display = "none";
+
+        modal5.style.display = "none";
+        modal6.style.display = "none";
     }
 }
 
@@ -314,36 +326,68 @@ $.contextMenu({
 }
 
 <!--저장버튼 작동하는 스크립트-->
+    document.getElementById("popupBtn").addEventListener("click",function () {
+        if(loginCheck == 'false') {
+            alert("로그인 후 사용 가능합니다:)");
+            return;
+        }
 
+        var name = document.getElementById("downloadName").value;
+        if (name === "untitled") {
+            modal.style.display = 'block';
+        } else{
+        let filename = document.getElementById("downloadName").value;
+        const htmlCode = htmlEditor.getValue();
+        const cssCode = cssEditor.getValue();
+        const jsCode = jsEditor.getValue();
+        const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+        let Code = {'filename': filename, 'content': content};
+        axios.post("/editor/save", Code)
+            .then((response) => {
+                saveTreeState();
+                $('#tree').remove();
+                loadFileList();
+                alert("파일이 성공적으로 저장되었습니다");
+            })
+            .catch((error) => {
+                console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
+
+                if (error.response && error.response.data) {
+                    if (error.response.data.msg) {
+                        alert(error.response.data.msg);
+                    } else {
+                        alert(JSON.stringify(error.response.data, null, 2)); // 에러 응답 자세히 보기
+                    }
+                } else {
+                    alert("에러 발생! 자세한 내용은 콘솔을 확인해주세요.");
+                    console.error("에러:", error.message);
+                }
+            })}
+    });
+    document.getElementById("changeName").addEventListener("click",function (){
+        modal6.style.display="block";
+    })
+
+    // 현재파일 untitled일때 저장시키는 기능
     document.getElementById("save").addEventListener("click", function () {
     let extension = document.getElementById("extension").value;
     let name =document.getElementById("filename").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
 
-    let cssExtension=".css";
-    let jsExtension = ".js";
-    let htmlExtension=".html";
-    let savedFilename= name + htmlExtension;
-    let savedCssname = name+ cssExtension;
-    let savedJsname = name + jsExtension;
     const htmlCode = htmlEditor.getValue();
     const cssCode = cssEditor.getValue();
     const jsCode = jsEditor.getValue();
     const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
-    const cssContent = `${cssCode}`;
-    const jsContent = `${jsCode}`;
-    const htmlContent = `<html>\n<head>\n<link rel="stylesheet" href="./${savedCssname}" />\n</head>\n<body>\n${htmlCode}\n</body>\n<script src="./${savedJsname}" ><\/script>\n</html>`;
+
     if (!isValidFilename(name)) {
     alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
     return; // 추가 실행 중단
 }
     //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
-    let code = {'filename' : filename,'content' : content };
-    let cssFile ={'filename': filename, 'content':cssContent};
-    let jsFile = {'filename': filename, 'content':jsContent};
-    let htmlFile = {'filename': filename, 'content':htmlContent};
-    let FormDataRequest = {'filename' : filename,'codeContent' : content,'cssfilename':savedCssname,'jsfilename':savedJsname,'htmlfilename':savedFilename,'cssContent':cssContent,'jsContent':jsContent,'htmlContent':htmlContent };
-        axios.post("/editor/get", FormDataRequest)
+
+    let Code = {'filename' : filename,'content' : content };
+        axios.post("/editor/newsave", Code)
+
             .then((response) => {
                 saveTreeState();
                 $('#tree').remove();
@@ -365,6 +409,47 @@ $.contextMenu({
                     console.error("에러:", error.message);
                 }
 });
+});
+
+// 다른이름으로 저장
+document.getElementById("resave").addEventListener("click", function () {
+    let extension = document.getElementById("extension6").value;
+    let name =document.getElementById("filename3").value; // 저장하고 싶은 파일의 파일명 값
+    let filename = name + extension ;
+
+    const htmlCode = htmlEditor.getValue();
+    const cssCode = cssEditor.getValue();
+    const jsCode = jsEditor.getValue();
+    const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+
+    if (!isValidFilename(name)) {
+        alert("파일명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+        return; // 추가 실행 중단
+    }
+    //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
+    let Code = {'filename' : filename,'content' : content };
+    axios.post("/editor/renamesave", Code)
+        .then((response) => {
+            saveTreeState();
+            $('#tree').remove();
+            loadFileList();
+            alert("파일이 성공적으로 저장되었습니다");
+            closeModal6();
+        })
+        .catch((error) => {
+            console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
+
+            if (error.response && error.response.data) {
+                if (error.response.data.msg) {
+                    alert(error.response.data.msg);
+                } else {
+                    alert(JSON.stringify(error.response.data, null, 2)); // 에러 응답 자세히 보기
+                }
+            } else {
+                alert("에러 발생! 자세한 내용은 콘솔을 확인해주세요.");
+                console.error("에러:", error.message);
+            }
+        });
 });
 
 <!--불러오기 버튼-->
@@ -396,6 +481,10 @@ $.contextMenu({
     //저장소 모달 닫기 함수
     function closeModal() {
         modal.style.display = 'none';
+
+}
+function closeModal6() {
+    modal6.style.display = 'none';
 
 }
 
@@ -431,6 +520,10 @@ $.contextMenu({
             node.children('ul').hide();
         }
     });
+        // 드래그 기능 막음
+        document.addEventListener('dragstart', function(event) {
+            event.preventDefault();
+        });
 }
     // 페이지 로드 시에 실행되도록
     function loadFileList() {
@@ -444,12 +537,23 @@ $.contextMenu({
         }
 
         // 새로운 파일 목록으로 트리뷰 재구성
-        $('#tree').tree({
+      var tree=   $('#tree').tree({
             primaryKey: 'id',
             uiLibrary: 'materialdesign',
             dataSource: transformToTreeViewFormat(fileList),
-            imageUrlField: 'flagUrl'
+            imageUrlField: 'flagUrl',
+            dragAndDrop: true, // 드래그 앤 드롭 활성화
         });
+        tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+            var file = { id: id, parentId: parentId, orderNumber: orderNumber };
+           axios.post('/editor/drag',file).then((response) => {
+               $('#tree').remove(); // 트리를 완전히 제거합니다.
+               loadFileList();
+           })
+            console.log("parma??:"+params)
+        });
+
+
 
         // 트리 재구성 후 상태 복원
         restoreTreeState();
@@ -534,6 +638,8 @@ $.contextMenu({
                 console.log("파일폴더:"+rehandleFileSelection(anchor2.getAttribute("href")));
             }
         });
+
+
 
         treeArea.addEventListener('contextmenu', function(event) {
             const displayElement = event.target.closest('[data-role="node"]');
