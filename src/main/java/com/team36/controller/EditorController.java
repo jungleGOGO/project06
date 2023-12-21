@@ -31,8 +31,16 @@ public class EditorController {
     private final FileService fileService;
 
     @GetMapping("/editor")
-    public String getEditor() throws Exception{
+    public String getEditor(Principal principal, Model model) throws Exception{
+        boolean loginCheck = false;
+        if(principal == null) {
+            loginCheck = false;
 
+        } else {
+            loginCheck = true;
+
+        }
+        model.addAttribute("loginCheck", loginCheck);
         return "editor";
     }
 //@ResponseBody는 Spring mvc 컨트롤러 매서드가 http 응답의 본문(body)으로 직접 데이터 반환시 사용.
@@ -47,14 +55,7 @@ public ResponseEntity<String> handleFileUpload(
     String mid = principal.getName();
     String html = "html";
     String project="project";
-    log.info("filename: {}", formDataRequest.getFilename());
-    log.info("cssfilename: {}", formDataRequest.getCssfilename());
-    log.info("jsfilename: {}", formDataRequest.getJsfilename());
-    log.info("htmlfilename: {}", formDataRequest.getHtmlfilename());
-    log.info("codeContent: {}", formDataRequest.getCodeContent());
-    log.info("cssContent: {}", formDataRequest.getCssContent());
-    log.info("jsContent: {}", formDataRequest.getJsContent());
-    log.info("htmlContent: {}", formDataRequest.getHtmlContent());
+
 
     try {
         String filename = formDataRequest.getFilename();
@@ -75,7 +76,7 @@ public ResponseEntity<String> handleFileUpload(
         String savedHtmlname = formDataRequest.getHtmlfilename();  // 수정된 부분
         String savedCssname = formDataRequest.getCssfilename();
         String savedJsname = formDataRequest.getJsfilename();
-        System.out.println("경로확인:"+savedFolderPath+savedHtmlname);
+
 
 //         중복 파일명 체크 함수
         if (isFileExists(savedFolderPath, savedHtmlname)) {
@@ -162,10 +163,6 @@ public ResponseEntity<String> handleFileUpload(
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
-        System.out.println("fileContent : " + fileContent);
-        System.out.println("filePath  : " + filePath);
-        log.info("filename : " + filename2);
-        log.info("filePath : " + filePath);
         return fileContent;
     }
 
@@ -191,12 +188,10 @@ public ResponseEntity<String> handleFileUpload(
     public FileNode fileList(Principal principal) throws Exception {
         String mid = principal.getName();
         String html = "html";
-        System.out.println("mid : "+mid);
         String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
 
         String targetDirectoryPath = rootDirectoryPath + "\\"+html;
-        System.out.println("target:"+targetDirectoryPath);
-        FileNode root = new FileNode(html, "\\"+html); // 상대 경로 사용
+        FileNode root = new FileNode(html, "\\"+html, mid); // 상대 경로 사용
 
 //        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
@@ -262,10 +257,11 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             String fileRelativePath = file.toString().substring(rootDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 상위 디렉토리에 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid)); // 상위 디렉토리에 파일 노드 추가
+
         });
 
-        System.out.println("respin"+root.getChildren());
+
         return root;
     }
 
@@ -275,7 +271,6 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String mid = principal.getName();
         String html="html";
         FileNode current = root; //현재 노드를 루트 노드로 초기화
-        System.out.println("current:"+current);
         String[] parts = path.split("\\\\"); // 주어진 경로를 \로 분할하여 배열로 저장.
 
         // 반복문을 통해 각 경로의 구성요소에 대해 처리. 만약 디렉토리인 경우 모든 구성요소 처리. 파일인 경우에는 마지막 구성요소를 제외하고 처리
@@ -290,15 +285,14 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             Optional<FileNode> found = current.getChildren().stream()
                     .filter(node -> node.getName().equals(part)) // 노드의 이름이 part와 같은지 확인하고 필터링한다.
                     .findFirst(); //필터링된 노드 중 첫번째 것을 선택
-            System.out.println("이건가?:"+found);
             if (found.isPresent()) { // 일치하는 노드가 존재하면 현재 노드를 해당노드로 업데이트
                 current = found.get();
             } else {// 일치하는 노드가 없으면 새로운 노드를 생성
                 //초기 루트 노드이고 첫 번째 구성요소인 경우에는 \를 추가하고, 그렇지 않은 경우에는 현재 노드의 텍스트와 구성요소를 결합.
                 String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 //                새로운 노드를 생성
-                FileNode newNode = new FileNode(part, nodePath);
-                System.out.println("current진짜:"+newNode);
+                FileNode newNode = new FileNode(part, nodePath,mid);
+
                 current.addChild(newNode);//현재 노드에 새로운 노드를 자식으로 추가
                 current = newNode; //현재 노드를 새로운 노드로 업데이트
             }
@@ -329,7 +323,6 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 // 파일인 경우 바로 삭제
                 fileToDelete.delete();
             }
-            System.out.println("삭제 성공: " + filePath);
         } else {
             System.out.println("삭제할 파일 또는 폴더가 존재하지 않습니다: " + filePath);
             // 파일 또는 폴더가 존재하지 않을 때의 처리를 추가할 수 있습니다.
@@ -343,9 +336,6 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             @RequestParam("newFilename") String newFilename,
             @RequestParam("currentFolder") String currentFolder,
             Model model,Principal principal) {
-        System.out.println("현재 파일 이름: " + currentFilename);
-        System.out.println("바꿀 파일 이름: " + newFilename);
-        System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
 
@@ -364,7 +354,6 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 
         try {
             Path newFilePath = Files.move(file, newFile, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println(newFilePath);
         } catch (IOException e) {
             e.printStackTrace();
             // 파일 이동 중 에러가 발생한 경우 에러 응답 반환
@@ -423,12 +412,10 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 return content; // HTML 및 TXT 파일의 경우 그대로 반환
             case "css":
             case "scss":
-                System.out.println("css:"+content);
                 // CSS 및 SCSS 파일의 경우 CSS 텍스트 에어리어에 값 할당
                 return "<style>\n" + content + "\n</style>";
             case "js":
                 // JS 파일의 경우 JS 텍스트 에어리어에 값 할당
-                System.out.println("JS:"+content);
                 return "<script>\n" + content + "\n</script>";
             default:
                 // 다른 확장자의 경우 빈 문자열 반환 또는 다른 처리 방식 선택 가능

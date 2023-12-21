@@ -127,7 +127,7 @@
     <div id="modalWrap2">
         <div id="modalBody2">
             <span id="closeBtn2">&times;</span>
-            <form class="row g-3" id="modalContent2" onsubmit="return false;">
+            <form class="row g-3" id="modalContent2">
                 <div class="col-auto">
                     <strong>파일명</strong>
                 </div>
@@ -172,7 +172,6 @@
                 <div class="mb-3 row mx-3">
                     <label for="newFilename" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">변경 이름</label>
                     <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
-                    <input class="col-sm form-control" type="hidden" id="reextension" value=".java">
                 </div>
                 <div class="d-grid mb-3 row mx-3">
                     <button class="btn btn-danger" onclick="renameFile()">변경</button>

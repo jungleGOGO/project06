@@ -45,11 +45,13 @@ public class JavaController {
         String mid = principal.getName();
         // TODO : 경로 수정
         // 준철
-      String rootDirectoryPath = "/Users/juncheol/mounttest/";
+
+//      String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
 //        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
+
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
@@ -57,13 +59,13 @@ public class JavaController {
 //        FileNode root = new FileNode("savef", "\\savef");
 
         //현경
-//        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
 
+
         // File 객체 생성
         File targetDirectory = new File(targetDirectoryPath);
-        System.out.println("생성할 디렉토리 경로 "+targetDirectoryPath );
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
@@ -109,14 +111,7 @@ public class JavaController {
             parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"/java")); // 파일 노드 추가
         });
 
-
-
-        System.out.println(root.getChildren());
-
-//        return root;
-//        return root;
         return root.getChildren();
-
     }
 
 
@@ -126,8 +121,8 @@ public class JavaController {
 
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
+        String[] parts = path.split("\\\\");
 //        String[] parts = path.split("/");
-        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
 
@@ -144,8 +139,6 @@ public class JavaController {
 
                 String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
 //                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
-                System.out.println("nodePath : "+nodePath);
-                System.out.println("part : "+part);
                 FileNode newNode = new FileNode(part, nodePath,mid+"/java");
                 current.addChild(newNode);
                 current = newNode;

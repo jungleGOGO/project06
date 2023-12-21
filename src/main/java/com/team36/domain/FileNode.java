@@ -20,9 +20,6 @@ public class FileNode {
         this.name = name;
         this.text = text;
         this.children = new ArrayList<>();
-        System.out.println("--------FileNode-------");
-        System.out.println("name : "+ name);
-        System.out.println("text : "+text);
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
 
         // TODO : 경로 수정
@@ -31,7 +28,6 @@ public class FileNode {
 //        this.flagUrl = determineFlagUrl("Y:\\storage\\"+text);
 //        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage"+text);
 
-//        System.out.println("flagUrl : "+text);
 
     }
 
@@ -39,12 +35,9 @@ public class FileNode {
         this.children.add(child);
     }
     private String determineFlagUrl(String name) {
-        System.out.println(name);
         if (new File(name).isDirectory()) {
-//            System.out.println("dir => " + name);
             return "/static/img/icon/folder.svg";
         } else {
-//            System.out.println("file => " + name);
             return "/static/img/icon/file.svg";
         }
     }

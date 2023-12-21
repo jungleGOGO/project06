@@ -24,7 +24,6 @@ public class AdminController {
     /*@PreAuthorize("hasRole('ADMIN')")*/
     @GetMapping("/admin/dash")
     public String adminHome(Model model, HttpServletRequest request) {
-        log.info("---------------------- ADMIN ----------------------");
         PageDTO<Member, MemberJoinDTO> pageDTO = new PageDTO<>();
 
         String type = request.getParameter("type");

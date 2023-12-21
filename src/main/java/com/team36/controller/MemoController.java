@@ -49,10 +49,12 @@ public class MemoController {
         String webPath = memo.getPath(); // 웹 경로 (/user1/dir1 형식)
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
-        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-//        String baseDir = "\\\\10.41.0.153\\storage";
-        String filePath = baseDir + webPath.replace("/", File.separator);
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+        String filePath = baseDir + webPath.replace("\\", File.separator);
+//        String filePath = baseDir + webPath.replace("/", File.separator);
+
+
 
 
         long count=0;
@@ -80,7 +82,6 @@ public class MemoController {
             // 파일인 경우
             directoryPath = file.toPath().getParent().resolve(filename);
         }
-        System.out.println("(MemoController) directoryPath : "+directoryPath);
 
         if (Files.exists(directoryPath)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -88,40 +89,40 @@ public class MemoController {
         }
 
 //      기존 파일 생성 처리 부분
-//        try {
-////            Files.createDirectories(directoryPath);
-//            OutputStream newFile = new FileOutputStream(directoryPath.toString());
-//            byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
-//            newFile.write(bt);
-//            newFile.close();
-//            return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("파일 생성 실패: " + e.getMessage());
-//        }
-
-        //파일 생성시 권한 777 부여
         try {
-            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
-            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
-
-            Path filePermission = Files.createFile(directoryPath, attr);
-
-//            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
-            Files.setPosixFilePermissions(filePermission, perms);
-
-
-            OutputStream newFile = new FileOutputStream(filePermission.toFile());
+//            Files.createDirectories(directoryPath);
+            OutputStream newFile = new FileOutputStream(directoryPath.toString());
             byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
             newFile.write(bt);
-
-
             newFile.close();
             return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 생성 실패: " + e.getMessage());
         }
+
+        //파일 생성시 권한 777 부여
+//        try {
+//            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+//            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+//
+//            Path filePermission = Files.createFile(directoryPath, attr);
+//
+////            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+//            Files.setPosixFilePermissions(filePermission, perms);
+//
+//
+//            OutputStream newFile = new FileOutputStream(filePermission.toFile());
+//            byte[] bt = code.getBytes(); //OutputStream은 바이트 단위로 저장됨
+//            newFile.write(bt);
+//
+//
+//            newFile.close();
+//            return ResponseEntity.ok("파일 생성 완료:" + webPath+"/"+filename);
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("파일 생성 실패: " + e.getMessage());
+//        }
 
     }
 
@@ -132,11 +133,9 @@ public class MemoController {
 
         String mid = principal.getName();
         // TODO : 경로 수정
-//        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
-        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
-//        String filePath = "\\\\Y:\\storage" + filename2;
-//        String filePath = "\\\\10.41.0.153\\storage" +filename2;
-//        System.out.println("(readFile) filePath : "+filePath);
+//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+        String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
+
 
         File file = new File(filePath);
         Path path = Path.of(filePath);
@@ -149,14 +148,10 @@ public class MemoController {
 
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("크기 : "+attrs.size());
             System.out.println("생성일 : "+attrs.creationTime());
             System.out.println("수정일 : "+attrs.lastModifiedTime());
 
             String fileContent = readFile(filePath);
-            System.out.println("fileContent : " + fileContent);
-            System.out.println("filePath  : " + filePath);
-            log.info("filename : " + filename2);
             return ResponseEntity.ok(fileContent);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -203,15 +198,12 @@ public class MemoController {
         // 웹 경로를 파일 시스템 경로로 변환
         String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
 //        String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
-        System.out.println("mkdir filePath : "+filePath);
 
         long count=0;
         try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
             count = files.count();
-            System.out.println("파일/디렉토리 개수: " + count);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,7 +225,6 @@ public class MemoController {
             // 파일인 경우
             directoryPath = file.toPath().getParent().resolve(mkdirname);
         }
-        System.out.println("directoryPath : "+directoryPath);
         try {
             Files.createDirectories(directoryPath);
             return ResponseEntity.ok("폴더 생성 완료: " + directoryPath.toString());
@@ -253,22 +244,23 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
-        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
+//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
         file.close();
-        log.info("filename : "+filename);
-        log.info("content : "+monaco);
         return filename;
     }
 
+    //파일 삭제
     @PostMapping("/deleteFile")
     public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
+        log.info("============삭제"+filename);
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String filePath = rootDirectoryPath +filename;
+
         File fileToDelete = new File(filePath);
 
         if (fileToDelete.exists()) {
@@ -287,15 +279,13 @@ public class MemoController {
         return "redirect:/java/project";
     }
 
+    //이름변경
     @PostMapping("/rename")
     public ResponseEntity<String> renameFile(
             @RequestParam("currentFilename") String currentFilename,
             @RequestParam("newFilename") String newFilename,
             @RequestParam("currentFolder") String currentFolder,
             Model model, Principal principal) {
-        System.out.println("현재 파일 이름: " + currentFilename);
-        System.out.println("바꿀 파일 이름: " + newFilename);
-        System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
@@ -312,7 +302,6 @@ public class MemoController {
 
         try {
             Path newFilePath = Files.move(file, newFile, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println(newFilePath);
         } catch (IOException e) {
             e.printStackTrace();
             // 파일 이동 중 에러가 발생한 경우 에러 응답 반환
@@ -330,16 +319,12 @@ public class MemoController {
         String mid = principal.getName();
 
         // TODO : 경로 수정
-        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-//        String baseDir = "\\\\10.41.0.153\\storage";
-        String filePath = baseDir + code.getFilename().replace("/", File.separator);
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+
+        String filePath = baseDir + code.getFilename().replace("/", "\\");
 
 
-
-        System.out.println(code.getFilename());
-        System.out.println(code.getContent());
-        System.out.println("save filePath : "+filePath);
         try {
             Path path = Paths.get(filePath);
 

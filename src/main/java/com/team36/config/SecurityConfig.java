@@ -43,8 +43,8 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                     .requestMatchers("/admin/**").hasAnyRole("ADMIN")
-                    .requestMatchers("/", "/**","/login","/join","/emailConfrim","/java/project").permitAll()
-                    .requestMatchers("/member/mypage").hasAnyRole("USER")
+                    .requestMatchers("/", "/**","/login","/emailConfrim","/editor").permitAll()
+                    .requestMatchers("/member/**","/java/project" ).hasAnyRole("USER")
                     .anyRequest().authenticated());
 
         http

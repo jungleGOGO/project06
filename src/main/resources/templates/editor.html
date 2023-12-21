@@ -21,7 +21,6 @@
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
 </head>
 <body>
-
 <!--헤더 -->
 <nav class="navbar navbar-light bg-dark" style="justify-content: space-between;">
     <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
@@ -31,22 +30,25 @@
 <!--사이드 메뉴 -->
 <div id="iconNav">
     <a id="icon"><i class="fa-solid fa-user" style="color:#fff;"></i></a>
-    <div id="balloon-wrap">
-        <ul id="balloon">
+    <ul id="balloon" style="display: none;">
+        <th:block sec:authorize="isAnonymous()">
+            <li><a th:href="@{/login}">로그인</a></li>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
             <li><a th:href="@{/java/project}">프로젝트</a></li>
-            <th:block sec:authorize="hasRole('USER')">
-                <li><a th:href="@{/member/mypage}">마이페이지</a></li>
-            </th:block>
-            <th:block sec:authorize="hasRole('ADMIN')">
-                <li><a th:href="@{/admin/dash}">관리자페이지</a></li>
-            </th:block>
+        <th:block sec:authorize="hasRole('USER')">
+            <li><a th:href="@{/member/mypage}">마이페이지</a></li>
+        </th:block>
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <li><a th:href="@{/admin/dash}">관리자페이지</a></li>
+        </th:block>
             <li><a th:href="@{/logout}">로그아웃</a></li>
-        </ul>
-    </div>
+        </th:block>
+    </ul>
 </div>
 
 <main>
-    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px;">
+    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px; padding-right: 0px;">
         <div class="row gx-5 mt-2">
         <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
         <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
@@ -62,58 +64,12 @@
             <div class="runBtn" id="run" style="margin-left:4px;"><span class="material-symbols-outlined "  title="실행" style="font-size: 22px; margin: 0 6px;">play_circle</span>RUN</div>
             <div class="runBtn" id="clear"><span class="material-symbols-outlined" title="전체 지우기" style="font-size: 22px; margin: 0 6px;">ink_eraser</span>CLEAR</div>
         </div>
-
-            <div class="col-3">
+        <div class="col-3">
             <div class="d-flex float-end p-1" style="display: flex;">
                 <span id="checkCircle" class="material-symbols-outlined" style="display:none;" >check_circle</span>
                 <button type="button" class="btn-sm btn-secondary" id="popupBtn"><span class="material-symbols-outlined" title="저장">save</span>저장</button>
-                <div id="moreNav">
-                    <button type="button" class="btn-sm btn-secondary" id="more"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
-                    <div id="balloon-wrap2">
-                        <ul id="balloon2" style="display: none;">
-                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
-                            <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
-                            <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- 파일리스트 (저장소) -->
-                <div id="moreNav2" >
-                    <button type="button" class="btn-sm btn-secondary" id="more2"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
-                    <div id="balloon-wrap3" >
-                        <div id="balloon3" style="display: none;">
-                            <p id="dnsName"><strong>저장소</strong>&nbsp;&nbsp;<i class="fa-solid fa-hard-drive" style="color: #7c7d7e;"></i></p>
-                            <div id="pane">
-                                <div id="tree"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--이름변경 모달창-->
-                    <div class="modal" id="renameFileModal" >
-                        <div class="modal-content" style="background: black; width: 20%;  padding-left: 43px; padding-right: 43px;">
-                            <div class="row"><p style="padding: 0px;"><span class="close" onclick="closeRenameFileModal()">&times;</span></p></div>
-                            <div class="mb-3 row">
-                                <label for="selectedFile" class="col-sm-4 col-form-label">현재 이름</label>
-                                <input class="col-sm form-control" type="text" id="selectedFile" name="selectedFile" readonly>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="newFilename" class="col-sm-4 col-form-label">변경 이름</label>
-                                <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="reextension" class="col-sm-4 col-form-label">파일확장자</label>
-                                <select class="col-sm form-select" id="reextension">
-                                    <option value=".html">.html</option>
-                                    <option value=".txt">.txt</option>
-                                </select>
-                            </div>
-                            <div class="d-grid mb-3 row">
-                            <button class="btn btn-danger" onclick="renameFile()">변경</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <button type="button" class="btn-sm btn-secondary" id="popupBtn2"><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></button>
+                <button type="button" class="btn-sm btn-secondary" id="popupBtn3"><span class="material-symbols-outlined" title="저장소">dns</span>저장소</button>
             </div>
         </div>
         </div>
@@ -191,6 +147,65 @@
             </div>
         </div>
 
+        <!--이름변경 모달창-->
+        <div id="renameFileModal">
+            <div id="modalBody2">
+                <span id="closeBtn2" onclick="closeRenameFileModal()">&times;</span>
+                <div id="modalContent2">
+                    <div class="mb-3 row mx-3">
+                        <label for="selectedFile" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">현재 이름</label>
+                        <input class="col-sm form-control" type="text" id="selectedFile" name="selectedFile" readonly>
+                    </div>
+                    <div class="mb-3 row mx-3">
+                        <label for="newFilename" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">변경 이름</label>
+                        <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
+                    </div>
+                    <div class="mb-3 row mx-3">
+                        <label for="reextension" class="col-sm-4 col-form-label">파일확장자</label>
+                        <select class="col-sm form-select" id="reextension">
+                            <option value=".html">.html</option>
+                            <option value=".txt">.txt</option>
+                        </select>
+                    </div>
+                    <div class="d-grid mb-3 row mx-3">
+                        <button class="btn btn-danger" onclick="renameFile()">변경</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--더보기 모달창-->
+        <div id="moreNav">
+            <div id="modalBody3">
+                <div id="modalContent3">
+                    <div>
+                        <ul id="balloon2">
+                            <li id="saveAT"><span id="savetext">자동저장</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div></li>
+                            <li id="saveBtn"><span class="material-symbols-outlined" title="다운로드">download</span>다운로드</li>
+                            <li id="readFile"><span class="material-symbols-outlined"  title="내 파일읽기">upload_file</span>내파일읽기</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--저장소 모달창-->
+        <div id="moreNav2">
+            <div id="modalBody4">
+                <div id="modalContent4">
+                    <div id="balloon-wrap3" >
+                        <div id="balloon3">
+                            <p id="dnsName"><strong>저장소</strong>&nbsp;&nbsp;<i class="fa-solid fa-hard-drive" style="color: #7c7d7e;"></i></p>
+                            <div id="pane">
+                                <div id="tree"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- iframe은 html문서 안에 다른 html문서를 삽입. 삽입된 문서는 원래 문서와 독립적으로 로드됨.-->
         <!-- data-code는 html5의 data-* 속성인데 javascript 또는 css에서 해당 데이터를 활용하기 위한 목적으로 사용된다.-->
         <!-- data-* 속성은 사용자가 원하는 만큼 사용할 수 있다. 임의로 사용자가 몇개든 만들어낼 수 있다. -->
@@ -199,6 +214,7 @@
         </div>
     </div>
     </div>
+    <input type="hidden" id="loginCheck" th:value="${loginCheck}">
 </main>
 <script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
 </body>
