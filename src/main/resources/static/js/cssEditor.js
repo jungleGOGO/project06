@@ -94,6 +94,7 @@ data-checked:
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
 const loginCheck = document.getElementById('loginCheck').value;
+
 const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
@@ -169,57 +170,51 @@ Split(['#split', '#view'], {
 
 //마우스 우클릭으로 여는 메뉴
 $.contextMenu({
-    selector: '[data-role="node"]',
+    selector: '[data-role="display"]',
     items: {
         item1: {
-            name: '삭제',
+            name: '폴더 생성',
+            icon: 'fa-solid fa-folder',
             callback: function (key, options) {
-                var $trigger = options.$trigger;
-                var filename = $trigger.find('a').attr('href');
-                var dataId = $trigger.attr('data-id');
-                console.log("dataId 뜨나?" + dataId)
-                if (dataId === '1') {
-                    alert("해당 파일 변경에 대한 권한이 없습니다.")
-                } else {
-                    // span 안의 a 태그의 텍스트를 가져옴
-                    console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                    var confirmed = confirm("정말로 삭제하시겠습니까?");
-                    if (confirmed) {
-                        console.log("Confirmed deletion for element with filename: " + filename);
-
-                        axios.post("/editor/delete", {filename: filename})
-                            .then((response) => {
-                                showFileList();
-                                console.log("삭제됨");
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    } else {
-                        console.log("Deletion cancelled.");
-                    }
-
-                }
+                console.log("key", key);
+                console.log("options", options);
+                modal5.style.display = 'block';
             }
         },
         item2: {
             name: '이름 변경',
+            icon: 'fa-solid fa-pen-to-square',
             callback: function (key, options) {
+                console.log(key);
+                console.log(options);
+                openRenameFileModal(); // 모달 열기
+            }
+        },
+        item3: {
+            name: '삭제',
+            icon:'fa-solid fa-trash',
+            callback: function (key, options) {
+                // 메뉴 아이템을 클릭한 경우의 동작
+                console.log("key", key);
+                console.log("options", options);
+
                 var $trigger = options.$trigger;
-                var dataId = $trigger.attr('data-id');
-                console.log("dataId 뜨나?"+dataId)
-                // data-id가 1이 아닌 경우에만 동작 수행
-                if (dataId !== '1') {
-                    console.log("여기까지 들어는 와짐?"+dataId)
-                    openRenameFileModal(); // 모달 열기
-                }else {
-                    alert("해당 파일 변경에 대한 권한이 없습니다.")
-                }
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/api/deleteFile", { filename: filename }).then((response) => {
+                    $('#tree').remove();
+                    loadFileList();
+                    console.log("삭제됨");
+                }).catch((error) => {
+                    console.log(error);
+                });
             }
         }
     }
 });
+
 
 <!--파일 확장자를 선택자로 추가해서 파일 만들기-->
     const extensionSelect = document.getElementById("extension"); //select문에서 선택한 값
@@ -465,11 +460,13 @@ $.contextMenu({
 }
 
     // FileNode 객체를 트리뷰 형식으로 변환
-    function transformToTreeViewFormat(fileNode) {
-    var treeData = [];
-    convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
-    return treeData;
-}
+    function transformToTreeViewFormat(fileList) {
+        var treeData = [];
+        fileList.forEach(function(fileNode) {
+            convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+        });
+        return treeData;
+    }
 
     // FileNode 객체를 트리뷰 노드로 변환
     function convertNode(fileNode, treeData, nodeId) {
@@ -540,28 +537,12 @@ $.contextMenu({
 
         treeArea.addEventListener('contextmenu', function(event) {
             const displayElement = event.target.closest('[data-role="node"]');
+            // 이전에 선택된 요소의 클래스와 속성 초기화
+            $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
+            // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
+            $(displayElement).addClass('gj-list-md-active');
+            $(displayElement).attr('data-selected', 'true');
 
-            if (displayElement && displayElement.dataset.id !== '1') {
-                event.preventDefault();
-
-                // 이전에 선택된 요소의 클래스와 속성 초기화
-                $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
-
-                // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
-                $(displayElement).addClass('gj-list-md-active');
-                $(displayElement).attr('data-selected', 'true');
-
-                // 추가로 필요한 로직을 수행
-                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
-                console.log('Additional logic for data-id not equal to 1');
-            } else {
-                // displayElement가 없거나 dataset.id가 '1'인 경우의 로직
-                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
-                console.log('Additional logic for data-id equal to 1 or no displayElement');
-
-                // 초기화 로직
-                $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
-            }
         });
 
     treeArea.addEventListener('dblclick', function(event) {
@@ -1027,18 +1008,18 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     validateInput(mkdirnameInput);
 
     const selectedElement = document.querySelector('[data-selected="true"]');
-
+    console.log("폴더생성엘리멘트:"+selectedElement);
     var anchor;
     var href;
     if (selectedElement) {
         // data-id 값을 추출
-        const dataId = selectedElement.getAttribute('data-id');
+        // const dataId = selectedElement.getAttribute('data-id');
 
         // 선택된 요소 내부의 a 태그
         anchor = selectedElement.querySelector('a');
         href = anchor ? anchor.getAttribute('href') : null;
 
-        console.log('Data ID:', dataId);
+        // console.log('Data ID:', dataId);
         console.log('Href:', href);
     } else {
         console.log('선택된 요소가 없습니다.');
@@ -1048,13 +1029,14 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     let mkdirname = document.getElementById("mkdirname").value;
     //현재 선택된 경로
     let path = href;
+    console.log("폴더추가 경로"+path)
     let dir = { 'mkdirname': mkdirname, 'path': path };
-    axios.post("/api/mkdir", dir).then((response) => {
+    axios.post("/editor/mkdir", dir).then((response) => {
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
-        modal.style.display = 'none';
-
+        modal5.style.display = 'none';
+        console.log("폴더생성 완료")
     }).catch((error) => {
         console.log(error);
     });
