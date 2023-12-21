@@ -3,6 +3,7 @@ package com.team36.controller;
 import com.team36.domain.Code;
 import com.team36.domain.Directory;
 import com.team36.domain.Memo;
+import com.team36.dto.ResponseEntityDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.Map;
@@ -50,14 +54,22 @@ public class MemoController {
         System.out.println(webPath);
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+        String filePath = baseDir + webPath.replace("/", File.separator);
+//        String filePath = baseDir + webPath.replace("/", File.separator);
+
+
+//        System.out.println("(MemoController:58) :"+baseDir); //경로 확인
+
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
-        String filePath = baseDir + webPath.replace("\\", File.separator);
+//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
+//        String filePath = baseDir + webPath.replace("\\", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
 
 
         long count=0;
-        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid+"/java"))) {
+        try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
             count = files.count();
             System.out.println("파일/디렉토리 개수: " + count);
         } catch (IOException e) {
@@ -72,7 +84,7 @@ public class MemoController {
 
 
         Path directoryPath;
-        System.out.println("(MemoCtrl) filePath : "+filePath);
+        System.out.println("(MemoCtrl :76) filePath : "+filePath);
         File file = new File(filePath);
         if (file.isDirectory()) {
             // 디렉토리인 경우
@@ -133,7 +145,9 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
-        String filePath = "\\\\10.41.0.153\\storage" + mid+"\\java"+filename2;
+//        String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
+//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+        String filePath = "\\\\10.41.0.153\\storage\\" + mid+"\\java"+filename2;
 
 
         File file = new File(filePath);
@@ -147,8 +161,8 @@ public class MemoController {
 
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("생성일 : "+attrs.creationTime());
-            System.out.println("수정일 : "+attrs.lastModifiedTime());
+            System.out.println("(MemoController:151) 생성일 : "+attrs.creationTime());
+            System.out.println("(MemoController:152) 수정일 : "+attrs.lastModifiedTime());
 
             String fileContent = readFile(filePath);
             return ResponseEntity.ok(fileContent);
@@ -243,8 +257,11 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
+        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\"+mid+"\\"+filename);
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\"+mid+"\\"+filename);
+
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
@@ -313,10 +330,15 @@ public class MemoController {
 
     // 파일 저장 버튼
     @PostMapping("/saveFile")
-    public ResponseEntity<String> saveFile(@RequestBody Code code, Principal principal) {
+    public ResponseEntity<Object> saveFile(@RequestBody Code code, Principal principal) {
 
         String mid = principal.getName();
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java";
+//        String filePath = baseDir + code.getFilename();
+//        String filePath = baseDir + code.getFilename().replace("/", "\\");
 
+        //파일 경로 확인
+//        System.out.println("(MemoController:325) filePath : "+filePath);
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
         String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
@@ -327,15 +349,36 @@ public class MemoController {
         try {
             Path path = Paths.get(filePath);
 
-            // 파일 존재 여부 확인
             if (!Files.exists(path)) {
                 return ResponseEntity.badRequest().body("파일이 존재하지 않습니다.");
             }
 
+            // 파일 메타데이터 읽기
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+//            String creationTime = attrs.creationTime().toString();
+//            String lastModifiedTime = attrs.lastModifiedTime().toString();
+            //
+
+            LocalDateTime oriLastModifiedTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime oriCreationTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            String lastModifiedTime = oriLastModifiedTime.format(formatter);
+            String creationTime = oriCreationTime.format(formatter);
+
             // 파일에 내용 쓰기
             Files.write(path, code.getContent().getBytes());
 
-            return ResponseEntity.ok("파일 저장 완료");
+            // 생성일과 수정일 출력
+            System.out.println("(MemoController:343) 파일 생성일: " + creationTime);
+            System.out.println("(MemoController:343) 파일 수정일: " + lastModifiedTime);
+
+            ResponseEntityDTO response = new ResponseEntityDTO();
+            response.setMessage("파일 저장 완료");
+            response.setCreationTime(creationTime);
+            response.setLastModifiedTime(lastModifiedTime);
+
+
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 저장 실패: " + e.getMessage());
