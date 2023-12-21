@@ -246,10 +246,10 @@ public ResponseEntity<String> handleFileUpload(
     public List<FileNode> fileList(Principal principal) throws Exception {
         String mid = principal.getName();
         String html = "html";
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
 
-        String targetDirectoryPath = rootDirectoryPath + "\\"+html;
-        FileNode root = new FileNode(html, "\\"+html, mid); // 상대 경로 사용
+        String targetDirectoryPath = rootDirectoryPath +mid +"\\"+html;
+        FileNode root = new FileNode(html, "", mid+"\\html"); // 상대 경로 사용
 
 //        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
@@ -315,7 +315,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             String fileRelativePath = file.toString().substring(targetDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid)); // 상위 디렉토리에 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"\\html")); // 상위 디렉토리에 파일 노드 추가
 
         });
 
@@ -340,7 +340,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         */
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i]; // 현재 반복에서 처리할 경로의 일부를 가져온다
-            if (part.isEmpty() || part.equals(html)) continue;
+            if (part.isEmpty() || part.equals(mid)) continue; //특정 경로 부분을 건너뛰기 위한 조건이다. "html" 엔드포인트는 빈 부분이나 mid값과 같은 부분을 건너뛴다
 
             // current.getChildren()는 current에 해당하는 FileNode객체의 자식 노드 목록을 가져옴
             Optional<FileNode> found = current.getChildren().stream()
@@ -352,7 +352,8 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 //초기 루트 노드이고 첫 번째 구성요소인 경우에는 \를 추가하고, 그렇지 않은 경우에는 현재 노드의 텍스트와 구성요소를 결합.
                 String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 //                새로운 노드를 생성
-                FileNode newNode = new FileNode(part, nodePath,mid);
+
+                FileNode newNode = new FileNode(part, nodePath,mid+"\\html");
 
                 current.addChild(newNode);//현재 노드에 새로운 노드를 자식으로 추가
                 current = newNode; //현재 노드를 새로운 노드로 업데이트
@@ -368,6 +369,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
     public String deleteFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
         String filename = payload.get("filename");
         String html = "html";
+        System.out.println("삭제할 파일: "+filename);
         // 파일 또는 폴더를 삭제할 디렉토리 경로
 //        String rootDirectoryPath = "D:\\kimleeho";
         String mid = principal.getName();

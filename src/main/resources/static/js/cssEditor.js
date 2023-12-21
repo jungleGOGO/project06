@@ -206,23 +206,27 @@ $.contextMenu({
             name: '삭제',
             icon:'fa-solid fa-trash',
             callback: function (key, options) {
-                // 메뉴 아이템을 클릭한 경우의 동작
-                console.log("key", key);
-                console.log("options", options);
+                var confirmed = confirm("정말로 삭제하시겠습니까?");
+                if (confirmed) {
+                    console.log("Confirmed deletion for element with filename: " + filename);
+                    // 메뉴 아이템을 클릭한 경우의 동작
+                    console.log("key", key);
+                    console.log("options", options);
 
-                var $trigger = options.$trigger;
-                var filename = $trigger.find('a').attr('href')
-                // span 안의 a 태그의 텍스트를 가져옴
-                console.log("Clicked on " + key + " for element with filename: " + filename);
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href')
+                    // span 안의 a 태그의 텍스트를 가져옴
+                    console.log("Clicked on " + key + " for element with filename: " + filename);
 
-                axios.post("/api/deleteFile", { filename: filename }).then((response) => {
-                    $('#tree').remove();
-                    loadFileList();
-                    console.log("삭제됨");
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
+                    axios.post("/editor/delete", {filename: filename})
+                        .then((response) => {
+                            showFileList();
+                            console.log("삭제됨");
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                }}
         }
     }
 });
@@ -542,16 +546,16 @@ function closeModal6() {
             uiLibrary: 'materialdesign',
             dataSource: transformToTreeViewFormat(fileList),
             imageUrlField: 'flagUrl',
-            dragAndDrop: true, // 드래그 앤 드롭 활성화
+            // dragAndDrop: true, // 드래그 앤 드롭 활성화
         });
-        tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
-            var file = { id: id, parentId: parentId, orderNumber: orderNumber };
-           axios.post('/editor/drag',file).then((response) => {
-               $('#tree').remove(); // 트리를 완전히 제거합니다.
-               loadFileList();
-           })
-            console.log("parma??:"+params)
-        });
+        // tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+        //     var file = { id: id, parentId: parentId, orderNumber: orderNumber };
+        //    axios.post('/editor/drag',file).then((response) => {
+        //        $('#tree').remove(); // 트리를 완전히 제거합니다.
+        //        loadFileList();
+        //    })
+        //     console.log("parma??:"+params)
+        // });
 
 
 
