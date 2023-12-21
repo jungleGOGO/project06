@@ -41,13 +41,13 @@
                     <div class="editor-info">
                         <p id="selectedFileName" title="파일경로" style="float: left; margin: 12px; font-size: 12px;"></p>
                         <div class="d-flex float-end mx-3 mt-1">
-                            <button type="button" class="btn btn-success float-end" id="save"><img th:src="@{/static/img/icon/save.svg}" alt="저장" id="saveImg" title="저장">저장</button>
+                            <button onclick="saveFile()" type="button" class="btn btn-success float-end" id="saveBtn"><img th:src="@{/static/img/icon/save.svg}" alt="저장" id="saveImg" title="저장">저장</button>
                             <button onclick="send_compiler();" type="button" class="btn btn-danger float-end mx-2" id="run"><img th:src="@{/static/img/icon/play.svg}" alt="컴파일" id="compileImg" title="컴파일">&nbsp;RUN</button>
                             <div id="moreNav">
                                 <a><i class="fa-solid fa-ellipsis-vertical" style="color: #f7f7f8; padding-left: 6px; padding-right: 6px"></i></a>
                                 <div id="balloon-wrap2">
                                     <ul id="balloon2">
-                                        <li id="saveBtn"><img th:src="@{/static/img/icon/download.svg}"  alt="다운로드" title="다운로드" style="width: 22px;">&nbsp;&nbsp;다운로드</li>
+                                        <li id="downloadBtn"><img th:src="@{/static/img/icon/download.svg}"  alt="다운로드" title="다운로드" style="width: 22px;">&nbsp;&nbsp;다운로드</li>
                                         <li id="popupBtn3"><img th:src="@{/static/img/icon/saveNewname.svg}" alt="다른이름으로저장" title="다른이름으로저장" style="width: 22px;">&nbsp;&nbsp;다른이름으로저장</li>
                                     </ul>
                                 </div>
@@ -127,7 +127,7 @@
     <div id="modalWrap2">
         <div id="modalBody2">
             <span id="closeBtn2">&times;</span>
-            <form class="row g-3" id="modalContent2" onsubmit="return false;">
+            <form class="row g-3" id="modalContent2">
                 <div class="col-auto">
                     <strong>파일명</strong>
                 </div>
@@ -172,7 +172,6 @@
                 <div class="mb-3 row mx-3">
                     <label for="newFilename" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">변경 이름</label>
                     <input class="col-sm form-control" type="text" id="newFilename" name="newFilename" placeholder="파일명을 입력해주세요">
-                    <input class="col-sm form-control" type="hidden" id="reextension" value=".java">
                 </div>
                 <div class="d-grid mb-3 row mx-3">
                     <button class="btn btn-danger" onclick="renameFile()">변경</button>

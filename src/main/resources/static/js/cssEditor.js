@@ -93,46 +93,35 @@ data-checked:
 
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
-
-const icon = document.getElementById('iconNav'); //헤더 버튼
+const loginCheck = document.getElementById('loginCheck').value;
+const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
-
-const icon2 = document.getElementById('moreNav'); //저장버튼 옆에 ... 버튼
-const balloon2 = document.getElementById('balloon2');// ...버튼 안의 버튼들
-
-const icon3 = document.getElementById('more2'); //저장소 버튼
-const balloon3 = document.getElementById('balloon3'); //저장소 창
 
 const btn = document.getElementById('popupBtn'); //저장 버튼
 const modal = document.getElementById('modalWrap'); //저장 모달창
 const closeBtn = document.getElementById('closeBtn');//저장모달창 끄는 버튼
 
-const modal2 = document.getElementById('modalWrap2');
-const closeBtn2 = document.getElementById('closeBtn2');
+const modal2 = document.getElementById('renameFileModal'); //이름변경 모달창
+const modal5 = document.getElementById('modalWrap2');
+const closeBtn5 = document.getElementById('closeBtn2');
 
-icon.addEventListener('mouseenter', function (){
-    balloon.style.display = 'block';
-})
+const btn3 = document.getElementById('popupBtn2'); //저장 옆 더보기 버튼
+const modal3 = document.getElementById('moreNav'); //저장 옆 더보기 모달창
 
-icon.addEventListener('mouseover', function (){
-    balloon.style.display = 'block';
-})
+const btn4 = document.getElementById('popupBtn3'); //저장소 버튼
+const modal4 = document.getElementById('moreNav2'); //저장소 모달창
 
-icon.addEventListener('mouseout', function (){
-    balloon.style.display = 'none';
-})
-
-icon2.addEventListener('click', function (event) {
-    if (balloon2.style.display === 'none') {
-        balloon3.style.display='none';
-        balloon2.style.display = 'block';
-    } else if (balloon2.style.display === 'block') {
-        balloon2.style.display = 'none';
+icon.addEventListener('click', function (){
+    if(balloon.style.display === 'none') {
+        balloon.style.display = 'block';
+    }else if(balloon.style.display === 'block' ) {
+        balloon.style.display = 'none';
     }
 });
 
-closeBtn2.onclick = function() {
-    modal2.style.display = 'none';
+
+closeBtn5.onclick = function() {
+    modal5.style.display = 'none';
 }
 
 // 이벤트 핸들러 함수 정의
@@ -196,16 +185,42 @@ icon3.addEventListener('click', handleIcon3Click);
 // document.addEventListener('click', handleDocumentClick);
 
 
+
 btn.onclick = function() {
-    modal.style.display = 'block';
+    if(loginCheck == 'true') {
+        modal.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
 }
 closeBtn.onclick = function() {
     modal.style.display = 'none';
 }
 
+btn3.onclick = function() {
+    if(loginCheck == 'true') {
+        modal3.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
+}
+
+btn4.onclick = function() {
+    if(loginCheck == 'true') {
+        modal4.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
+
+}
+
 window.onclick = function(event) {
-    if (event.target === modal) {
+    if (event.target === modal || event.target === modal2 || event.target === modal3 || event.target === modal4 || event.target === modal5) {
         modal.style.display = "none";
+        modal2.style.display = "none";
+        modal3.style.display = "none";
+        modal4.style.display = "none";
+        modal5.style.display="none";
     }
 }
 
@@ -278,7 +293,7 @@ $.contextMenu({
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
-                modal2.style.display = 'block';
+                modal5.style.display = 'block';
             }
         },
         item2: {
@@ -1170,7 +1185,7 @@ document.getElementById("mkdir2").addEventListener("click", function() {
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
-        modal2.style.display = 'none';
+        modal5.style.display = 'none';
         console.log("폴더생성 완료")
     }).catch((error) => {
         console.log(error);

@@ -70,8 +70,6 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
 
 /////////////////////////////////////////////////// 새 파일 생성 /////////////////////////////////////////////////////////////////
     // 선택된 경로에 따라 새 파일 생성
-    // 중복 파일 처리 해야됨
-    // 어디서 처리?
     document.getElementById("btn1").addEventListener("click", function() {
         saveTreeState();
         let filename = document.getElementById("filename").value;
@@ -119,6 +117,10 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
                 $('#btn1').blur();
                 alert("이미 같은 이름으로 생성된 파일이 존재합니다.")
             }
+            if (error.response.status === 507) {
+                $('#btn1').blur();
+                alert("더 이상 파일 및 폴더를 생성할 수 없습니다.\n (최대 30개의 파일 및 폴더 생성 가능)")
+            }
 
         });
 
@@ -142,6 +144,45 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     //         console.log('해당 href 값을 가진 a 태그가 없습니다.');
     //     }
     // }
+
+////////////////////////////////////////////// 파일 내용 저장 (saveBtn) //////////////////////////////////////////////////
+// 파일 경로 , 코드 내용 전달 받아서 저장
+// 파일이 선택되어 있을때만 가능하도록 처리
+
+function saveFile() {
+
+    // 파일 미선택시 처리
+    if (document.getElementById('selectedFileName').textContent === '') {
+        alert("선택된 파일이 없습니다.");
+        $("#saveBtn").blur();
+        return false;
+    }
+
+    var fileName = document.getElementById('selectedFileName').title // 파일 경로
+    var mid = document.getElementById("user_mid").value;
+
+    var filePath = "/"+ fileName;
+    var fileContent = monaco_test.getValue();
+
+    console.log("파일 경로 : "+filePath)
+    console.log("에디터 내용 : "+monaco_test.getValue())
+
+    $.ajax({
+        type: "POST",
+        url: "/api/saveFile",
+        data: JSON.stringify({ "content": fileContent ,"filename":filePath}),
+        contentType: "application/json",
+        success: function(response) {
+            alert('파일 저장 성공');
+        },
+        error: function(error) {
+            alert('파일 저장 실패: ' + error.responseText);
+        }
+    });
+
+
+}
+
 
 
 /////////////////////////////////////// 자바 코드 실행 ////////////////////////////////////////
@@ -182,8 +223,12 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
 }
 
 
-/////////////////////////////////////// 지정한 파일명으로 파일 저장  ////////////////////////////////////////
-    document.getElementById("saveBtn").addEventListener("click", () => {
+
+
+
+/////////////////////////////////////// 지정한 파일명으로 파일 다운로드  ////////////////////////////////////////
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+
     var viewLinesElements = document.getElementsByClassName("view-line");
     var allTextValues = [];
 
@@ -301,8 +346,11 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
     // FileNode 객체를 트리뷰 형식으로 변환
 function transformToTreeViewFormat(fileList) {
     var treeData = [];
+
+        // convertNode(fileNode, treeData, 1);// 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
     fileList.forEach(function(fileNode) {
-        convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+        convertNode(fileNode, treeData, 1);
+
     });
     return treeData;
 }
@@ -387,7 +435,7 @@ function convertNode(fileNode, treeData, nodeId) {
                         const fileContent = response.data;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
                         document.getElementById('selectedFileName').textContent = filename;
-                        document.getElementById('selectedFileName').title = removeFirstSegment(filepath);
+                        document.getElementById('selectedFileName').title = filepath;
 
                         anchor.style.fontWeight = 'bold';
                     })
@@ -673,6 +721,7 @@ $.contextMenu({
     items: {
         item1: {
             name: '파일 생성',
+            icon: 'fa-solid fa-file',
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
@@ -684,6 +733,7 @@ $.contextMenu({
         },
         item2: {
             name: '폴더 생성',
+            icon: 'fa-solid fa-folder',
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
@@ -694,6 +744,7 @@ $.contextMenu({
         },
         item3: {
             name: '이름 변경',
+            icon: 'fa-solid fa-pen-to-square',
             callback: function (key, options) {
                 console.log(key);
                 console.log(options);
@@ -702,6 +753,7 @@ $.contextMenu({
         },
         item4: {
             name: '삭제',
+            icon:'fa-solid fa-trash',
             callback: function (key, options) {
                 // 메뉴 아이템을 클릭한 경우의 동작
                 console.log("key", key);

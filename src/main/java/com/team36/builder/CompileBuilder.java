@@ -27,8 +27,8 @@ public class CompileBuilder {
     // private final String path = CompilerApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
     // TODO : 경로 수정
-    private final String path = "/Users/juncheol/Desktop/compile/";
-//    private final String path = "D:\\hk\\project\\compile\\";
+//    private final String path = "/Users/juncheol/Desktop/compile/";
+    private final String path = "D:\\hk\\project\\compile\\";
 
     // 파일명이랑 코드내용 전달 받음
     // 파일명 .java 아니면 alert띄우도록 프론트에서 처리
@@ -43,11 +43,10 @@ public class CompileBuilder {
 
     //전달받은 코드 컴파일하고 실행 결과 반환
     public String compileAndRunCode(String code, String fileName) {
-        System.out.println(code);
-        System.out.println("fileName"+fileName);
+//        System.out.println(code);
+//        System.out.println("fileName"+fileName);
         int dotIndex = fileName.lastIndexOf(".");
         String noExtensionFileName = fileName.substring(0, dotIndex); // 파일 확장자 잘라내기
-        System.out.println(noExtensionFileName);
 
         // 악의적인 코드 유무 확인
         if (!chkCode(code)) {
@@ -76,7 +75,6 @@ public class CompileBuilder {
             return "소스 코드 파일을 작성할 수 없습니다.";
         }
 
-        System.out.println("---- 자바 파일 생성 완료 ----");
 /////////////////////////////////////////////////  컴파일  ///////////////////////////////////////////////////////
         // 비동기 작업 실행을 위한 ExecutorService 생성
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -121,14 +119,12 @@ public class CompileBuilder {
                     String compileError = output.substring(compileErrorPath, output.length());
                     return "컴파일 오류:\n" + compileError;
                 }
-                System.out.println("---- 자바 파일 컴파일 완료 ----");
+
 //////////////////////////////////////////////  코드실행  ////////////////////////////////////////////////////
                 // 컴파일된 클래스 실행하는 부분
                 processBuilder = new ProcessBuilder("java", "-cp", uuidPath, noExtensionFileName); // ProcessBuilder를 재선언하여 자바 코드를 실행
                 process = processBuilder.start();
-                System.out.println("---- 프로세스 실행 시작 ---- " + process.isAlive());
                 long pid = process.pid();
-                System.out.println("프로세스 PID : " + pid);
 
                 // 정상 실행 시 결과 값 저장
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -142,7 +138,6 @@ public class CompileBuilder {
 //                    if (process.waitFor(5, TimeUnit.SECONDS)){
 //                        process.destroy();
 //                    }
-                    System.out.println("inputStream , 프로세스 상태 " + process.isAlive());
 
                 }
 
@@ -152,7 +147,6 @@ public class CompileBuilder {
                     while ((line = reader.readLine()) != null) {
                         output.append(line).append("\n");
                     }
-                    System.out.println("ErrorStream , 프로세스 상태 " + process.isAlive());
                 }
 //
 //                 실행 작업에 대한 5초 타임아웃 설정
@@ -161,7 +155,6 @@ public class CompileBuilder {
                     process.destroy();
                     throw new RuntimeException("실행 타임아웃");
                 }
-                System.out.println("프로세스 상태 확인: " + process.isAlive());
 
             } catch (IOException e) {
                 throw new RuntimeException("프로세스 시작 오류.", e);
@@ -171,7 +164,6 @@ public class CompileBuilder {
                 }
                 throw new RuntimeException("프로세스 중단됨.", e);
             }
-            System.out.println("try 종료 , 프로세스 상태 " + process.isAlive());
 
             return output.toString();
         });

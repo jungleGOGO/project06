@@ -43,15 +43,15 @@ public class JavaController {
     public List<FileNode> fileList(Principal principal) throws Exception {
 
         String mid = principal.getName();
-        System.out.println("mid : "+mid);
-
         // TODO : 경로 수정
         // 준철
+
 //      String rootDirectoryPath = "/Users/juncheol/mounttest";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
 //        String targetDirectoryPath = rootDirectoryPath + "/user1";
 //        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
 //        FileNode root = new FileNode(mid, "/"+mid); // 상대 경로 사용
+
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
@@ -60,12 +60,12 @@ public class JavaController {
 
         //현경
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
-        String targetDirectoryPath = rootDirectoryPath + "/"+mid;
-        FileNode root = new FileNode("mid", "/"+mid);
+        String targetDirectoryPath = rootDirectoryPath+mid + "/java";
+        FileNode root = new FileNode("java", "",mid+"/java" );
+
 
         // File 객체 생성
         File targetDirectory = new File(targetDirectoryPath);
-
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
@@ -98,27 +98,20 @@ public class JavaController {
 
         // 디렉토리 노드 추가
         directories.forEach(dir -> {
-            String dirRelativePath = dir.toString().substring(rootDirectoryPath.length());
+            String dirRelativePath = dir.toString().substring(targetDirectoryPath.length());
             findOrCreateNode(root, dirRelativePath, true,principal);
         });
 
 
         // 파일 노드 추가
         files.forEach(file -> {
-            String fileRelativePath = file.toString().substring(rootDirectoryPath.length());
+            String fileRelativePath = file.toString().substring(targetDirectoryPath.length());
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath)); // 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"/java")); // 파일 노드 추가
         });
 
-
-
-        System.out.println(root.getChildren());
-
-//        return root;
-//        return root;
         return root.getChildren();
-
     }
 
 
@@ -128,8 +121,8 @@ public class JavaController {
 
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
-//        String[] parts = path.split("/");
         String[] parts = path.split("\\\\");
+//        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];
 
@@ -144,10 +137,9 @@ public class JavaController {
 
             } else {
 
-//                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
-                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
-
-                FileNode newNode = new FileNode(part, nodePath);
+                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+//                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                FileNode newNode = new FileNode(part, nodePath,mid+"/java");
                 current.addChild(newNode);
                 current = newNode;
             }
