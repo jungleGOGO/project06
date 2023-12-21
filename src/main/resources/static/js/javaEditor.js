@@ -160,8 +160,7 @@ function saveFile() {
 
     var fileName = document.getElementById('selectedFileName').title // 파일 경로
     var mid = document.getElementById("user_mid").value;
-    // var filePath = "/"+mid + fileName;
-    var filePath = fileName;
+    var filePath = "/"+ fileName;
     var fileContent = monaco_test.getValue();
 
     console.log("파일 경로 : "+filePath)
@@ -433,7 +432,7 @@ function convertNode(fileNode, treeData, nodeId) {
                         const fileContent = response.data;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
                         document.getElementById('selectedFileName').textContent = filename;
-                        document.getElementById('selectedFileName').title = removeFirstSegment(filepath);
+                        document.getElementById('selectedFileName').title = filepath;
 
                         anchor.style.fontWeight = 'bold';
                     })

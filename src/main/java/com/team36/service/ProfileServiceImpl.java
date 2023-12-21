@@ -24,9 +24,7 @@ public class ProfileServiceImpl implements ProfileService{
 
     @Override
     public int insertProfile(ProfileDTO profileDTO) {
-        log.info("=========profileInsert");
         Profile pf = modelMapper.map(profileDTO, Profile.class);
-        log.info(pf.getMember());
         profileRepo.save(pf);
         return profileRepo.save(pf).getPno();
     }

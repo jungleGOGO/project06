@@ -62,11 +62,8 @@ public class MemberController {
     }
     @PostMapping("/join")
     public String joinPOST(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult, Model model){
-        log.info("join post...");
-        log.info(memberJoinDTO);
         String email = memberJoinDTO.getEmail();
         Member existEmail = memberService.existByEmail(email);
-        System.out.println(existEmail);
         if(existEmail!=null){
             bindingResult
                     .rejectValue("email", "error.email", "사용이 불가한 이메일입니다.");
@@ -90,12 +87,10 @@ public class MemberController {
 
     @GetMapping("/member/mypage")
     public String mypageForm(Principal principal, Model model){
-        log.info("/mypage .........");
 
         String mid = principal.getName();
         Member member =memberRepository.findByMid(mid);
         Profile profile = profileService.existsProfileByMember(member);
-        System.out.println(profile);
         model.addAttribute("member", member);
         model.addAttribute("profile", profile);
         return "member/mypage";
@@ -108,14 +103,12 @@ public class MemberController {
         int mid = Integer.parseInt(principal.getName());
         Member member = memberRepository.findByMid(principal.getName());
         Profile exist = profileService.existsProfileByMember(member);
-        log.info(exist);
         ProfileDTO pf = new ProfileDTO();
 
 
         if(exist == null) {
             log.info("==============추가");
             pf.setMid(mid);
-            log.info(mid);
             pf.setMember(member);
             pf.setIntro(profile.getIntro());
             pf.setGitLink1(profile.getGitLink1());
@@ -180,16 +173,12 @@ public class MemberController {
     public String changePw(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult,Principal principal, Model model){
         Member member = memberRepository.findByMid(principal.getName());
         String pw = member.getMpw();
-        log.info(memberJoinDTO.getPasswordConfirm());
-        log.info(memberJoinDTO.getMpw());
 
         if(!Objects.equals(memberJoinDTO.getPasswordConfirm(), memberJoinDTO.getMpw())) {
-            log.info("==============e1");
             bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "비밀번호와 비밀번호 확인이 다릅니다.");
         }
 
         if(!passEncoder.matches(memberJoinDTO.getNowPassword(), pw)) {
-            log.info("===============e2");
             bindingResult.rejectValue("nowPassword", "error.nowPassword", "비밀번호가 잘못되었습니다.");
         }
 
@@ -216,9 +205,7 @@ public class MemberController {
     @PostMapping("/member/changeImage")
     @ResponseBody
     public boolean changeImage(@RequestParam("memberImg") String memberImg, Principal principal) throws FileNotFoundException {
-
         OutputStream file = new FileOutputStream("D:\\hk\\project\\img\\"+memberImg);
-
         return true;
     }
 }

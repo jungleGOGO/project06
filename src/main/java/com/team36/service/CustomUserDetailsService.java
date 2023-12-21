@@ -31,7 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("loadUserByUsername: " + username);
 
         Optional<Member> result = memberRepository.getWithRoles(username);
-        log.info(result);
 
         if (result.isEmpty()) { //해당 아이디를 가진 사용자가 없다면
             throw new UsernameNotFoundException("username not found...");
@@ -54,9 +53,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                                 .stream().map(memberRole -> new SimpleGrantedAuthority("ROLE_" + memberRole.name()))
                                 .collect(Collectors.toList())
                 );
-
-        log.info("memberSecurityDTO");
-        log.info(memberSecurityDTO);
 
         return memberSecurityDTO;
     }

@@ -49,15 +49,15 @@ public class MemoController {
         String webPath = memo.getPath(); // 웹 경로 (/user1/dir1 형식)
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
-//        String baseDir = "/Users/juncheol/mounttest/"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage\\";
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
         String filePath = baseDir + webPath.replace("\\", File.separator);
+//        String filePath = baseDir + webPath.replace("/", File.separator);
 
-        System.out.println("chk filePath : " + baseDir+mid);
+
 
         long count=0;
-        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid))) {
+        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid+"/java"))) {
             count = files.count();
             System.out.println("파일/디렉토리 개수: " + count);
         } catch (IOException e) {
@@ -72,7 +72,7 @@ public class MemoController {
 
 
         Path directoryPath;
-
+        System.out.println("(MemoCtrl) filePath : "+filePath);
         File file = new File(filePath);
         if (file.isDirectory()) {
             // 디렉토리인 경우
@@ -81,7 +81,6 @@ public class MemoController {
             // 파일인 경우
             directoryPath = file.toPath().getParent().resolve(filename);
         }
-        System.out.println("directoryPath : "+directoryPath);
 
         if (Files.exists(directoryPath)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -129,13 +128,13 @@ public class MemoController {
     //파일 내용 읽기
     @PostMapping("/readFile")
     @ResponseBody
-    public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2) {
+    public ResponseEntity<?> getFile(@RequestParam("filename2") String filename2,Principal principal) {
 
+        String mid = principal.getName();
         // TODO : 경로 수정
-//        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
-//        String filePath = "/Users/juncheol/mounttest" + filename2;
-//        String filePath = "\\\\Y:\\storage" + filename2;
-        String filePath = "\\\\10.41.0.153\\storage" +filename2;
+//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+        String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
+
 
 
         File file = new File(filePath);
@@ -149,14 +148,10 @@ public class MemoController {
 
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("크기 : "+attrs.size());
             System.out.println("생성일 : "+attrs.creationTime());
             System.out.println("수정일 : "+attrs.lastModifiedTime());
 
             String fileContent = readFile(filePath);
-            System.out.println("fileContent : " + fileContent);
-            System.out.println("filePath  : " + filePath);
-            log.info("filename : " + filename2);
             return ResponseEntity.ok(fileContent);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -201,16 +196,14 @@ public class MemoController {
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage";
+//        String baseDir = "\\\\10.41.0.153\\storage";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
         long count=0;
-        try (Stream<Path> files = Files.list(Paths.get(baseDir+mid))) {
+        try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
             count = files.count();
-            System.out.println("파일/디렉토리 개수: " + count);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,7 +225,6 @@ public class MemoController {
             // 파일인 경우
             directoryPath = file.toPath().getParent().resolve(mkdirname);
         }
-        System.out.println("directoryPath : "+directoryPath);
         try {
             Files.createDirectories(directoryPath);
             return ResponseEntity.ok("폴더 생성 완료: " + directoryPath.toString());
@@ -258,11 +250,10 @@ public class MemoController {
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
         file.write(bt);
         file.close();
-        log.info("filename : "+filename);
-        log.info("content : "+monaco);
         return filename;
     }
 
+    //파일 삭제
     @PostMapping("/deleteFile")
     public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
@@ -286,15 +277,13 @@ public class MemoController {
         return "redirect:/java/project";
     }
 
+    //이름변경
     @PostMapping("/rename")
     public ResponseEntity<String> renameFile(
             @RequestParam("currentFilename") String currentFilename,
             @RequestParam("newFilename") String newFilename,
             @RequestParam("currentFolder") String currentFolder,
             Model model, Principal principal) {
-        System.out.println("현재 파일 이름: " + currentFilename);
-        System.out.println("바꿀 파일 이름: " + newFilename);
-        System.out.println("현재 디렉토리: " + currentFolder);
 
         String mid = principal.getName();
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
@@ -311,7 +300,6 @@ public class MemoController {
 
         try {
             Path newFilePath = Files.move(file, newFile, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println(newFilePath);
         } catch (IOException e) {
             e.printStackTrace();
             // 파일 이동 중 에러가 발생한 경우 에러 응답 반환
@@ -329,9 +317,8 @@ public class MemoController {
         String mid = principal.getName();
 
         // TODO : 경로 수정
-//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage";
+//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
         String filePath = baseDir + code.getFilename().replace("/", "\\");
 
 
