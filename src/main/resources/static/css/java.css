@@ -14,7 +14,7 @@ strong {
 }
 
 #monaco {
-    min-height:90vh;
+    min-height:85vh;
 }
 
 .file_name {
@@ -392,3 +392,12 @@ button {
     color: #c7c7c7 !important;
 }
 
+.editor-bottom {
+    background-color: #1e1e1e;
+    border-top: 1px solid #cccccc;
+    height: 20px;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    z-index: 9999;
+}

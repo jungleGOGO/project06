@@ -3,6 +3,7 @@ package com.team36.controller;
 import com.team36.domain.Code;
 import com.team36.domain.Directory;
 import com.team36.domain.Memo;
+import com.team36.dto.ResponseEntityDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.Map;
@@ -314,7 +318,7 @@ public class MemoController {
 
     // 파일 저장 버튼
     @PostMapping("/saveFile")
-    public ResponseEntity<String> saveFile(@RequestBody Code code, Principal principal) {
+    public ResponseEntity<Object> saveFile(@RequestBody Code code, Principal principal) {
 
         String mid = principal.getName();
         String baseDir = "/Users/juncheol/mounttest/"+mid+"/java";
@@ -333,8 +337,15 @@ public class MemoController {
 
             // 파일 메타데이터 읽기
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            String creationTime = attrs.creationTime().toString();
-            String lastModifiedTime = attrs.lastModifiedTime().toString();
+//            String creationTime = attrs.creationTime().toString();
+//            String lastModifiedTime = attrs.lastModifiedTime().toString();
+            //
+
+            LocalDateTime oriLastModifiedTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime oriCreationTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            String lastModifiedTime = oriLastModifiedTime.format(formatter);
+            String creationTime = oriCreationTime.format(formatter);
 
             // 파일에 내용 쓰기
             Files.write(path, code.getContent().getBytes());
@@ -343,7 +354,13 @@ public class MemoController {
             System.out.println("(MemoController:343) 파일 생성일: " + creationTime);
             System.out.println("(MemoController:343) 파일 수정일: " + lastModifiedTime);
 
-            return ResponseEntity.ok("파일 저장 완료\n생성일: " + creationTime + "\n수정일: " + lastModifiedTime);
+            ResponseEntityDTO response = new ResponseEntityDTO();
+            response.setMessage("파일 저장 완료");
+            response.setCreationTime(creationTime);
+            response.setLastModifiedTime(lastModifiedTime);
+
+
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 저장 실패: " + e.getMessage());
