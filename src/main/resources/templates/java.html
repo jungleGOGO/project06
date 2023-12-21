@@ -41,6 +41,7 @@
                     <div class="editor-info">
                         <p id="selectedFileName" title="파일경로" style="float: left; margin: 12px; font-size: 12px;"></p>
                         <div class="d-flex float-end mx-3 mt-1">
+<!--                            <p id="lastSaveTime" style="margin:0; padding:2px 10px 0 0; color: #b6b6b6; font-size: 14px" title="최종 저장된 시간"></p>-->
                             <button onclick="saveFile()" type="button" class="btn btn-success float-end" id="saveBtn"><img th:src="@{/static/img/icon/save.svg}" alt="저장" id="saveImg" title="저장">저장</button>
                             <button onclick="send_compiler();" type="button" class="btn btn-danger float-end mx-2" id="run"><img th:src="@{/static/img/icon/play.svg}" alt="컴파일" id="compileImg" title="컴파일">&nbsp;RUN</button>
                             <div id="moreNav">
@@ -56,6 +57,9 @@
                     </div>
 
                     <pre id="monaco"></pre>
+                    <div class="editor-bottom">
+                        <p id="lastSaveTime" style="margin:0; padding:2px 10px 0 0; color: #b6b6b6; font-size: 14px; float:right;" title="최종 저장된 시간"></p>
+                    </div>
                 </div>
                 <!--컴파일 영역 -->
                 <div id="right-pane" style="background-color: #cccccc; width: 24%;">

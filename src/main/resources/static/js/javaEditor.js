@@ -164,17 +164,21 @@ function saveFile() {
     var filePath = "/"+ fileName;
     var fileContent = monaco_test.getValue();
 
-    console.log("파일 경로 : "+filePath)
+    console.log("파일 경로 : "+fileName)
     console.log("에디터 내용 : "+monaco_test.getValue())
 
     $.ajax({
         type: "POST",
         url: "/api/saveFile",
-        data: JSON.stringify({ "content": fileContent ,"filename":filePath}),
+        data: JSON.stringify({ "content": fileContent ,"filename":fileName}),
         contentType: "application/json",
         success: function(response) {
-            alert('파일 저장 성공');
-        },
+            alert(response.message + '\n생성일: ' + response.creationTime + '\n수정일: ' + response.lastModifiedTime);
+            console.log(response.message);
+            console.log(response.creationTime);
+            console.log(response.lastModifiedTime);
+            $('#lastSaveTime').text('저장 : '+response.lastModifiedTime);
+            },
         error: function(error) {
             alert('파일 저장 실패: ' + error.responseText);
         }
