@@ -160,6 +160,7 @@ function saveFile() {
 
     var fileName = document.getElementById('selectedFileName').title // 파일 경로
     var mid = document.getElementById("user_mid").value;
+
     var filePath = "/"+ fileName;
     var fileContent = monaco_test.getValue();
 

@@ -93,6 +93,7 @@ data-checked:
 
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
+const loginCheck = document.getElementById('loginCheck').value;
 const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
@@ -118,18 +119,31 @@ icon.addEventListener('click', function (){
 
 
 btn.onclick = function() {
-    modal.style.display = 'block';
+    if(loginCheck == 'true') {
+        modal.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
 }
 closeBtn.onclick = function() {
     modal.style.display = 'none';
 }
 
 btn3.onclick = function() {
-    modal3.style.display = 'block';
+    if(loginCheck == 'true') {
+        modal3.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
 }
 
 btn4.onclick = function() {
-    modal4.style.display = 'block';
+    if(loginCheck == 'true') {
+        modal4.style.display = 'block';
+    } else if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+    }
+
 }
 
 window.onclick = function(event) {

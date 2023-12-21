@@ -21,7 +21,6 @@
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
 </head>
 <body>
-
 <!--헤더 -->
 <nav class="navbar navbar-light bg-dark" style="justify-content: space-between;">
     <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
@@ -49,7 +48,7 @@
 </div>
 
 <main>
-    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px;">
+    <div class="container-fluid" style=" background-color:black; height: 100%; padding-left: 0px; padding-right: 0px;">
         <div class="row gx-5 mt-2">
         <!--id=filename의 변경이 감지되면 해당 파일의 이름변경으로 인식.-->
         <!--현재는 filename + extension으로 파일이름을 저장하고 있음.-->
@@ -215,6 +214,7 @@
         </div>
     </div>
     </div>
+    <input type="hidden" id="loginCheck" th:value="${loginCheck}">
 </main>
 <script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
 </body>

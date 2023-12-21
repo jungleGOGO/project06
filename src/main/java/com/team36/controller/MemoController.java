@@ -56,6 +56,7 @@ public class MemoController {
 
 
 
+
         long count=0;
         try (Stream<Path> files = Files.list(Paths.get(baseDir+mid+"/java"))) {
             count = files.count();
@@ -134,7 +135,6 @@ public class MemoController {
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
         String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
-
 
 
         File file = new File(filePath);
@@ -257,8 +257,10 @@ public class MemoController {
     @PostMapping("/deleteFile")
     public String deleteJavaFile(@RequestBody Map<String, String> payload) throws Exception {
         String filename = payload.get("filename");
+        log.info("============삭제"+filename);
         String rootDirectoryPath = "\\\\10.41.0.153\\storage";
         String filePath = rootDirectoryPath +filename;
+
         File fileToDelete = new File(filePath);
 
         if (fileToDelete.exists()) {
@@ -319,6 +321,7 @@ public class MemoController {
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
         String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+
         String filePath = baseDir + code.getFilename().replace("/", "\\");
 
 
