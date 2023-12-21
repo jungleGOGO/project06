@@ -160,6 +160,7 @@ public class MemberController {
         }
         model.addAttribute("pw", pw);
         model.addAttribute("member", member);
+
         return "/member/memberEdit";
     }
 
@@ -208,4 +209,14 @@ public class MemberController {
         OutputStream file = new FileOutputStream("D:\\hk\\project\\img\\"+memberImg);
         return true;
     }
+
+    @GetMapping("/member/changeActive")
+    public String changActive(@RequestParam("mid")Integer mid, Principal principal, Model model) {
+        log.info("======================들어왔는지");
+        memberService.changeActive(2, mid);
+        model.addAttribute("msg", "탈퇴되었습니다.안녕히가세요!");
+        model.addAttribute("url", "/logout");
+        return "layout/alert";
+    }
+
 }

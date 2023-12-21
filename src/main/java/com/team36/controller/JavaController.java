@@ -58,15 +58,12 @@ public class JavaController {
         //경로 확인
 //        System.out.println("(JavaController:59) targetDirectoryPath : "+targetDirectoryPath);
 
-
         // File 객체 생성
         File targetDirectory = new File(targetDirectoryPath);
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
         }
-
-
 
         List<Path> directories = new ArrayList<>();
         List<Path> files = new ArrayList<>();

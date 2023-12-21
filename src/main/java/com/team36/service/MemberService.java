@@ -16,6 +16,6 @@ public interface MemberService {
     void join(MemberJoinDTO memberJoinDTO) ;
     void changePw(MemberJoinDTO memberJoinDTO);
     boolean changeName(MemberJoinDTO memberJoinDTO);
-    void changeActive (Integer active, Integer mid);
+    boolean changeActive (Integer active, Integer mid);
     PageDTO<Member, MemberJoinDTO> memberList(PageDTO<Member, MemberJoinDTO> pageDTO);
 }
