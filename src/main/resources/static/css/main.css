@@ -202,10 +202,9 @@ label{
   # Modal
   --------------------------------------------------------------*/
 
-
-#modalWrap2 {
+#modalWrap6 {
   position: fixed;
-  z-index: 1;
+  z-index: 100;
   padding-top: 150px;
   left: 0;
   top: 0;
@@ -216,7 +215,7 @@ label{
   display: none;
 }
 
-#modalBody2 {
+#modalBody6 {
   width: 470px;
   height: 250px;
   padding: 15px 30px;
@@ -225,12 +224,16 @@ label{
   border-radius: 30px;
 }
 
-#closeBtn2 {
+#closeBtn6 {
   float:right;
   font-weight: bold;
   color: #777;
   font-size:25px;
   cursor: pointer;
+}
+
+#modalContent6 {
+  margin-top: 70px;
 }
 
 .modal {
@@ -304,6 +307,20 @@ label{
   content: none; /* 마지막 버튼 뒤의 가상 요소 내용을 없앰 */
 }
 
+
+#modalWrap5 {
+  position: fixed;
+  z-index: 9999;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
 #modalBody5 {
   width: 470px;
   height: 250px;
@@ -324,6 +341,7 @@ label{
 #modalContent5 {
   margin-top: 70px;
 }
+
 
 
 
