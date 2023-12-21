@@ -424,6 +424,53 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 return "";
         }
     }
+
+    @PostMapping("/editor/mkdir")
+    public ResponseEntity<?>  createDirectory(@RequestBody Directory directory) {
+        System.out.println("받아온 디레고리 경로 값:"+directory.getPath());
+        String webPath = directory.getPath(); // 웹 경로 (/user1/dir1 형식)
+        String mkdirname = directory.getMkdirname(); // 생성할 디렉토리 이름
+
+        if (mkdirname.contains("..") || mkdirname.contains("/") || mkdirname.contains("\\") ||
+                mkdirname.contains(":") || mkdirname.contains("*") || mkdirname.contains("?") ||
+                mkdirname.contains("\"") || mkdirname.contains("<") || mkdirname.contains(">") ||
+                mkdirname.contains("|") || mkdirname.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 폴더명입니다.");
+        }
+
+        // TODO : 경로 수정
+        // 웹 경로를 파일 시스템 경로로 변환
+//        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
+//        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
+//        String baseDir = "\\\\Y:\\storage";
+        String baseDir = "\\\\10.41.0.153\\storage\\html";
+        String filePath = baseDir + webPath.replace("\\", File.separator);
+        System.out.println("폴더생성 filepath:"+filePath);
+
+        Path directoryPath;
+
+        File file = new File(filePath);
+        System.out.println("if 블록 진입 전");
+        if (file.isDirectory()) {
+            // 디렉토리인 경우
+            directoryPath = Paths.get(filePath, mkdirname);
+            System.out.println("ㅋㅋㅋㅋㅋ"+directoryPath);
+        }  else {
+            // 파일인 경우
+            directoryPath = file.toPath().getParent().resolve(mkdirname);
+            System.out.println("파일인경우"+directoryPath);
+        }
+        System.out.println("directoryPath : "+directoryPath);
+        try {
+            System.out.println("폴더 생성 시도 경로: " + directoryPath.toString());
+            Files.createDirectories(directoryPath);
+            System.out.println("디렉토리 생성 후 경로: " + directoryPath.toString());
+            return ResponseEntity.ok("폴더 생성 완료: " + directoryPath.toString());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("폴더 생성 실패: " + e.getMessage());
+        }
+    }
 }
 
 

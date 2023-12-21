@@ -658,28 +658,12 @@ function transformToTreeViewFormat(fileList) {
 
         treeArea.addEventListener('contextmenu', function(event) {
             const displayElement = event.target.closest('[data-role="node"]');
-
-            if (displayElement && displayElement.dataset.id !== '1') {
-                event.preventDefault();
-
                 // 이전에 선택된 요소의 클래스와 속성 초기화
                 $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
-
                 // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
                 $(displayElement).addClass('gj-list-md-active');
                 $(displayElement).attr('data-selected', 'true');
 
-                // 추가로 필요한 로직을 수행
-                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
-                console.log('Additional logic for data-id not equal to 1');
-            } else {
-                // displayElement가 없거나 dataset.id가 '1'인 경우의 로직
-                // 예: 다른 작업을 수행하거나 알림 메시지를 표시하는 등의 로직
-                console.log('Additional logic for data-id equal to 1 or no displayElement');
-
-                // 초기화 로직
-                $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
-            }
         });
 
     treeArea.addEventListener('dblclick', function(event) {
@@ -792,6 +776,20 @@ function transformToTreeViewFormat(fileList) {
     return null;
 }
 }
+}
+
+function getSelectedFile2() {
+    if (selectedFile) {
+        return selectedFile;
+    } else {
+        const selectedNode = document.querySelector('#tree [data-role="node"][data-selected="true"]');
+       console.log("selectedNode값:"+selectedNode)
+        if (selectedNode) {
+            return selectedNode;
+        } else {
+            return null;
+        }
+    }
 }
 
 
@@ -1144,7 +1142,7 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     // validateInput 함수를 사용하여 입력 검증
     validateInput(mkdirnameInput);
 
-    const selectedElement =  getSelectedFile();
+    const selectedElement = document.querySelector('[data-selected="true"]');
     console.log("폴더생성엘리멘트:"+selectedElement);
     var anchor;
     var href;
@@ -1153,7 +1151,7 @@ document.getElementById("mkdir2").addEventListener("click", function() {
         // const dataId = selectedElement.getAttribute('data-id');
 
         // 선택된 요소 내부의 a 태그
-        anchor = selectedElement2.querySelector('a');
+        anchor = selectedElement.querySelector('a');
         href = anchor ? anchor.getAttribute('href') : null;
 
         // console.log('Data ID:', dataId);
@@ -1168,82 +1166,18 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     let path = href;
     console.log("폴더추가 경로"+path)
     let dir = { 'mkdirname': mkdirname, 'path': path };
-    axios.post("/api/mkdir", dir).then((response) => {
+    axios.post("/editor/mkdir", dir).then((response) => {
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
         modal2.style.display = 'none';
-
+        console.log("폴더생성 완료")
     }).catch((error) => {
         console.log(error);
     });
 });
 
 
-//
-// //////////////////////////////////// 폴더 생성 //////////////////////////////////////
-// // 폴더명 입력 문자만 입력 가능하도록 처리
-// function validateInput(input) {
-//     const validChars = /^[가-힣a-zA-Z0-9]+$/; // 한글, 영어, 숫자만 허용하는 정규 표현식
-//
-//     // 입력된 값이 유효한 문자만 포함하고 있는지 검사합니다.
-//     if (!validChars.test(input.value)) {
-//         alert("한글, 영어, 숫자만 입력할 수 있습니다.");
-//         return false;
-//         // input.value = input.value.replace(/[^가-힣a-zA-Z0-9]/g, ''); // 유효하지 않은 문자 제거
-//     } else {
-//         return true;
-//     }
-// }
-// // 선택한 항목이 디렉토리라면 해당하는 디렉토리 하위에 디렉토리를 생성하고, 파일이면 그 파일이있는 경로에 디렉토리를 생성
-//     function openNewFolderModal() {
-//     saveTreeState();
-//     let mkdirnameInput = document.getElementById("mkdirname");
-//
-//     // validateInput 함수를 사용하여 입력 검증
-//     if (!validateInput(mkdirnameInput)) {
-//         this.blur();
-//         return false;
-//     }
-//
-//     const selectedElement = document.querySelector('[data-selected="true"]');
-//
-//     var anchor;
-//     var href;
-//     if (selectedElement) {
-//         // data-id 값을 추출
-//         const dataId = selectedElement.getAttribute('data-id');
-//
-//         // 선택된 요소 내부의 a 태그
-//         anchor = selectedElement.querySelector('a');
-//         href = anchor ? anchor.getAttribute('href') : null;
-//
-//         console.log('Data ID:', dataId);
-//         console.log('Href:', href);
-//     } else {
-//         console.log('선택된 요소가 없습니다.');
-//
-//         var mid = document.getElementById("user_mid").value;
-//         href = '/'+mid
-//         console.log('mid : '+href);
-//     }
-//
-//     //작성한 폴더명
-//     let mkdirname = document.getElementById("mkdirname").value;
-//     //현재 선택된 경로
-//     let path = href;
-//     let dir = { 'mkdirname': mkdirname, 'path': path };
-//     axios.post("/api/mkdir", dir).then((response) => {
-//         // 저장 후 파일 목록 다시 불러오기
-//         $('#tree').remove(); // 트리를 완전히 제거합니다.
-//         loadFileList();
-//         modal.style.display = 'none';
-//
-//     }).catch((error) => {
-//         console.log(error);
-//     });
-// };
-//
 
 
 
