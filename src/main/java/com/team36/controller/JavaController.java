@@ -140,36 +140,41 @@ public class JavaController {
 
         return current;
     }
-    @GetMapping("/download-zip")
-    public ResponseEntity<Resource> downloadZip() throws IOException {
-        String sourceDirPath = "/Users/juncheol/Desktop/storage/user1/dir1"; // 압축할 폴더 경로
-        String zipFilePath = "/Users/juncheol/Desktop/storage/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
 
-        compressToZip(sourceDirPath, zipFilePath);
-
-        Resource fileSystemResource = new FileSystemResource(zipFilePath);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(fileSystemResource);
-    }
-
-    private void compressToZip(String sourceDir, String outputFile) throws IOException {
-        Path zipPath = Files.createFile(Paths.get(outputFile));
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipPath))) {
-            Path pp = Paths.get(sourceDir);
-            Files.walk(pp)
-                    .filter(path -> !Files.isDirectory(path))
-                    .forEach(path -> {
-                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
-                        try {
-                            zs.putNextEntry(zipEntry);
-                            Files.copy(path, zs);
-                            zs.closeEntry();
-                        } catch (IOException e) {
-                            System.err.println(e);
-                        }
-                    });
-        }
-    }
+//    @GetMapping("/download-zip")
+//    public ResponseEntity<Resource> downloadZip(Principal principal) throws IOException {
+//
+//        String mid = principal.getName();
+////        String sourceDirPath = "/Users/juncheol/Desktop/storage/user1/dir1"; // 압축할 폴더 경로
+////        String zipFilePath = "/Users/juncheol/Desktop/storage/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
+//        String sourceDirPath ="\\\\10.41.0.153\\storage\\"+mid+"\\java"; // 압축할 폴더 경로
+//        String zipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\java\\java.zip"; // 출력될 ZIP 파일 경로
+//
+//        compressToZip(sourceDirPath, zipFilePath);
+//
+//        Resource fileSystemResource = new FileSystemResource(zipFilePath);
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .body(fileSystemResource);
+//    }
+//
+//    private void compressToZip(String sourceDir, String outputFile) throws IOException {
+//        Path zipPath = Files.createFile(Paths.get(outputFile));
+//        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipPath))) {
+//            Path pp = Paths.get(sourceDir);
+//            Files.walk(pp)
+//                    .filter(path -> !Files.isDirectory(path))
+//                    .forEach(path -> {
+//                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
+//                        try {
+//                            zs.putNextEntry(zipEntry);
+//                            Files.copy(path, zs);
+//                            zs.closeEntry();
+//                        } catch (IOException e) {
+//                            System.err.println(e);
+//                        }
+//                    });
+//        }
+//    }
 }

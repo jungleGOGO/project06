@@ -241,6 +241,7 @@ function saveFile() {
 
     var blob = new Blob([textToSave], { type: "text/plain" });
 
+
     var a = document.createElement("a");
     a.style.display = "none";
     a.href = window.URL.createObjectURL(blob);
@@ -707,11 +708,12 @@ icon2.addEventListener('mouseout', function (){
     balloon2.style.display = 'none';
 })
 
-
 /////////////////////////////////////// ZIP 파일로 다운로드 ////////////////////////////////////////
-// document.getElementById('saveZip').addEventListener('click', function() {
-//     window.location.href = '/java/download-zip';
-// });
+// function zipDownload() {
+//     document.getElementById('saveZip').addEventListener('click', function () {
+//         window.location.href = '/java/download-zip';
+//     });
+// }
 
 
 ///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
@@ -752,6 +754,31 @@ $.contextMenu({
             }
         },
         item4: {
+            name: 'zip 다운로드',
+            icon: 'fa-solid fa-file-zipper',
+            callback: function (key, options) {
+                console.log("key", key);
+                console.log("options", options);
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                axios.post("/api/zipDownload", {filename: filename}, {responseType: 'blob'})
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', filename.split("/")[1]+'.zip');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        console.error('다운로드 에러:', error);
+                    });
+            }
+        },
+        item5: {
             name: '삭제',
             icon:'fa-solid fa-trash',
             callback: function (key, options) {

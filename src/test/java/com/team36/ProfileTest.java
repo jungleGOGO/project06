@@ -12,8 +12,11 @@ import java.util.Scanner;
 public class ProfileTest {
 
     public static void main(String[] args) {
-        String j ="hello";
-        System.out.println(j);
+        String a = "/dir2";
+
+        String b = a.split("/")[1].toString();
+        System.out.println(b);
+        System.out.println(a.split("/").toString());
     }
 
 }
