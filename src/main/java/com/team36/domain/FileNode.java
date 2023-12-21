@@ -27,8 +27,6 @@ public class FileNode {
 //        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/storage/"+text);
 //        this.flagUrl = determineFlagUrl("Y:\\storage\\"+text);
 //        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\storage"+text);
-
-
     }
 
     public void addChild(FileNode child) {
