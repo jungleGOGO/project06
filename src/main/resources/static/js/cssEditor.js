@@ -94,6 +94,7 @@ data-checked:
 
 /////////////////////////////////////// 모달창 및 사이드메뉴 ////////////////////////////////////////
 const loginCheck = document.getElementById('loginCheck').value;
+
 const icon = document.getElementById('icon'); //헤더 버튼
 const balloon = document.getElementById('balloon');
 
@@ -154,11 +155,14 @@ btn4.onclick = function() {
 }
 
 window.onclick = function(event) {
+
     if (event.target === modal || event.target === modal2 || event.target === modal3 || event.target === modal4 ||event.target === modal5 || event.target === modal6 ) {
+
         modal.style.display = "none";
         modal2.style.display = "none";
         modal3.style.display = "none";
         modal4.style.display = "none";
+
         modal5.style.display = "none";
         modal6.style.display = "none";
     }
@@ -182,6 +186,7 @@ $.contextMenu({
     items: {
         item1: {
             name: '폴더 생성',
+            icon: 'fa-solid fa-folder',
             callback: function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
@@ -190,6 +195,7 @@ $.contextMenu({
         },
         item2: {
             name: '이름 변경',
+            icon: 'fa-solid fa-pen-to-square',
             callback: function (key, options) {
                 console.log(key);
                 console.log(options);
@@ -198,6 +204,7 @@ $.contextMenu({
         },
         item3: {
             name: '삭제',
+            icon:'fa-solid fa-trash',
             callback: function (key, options) {
                 // 메뉴 아이템을 클릭한 경우의 동작
                 console.log("key", key);
@@ -377,8 +384,10 @@ $.contextMenu({
     return; // 추가 실행 중단
 }
     //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
+
     let Code = {'filename' : filename,'content' : content };
         axios.post("/editor/newsave", Code)
+
             .then((response) => {
                 saveTreeState();
                 $('#tree').remove();
@@ -555,13 +564,13 @@ function closeModal6() {
 }
 
     // FileNode 객체를 트리뷰 형식으로 변환
-function transformToTreeViewFormat(fileList) {
-    var treeData = [];
-    fileList.forEach(function(fileNode) {
-        convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
-    });
-    return treeData;
-}
+    function transformToTreeViewFormat(fileList) {
+        var treeData = [];
+        fileList.forEach(function(fileNode) {
+            convertNode(fileNode, treeData, 1); // 재귀적으로 노드를 변환합니다. 재귀적- 함수내에서 같은 함수를 호출하는것
+        });
+        return treeData;
+    }
 
     // FileNode 객체를 트리뷰 노드로 변환
     function convertNode(fileNode, treeData, nodeId) {

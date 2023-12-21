@@ -307,7 +307,6 @@ label{
   content: none; /* 마지막 버튼 뒤의 가상 요소 내용을 없앰 */
 }
 
-
 #modalWrap5 {
   position: fixed;
   z-index: 9999;
@@ -341,9 +340,6 @@ label{
 #modalContent5 {
   margin-top: 70px;
 }
-
-
-
 
 #modalWrap {
   position: fixed;

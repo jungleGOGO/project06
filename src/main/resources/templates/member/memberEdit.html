@@ -16,6 +16,7 @@
                             <h4 class="mb-4 pb-3">회원정보변경</h4>
                             <div class="form-group">
                                 <label for="email" class="form-label" style="width:100px;">이메일</label>
+                                <input type="hidden" id="mid" name="mid" th:value="${member.mid}">
                                 <input type="email" class="form-style" id="email" name="email" th:value="${member.email}" readonly>
                             </div>
                             <div class="form-group mt-2">
@@ -27,6 +28,9 @@
                                 <label for="mpw" class="form-label" style="width:80px;">비밀번호</label>
                                 <input type="text" class="form-style" id="mpw" name="mpw" th:value="${pw}" style="width:52%" readonly>
                                 <a th:href="@{/member/changePw}" class="btn btn-dark" style="float:right;"> 변경</a>
+                            </div>
+                            <div class="d-grid mb-4 mt-2">
+                                <a th:href="@{/member/changeActive(mid=${member.mid})}" class="btn btn-danger">회원탈퇴</a>
                             </div>
                         </div>
                     </div>
