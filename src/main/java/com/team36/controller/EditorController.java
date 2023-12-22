@@ -582,7 +582,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         CompressZip compressZip = new CompressZip();
         compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile);
 
-        // 압축 하기
+
         try {
             if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
                 System.out.println("압축 실패");

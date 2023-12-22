@@ -218,6 +218,7 @@ function saveFile() {
     contentType: "application/json",
     success: function(response) {
     $("#output").html(response.output.replace(/\n/g, "<br>"));
+
     $("#compileTime").html("<i class=\"fa-solid fa-circle\" style=\"color: #1b4134; font-size: 10px; margin-right: 6px;\"></i>"+response.time + ","+response.date );
 },
     error: function(error) {

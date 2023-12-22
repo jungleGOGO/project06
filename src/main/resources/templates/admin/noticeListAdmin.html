@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>공지사항 관리</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <script th:src="@{/static/js/scripts.js}"></script>
+    <link th:href="@{/static/css/admin.css}" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+<th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+<div id="layoutSidenav">
+    <th:block th:insert="~{layout/adminSidebar :: sidebar}"></th:block>
+    <div id="layoutSidenav_content">
+        <main>
+            <h2><strong>공지사항&nbsp;<i class="fa-solid fa-bell" style="color: #1e1e1f;"></i></strong></h2>
+            <div class="table-responsive" style="margin-top:50px;">
+                <table class="table text-nowrap mb-0 align-middle">
+                    <thead class="text-dark fs-4">
+                    <tr>
+                        <th class="border-bottom-0" width="80">
+                            <h6 class="fw-semibold mb-0">#</h6>
+                        </th>
+                        <th class="border-bottom-0" width="600">
+                            <h6 class="fw-semibold mb-0">제목</h6>
+                        </th>
+                        <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">등록일</h6>
+                        </th>
+                        <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">비고</h6>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="notice, noticeStat : ${list}">
+                        <td class="border-bottom-0"><h6 class="fw-semibold mb-0" th:text="${noticeStat.index}"></h6></td>
+                        <td class="border-bottom-0">
+                            <a th:text="${notice.title}" th:href="@{/notice/detail(no = ${notice.no})}" id="title" ></a>
+                        </td>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </td>
+                        <td class="border-bottom-0">
+                            <p class="mb-0 fw-normal" th:text="${#temporals.format(notice.regDate, 'yyyy-MM-dd')}"></p>
+                        </td>
+                        <td class="border-bottom-0">
+                            <a class="badge bg-danger rounded-3 fw-semibold" th:href="@{/admin/noticeDelete(no = ${notice.no})}">삭제</a>
+                            <a class="badge bg-secondary rounded-3 fw-semibold" th:href="@{/admin/noticeEdit(no = ${notice.no})}">수정</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${list.isEmpty()}">
+                        <td colspan="6">공지사항이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <th:block th:insert="~{layout/footer :: footer}"></th:block>
+</div>
+
+</body>
+</html>
