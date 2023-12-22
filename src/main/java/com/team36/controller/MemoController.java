@@ -22,10 +22,15 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.Map;
 
@@ -144,10 +149,8 @@ public class MemoController {
 
         String mid = principal.getName();
         // TODO : 경로 수정
-//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
-//        String filePath = "\\\\10.41.0.153\\storage" + mid+"/java"+filename2;
-//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
-        String filePath = "\\\\10.41.0.153\\storage\\" + mid+"\\java"+filename2;
+        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+//        String filePath = "\\\\10.41.0.153\\storage\\" + mid+"\\java"+filename2;
 
 
         File file = new File(filePath);
@@ -209,9 +212,9 @@ public class MemoController {
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
+//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
         long count=0;
@@ -238,6 +241,11 @@ public class MemoController {
             // 파일인 경우
             directoryPath = file.toPath().getParent().resolve(mkdirname);
         }
+        if (Files.exists(directoryPath)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("폴더 생성 실패: 폴더가 이미 존재합니다.");
+        }
+
         try {
             Files.createDirectories(directoryPath);
             return ResponseEntity.ok("폴더 생성 완료: " + directoryPath.toString());
@@ -340,10 +348,11 @@ public class MemoController {
         //파일 경로 확인
 //        System.out.println("(MemoController:325) filePath : "+filePath);
         // TODO : 경로 수정
-//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
 
-        String filePath = baseDir + code.getFilename().replace("/", "\\");
+//        String filePath = baseDir + code.getFilename().replace("/", "\\");
+        String filePath = baseDir + code.getFilename();
 
 
         try {
@@ -365,16 +374,63 @@ public class MemoController {
             String lastModifiedTime = oriLastModifiedTime.format(formatter);
             String creationTime = oriCreationTime.format(formatter);
 
+            //파일의 inode 값 가져오기
+            Object fileKey = attrs.fileKey();
+            String inode = fileKey.toString().split("ino=")[1].split("\\)")[0];
+            System.out.println("(MemoController:374) 파일 Inode 번호: " + inode);
+
+            // debugfs 명령으로 파일의 세부정보 가져오기
+            String command = "sudo debugfs -R 'stat <" + inode + ">' " + "dev/sdb1";
+            String crtimePattern = "crtime:.*--\\s(.+)";
+            Pattern pattern = Pattern.compile(crtimePattern);
+            String formattedCrtime = "";
+            //서버에 명령어 실행하고 결과값 가져오기
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+                Process process = processBuilder.start();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+                SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        String crtime = matcher.group(1);
+                        try {
+                            Date date = originalFormat.parse(crtime);
+                            formattedCrtime = targetFormat.format(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+
+                int exitCode = process.waitFor();
+                System.out.println("Exited with code : " + exitCode);
+
+                if (formattedCrtime != null) {
+                    System.out.println("Formatted crtime: " + formattedCrtime);
+                }
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
             // 파일에 내용 쓰기
             Files.write(path, code.getContent().getBytes());
 
             // 생성일과 수정일 출력
-            System.out.println("(MemoController:343) 파일 생성일: " + creationTime);
-            System.out.println("(MemoController:343) 파일 수정일: " + lastModifiedTime);
+//            System.out.println("(MemoController:) 파일 생성일: " + creationTime);
+            System.out.println("(MemoController:) 파일 생성일: " + formattedCrtime);
+            System.out.println("(MemoController:) 파일 수정일: " + lastModifiedTime);
 
             ResponseEntityDTO response = new ResponseEntityDTO();
             response.setMessage("파일 저장 완료");
-            response.setCreationTime(creationTime);
+            response.setCreationTime(formattedCrtime);
             response.setLastModifiedTime(lastModifiedTime);
 
 
