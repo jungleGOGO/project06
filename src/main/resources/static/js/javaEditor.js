@@ -65,6 +65,10 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
 
         }).catch((error) => {
             console.log(error);
+            if (error.response.status === 409) {
+                $('#mkdirname').blur();
+                alert("이미 같은 이름으로 생성된 폴더가 존재합니다.")
+            }
         });
     });
 
