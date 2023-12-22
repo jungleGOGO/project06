@@ -2,9 +2,12 @@ package com.team36.controller;
 
 import com.team36.domain.*;
 import com.team36.service.FileService;
+import com.team36.util.CompressZip;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 @Controller
 @Log4j2
-@Slf4j
 @RequiredArgsConstructor
 public class EditorController {
     private final FileService fileService;
@@ -58,13 +60,16 @@ public ResponseEntity<String> handleFileUpload(
         @RequestBody Code code, Model model, Principal principal) {
     String mid = principal.getName();
     String html = "html";
+    String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
+
+    String folderPath = baseDir + code.getFilehref();
 
     try {
-        String filename = code.getFilename();
+        String filename ="\\"+code.getFilename();
         String content = code.getContent();
         System.out.println("저장기능 파일이름: "+filename);
 
-        String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+        String filePath = baseDir + code.getFilehref();
         File targetDirectorys = new File(filePath);
         System.out.println(filePath);
         // 디렉토리가 존재하지 않으면 생성
@@ -209,7 +214,7 @@ public ResponseEntity<String> handleFileUpload(
 
     @PostMapping("/editor/read")
     @ResponseBody
-    public String getFile(@RequestParam("filename2") String filename2,Principal principal) throws IOException {
+    public FileContentResponse getFile(@RequestParam("filename2") String filename2,Principal principal,Model model) throws IOException {
       String mid = principal.getName();
       String html = "html";
         // 파일 경로
@@ -221,7 +226,8 @@ public ResponseEntity<String> handleFileUpload(
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
-        return fileContent;
+        String folderAndfile = filename2;
+        return  new FileContentResponse(fileContent, filename2);
     }
 
     // 파일 내용을 읽어오는 메서드
@@ -246,10 +252,10 @@ public ResponseEntity<String> handleFileUpload(
     public List<FileNode> fileList(Principal principal) throws Exception {
         String mid = principal.getName();
         String html = "html";
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid;
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
 
-        String targetDirectoryPath = rootDirectoryPath + "\\"+html;
-        FileNode root = new FileNode(html, "\\"+html, mid); // 상대 경로 사용
+        String targetDirectoryPath = rootDirectoryPath +mid +"\\"+html;
+        FileNode root = new FileNode(html, "", mid+"\\html"); // 상대 경로 사용
 
 //        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
@@ -315,7 +321,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             String fileRelativePath = file.toString().substring(targetDirectoryPath.length());//파일의 상대 경로를 계산
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));//파일의 상위 디렉토리 경로를 계산
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid)); // 상위 디렉토리에 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"\\html")); // 상위 디렉토리에 파일 노드 추가
 
         });
 
@@ -340,7 +346,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         */
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i]; // 현재 반복에서 처리할 경로의 일부를 가져온다
-            if (part.isEmpty() || part.equals(html)) continue;
+            if (part.isEmpty() || part.equals(mid)) continue; //특정 경로 부분을 건너뛰기 위한 조건이다. "html" 엔드포인트는 빈 부분이나 mid값과 같은 부분을 건너뛴다
 
             // current.getChildren()는 current에 해당하는 FileNode객체의 자식 노드 목록을 가져옴
             Optional<FileNode> found = current.getChildren().stream()
@@ -352,7 +358,8 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                 //초기 루트 노드이고 첫 번째 구성요소인 경우에는 \를 추가하고, 그렇지 않은 경우에는 현재 노드의 텍스트와 구성요소를 결합.
                 String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
 //                새로운 노드를 생성
-                FileNode newNode = new FileNode(part, nodePath,mid);
+
+                FileNode newNode = new FileNode(part, nodePath,mid+"\\html");
 
                 current.addChild(newNode);//현재 노드에 새로운 노드를 자식으로 추가
                 current = newNode; //현재 노드를 새로운 노드로 업데이트
@@ -368,6 +375,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
     public String deleteFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
         String filename = payload.get("filename");
         String html = "html";
+        System.out.println("삭제할 파일: "+filename);
         // 파일 또는 폴더를 삭제할 디렉토리 경로
 //        String rootDirectoryPath = "D:\\kimleeho";
         String mid = principal.getName();
@@ -534,6 +542,92 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("폴더 생성 실패: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/editor/drag")
+    public ResponseEntity<String> moveFile(@RequestBody DragFile fileMoveRequest,Principal principal) {
+        String mid = principal.getName();
+        String html = "html";
+        try {
+            String baseDir = "\\\\10.41.0.153\\storage\\" + mid + "\\" + html;
+            String filePath = baseDir + fileMoveRequest.getFilehref();
+            String folderPath = baseDir + fileMoveRequest.getFolderhref();
+            System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
+            File file = new File(filePath);
+            File folder = new File(folderPath);
+
+            if (file.exists() && folder.exists()) {
+                File newFile = new File(folder, file.getName());
+                if (file.renameTo(newFile)) {
+                    return ResponseEntity.ok("파일 이동 성공");
+                } else {
+                    return ResponseEntity.status(500).body("파일 이동 실패");
+                }
+            } else {
+                return ResponseEntity.status(400).body("파일 또는 폴더가 존재하지 않습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("서버 오류");
+        }
+    }
+
+    //파일 다운로드(우클릭)
+    @PostMapping("/editor/fileDownload")
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadFile(@RequestBody Map<String, String> payload, Principal principal) throws IOException {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename;
+
+        // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
+        File file = new File(unZipFilePath);
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", file.getName());
+
+        return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+    }
+
+    //zip 다운로드
+    @PostMapping("/editor/zipDownload")
+    @ResponseBody
+    public ResponseEntity<Resource> zipDownload(@RequestBody Map<String, String> payload, Principal principal) throws Throwable {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String [] filename2 = filename.split("[\\\\/]");
+        String filename3 = filename2[filename2.length-1];
+
+        // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
+        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
+        String unZipFile = mid+"html"+filename3;
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
+        log.info("파일경로:"+unZipFilePath);
+
+
+        log.info("============압축하기==============");
+        CompressZip compressZip = new CompressZip();
+        compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile);
+
+        // 압축 하기
+        try {
+            if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
+                System.out.println("압축 실패");
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+
+        Resource fileSystemResource = new FileSystemResource(unZipFilePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(fileSystemResource);
     }
 }
 

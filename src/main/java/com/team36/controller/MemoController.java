@@ -3,9 +3,14 @@ package com.team36.controller;
 import com.team36.domain.Code;
 import com.team36.domain.Directory;
 import com.team36.domain.Memo;
+import com.team36.util.CompressZip;
 import com.team36.dto.ResponseEntityDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -282,7 +287,8 @@ public class MemoController {
     public String deleteJavaFile(@RequestBody Map<String, String> payload, Principal principal) throws Exception {
         String mid = principal.getName();
         String filename = payload.get("filename");
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+ "\\java";
+        System.out.println(filename);
+        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+"\\java\\";
         String filePath = rootDirectoryPath +filename;
 
         File fileToDelete = new File(filePath);
@@ -439,6 +445,65 @@ public class MemoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 저장 실패: " + e.getMessage());
         }
+    }
+
+    //파일 다운로드(우클릭)
+    @PostMapping("/fileDownload")
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadFile(@RequestBody Map<String, String> payload, Principal principal) throws IOException {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename;
+
+        // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
+        File file = new File(unZipFilePath);
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", file.getName());
+
+        return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+    }
+
+
+    //zip 다운로드
+    @PostMapping("/zipDownload")
+    @ResponseBody
+    public ResponseEntity<Resource> zipDownload(@RequestBody Map<String, String> payload, Principal principal) throws Throwable {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String [] filename2 = filename.split("[\\\\/]");
+        String filename3 = filename2[filename2.length-1].replace(".java", "");
+
+        // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
+        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
+        String unZipFile = mid+"java"+filename3;
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
+        log.info("파일경로:"+unZipFilePath);
+
+
+        log.info("============압축하기==============");
+        CompressZip compressZip = new CompressZip();
+        compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename, unZipPath, unZipFile);
+
+        // 압축 하기
+        try {
+            if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename, unZipPath, unZipFile)) {
+                System.out.println("압축 실패");
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+
+        Resource fileSystemResource = new FileSystemResource(unZipFilePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(fileSystemResource);
     }
 
 }

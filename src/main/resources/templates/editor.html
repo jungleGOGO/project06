@@ -19,6 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <!--헤더 -->
@@ -100,25 +101,22 @@
         <!--도움말 모달창-->
         <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
             <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: black">
-                        <h5 class="modal-title" id="exampleModalLabel">도움말</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-content" id="info">
+                    <div class="modal-header" style="border-bottom: 1px solid #717578">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-circle-question"></i>&nbsp;&nbsp;도움말</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: #fff; margin-right: 6px;"></button>
                     </div>
-                    <div class="modal-body" style="background-color: black">
+                    <div class="modal-body">
                         <!-- 모달 내용 -->
-                        <span class="material-symbols-outlined">save</span> <p>다운로드 버튼</p> <hr>
-                        <span class="material-symbols-outlined">dns</span> <p>저장소 열기</p><hr>
-                        <span class="material-symbols-outlined">download</span> <p>현재 파일 다운받기</p><hr>
-                        <span class="material-symbols-outlined">play_circle</span> <p>결과 보기</p><hr>
-                        <span class="material-symbols-outlined">ink_eraser</span> <p>TML, CSS, JS에 입력한 코드 전체 지우기</p><hr>
-                        <span class="material-symbols-outlined">contract_edit</span> <p>다른 이름으로 저장</p><hr>
-                        <p>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p> <hr>
-                        <p>자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p> <hr>
-                        <p>로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p> <hr>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <p><span class="material-symbols-outlined">save</span> 다운로드 버튼 </p>
+                        <p><span class="material-symbols-outlined">dns</span> 저장소 열기</p>
+                        <p><span class="material-symbols-outlined">download</span>현재 파일 다운받기</p>
+                        <p><span class="material-symbols-outlined">play_circle</span>결과 보기</p>
+                        <p><span class="material-symbols-outlined">ink_eraser</span>TML, CSS, JS에 입력한 코드 전체 지우기</p>
+                        <p><span class="material-symbols-outlined">contract_edit</span> 이름으로 저장</p><hr>
+                        <p class="info-content"z>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p>
+                        <p class="info-content">자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p>
+                        <p class="info-content">로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p>
                     </div>
                 </div>
             </div>
