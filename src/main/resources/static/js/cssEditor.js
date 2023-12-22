@@ -268,15 +268,15 @@ $.contextMenu({
             name: '삭제',
             icon:'fa-solid fa-trash',
             callback: function (key, options) {
-                var confirmed = confirm("정말로 삭제하시겠습니까?");
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href');
+                var filename2 = $trigger.find('a').text();
+                var confirmed = confirm("정말로 삭제하시겠습니까? 파일명: " + filename2);
                 if (confirmed) {
                     console.log("Confirmed deletion for element with filename: " + filename);
                     // 메뉴 아이템을 클릭한 경우의 동작
                     console.log("key", key);
                     console.log("options", options);
-
-                    var $trigger = options.$trigger;
-                    var filename = $trigger.find('a').attr('href')
                     // span 안의 a 태그의 텍스트를 가져옴
                     console.log("Clicked on " + key + " for element with filename: " + filename);
 
@@ -288,6 +288,8 @@ $.contextMenu({
                         .catch((error) => {
                             console.log(error);
                         });
+                }else {
+                    showFileList();
                 }}
         }
     }
@@ -391,45 +393,7 @@ $.contextMenu({
     return true;
 }
 
-<!--저장버튼 작동하는 스크립트-->
-    document.getElementById("popupBtn").addEventListener("click",function () {
-        if(loginCheck == 'false') {
-            alert("로그인 후 사용 가능합니다:)");
-            return;
-        }
 
-        var name = document.getElementById("downloadName").value;
-        if (name === "untitled") {
-            modal.style.display = 'block';
-        } else{
-        let filename = document.getElementById("downloadName").value;
-        const htmlCode = htmlEditor.getValue();
-        const cssCode = cssEditor.getValue();
-        const jsCode = jsEditor.getValue();
-        const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
-        let Code = {'filename': filename, 'content': content};
-        axios.post("/editor/save", Code)
-            .then((response) => {
-                saveTreeState();
-                $('#tree').remove();
-                loadFileList();
-                alert("파일이 성공적으로 저장되었습니다");
-            })
-            .catch((error) => {
-                console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
-
-                if (error.response && error.response.data) {
-                    if (error.response.data.msg) {
-                        alert(error.response.data.msg);
-                    } else {
-                        alert(JSON.stringify(error.response.data, null, 2)); // 에러 응답 자세히 보기
-                    }
-                } else {
-                    alert("에러 발생! 자세한 내용은 콘솔을 확인해주세요.");
-                    console.error("에러:", error.message);
-                }
-            })}
-    });
     document.getElementById("changeName").addEventListener("click",function (){
         modal6.style.display="block";
     })
@@ -482,7 +446,8 @@ document.getElementById("resave").addEventListener("click", function () {
     let extension = document.getElementById("extension6").value;
     let name =document.getElementById("filename3").value; // 저장하고 싶은 파일의 파일명 값
     let filename = name + extension ;
-
+    folderAndfile = '';
+    console.log("저장이됐나요??안되야되는데??: "+folderAndfile)
     const htmlCode = htmlEditor.getValue();
     const cssCode = cssEditor.getValue();
     const jsCode = jsEditor.getValue();
@@ -523,6 +488,7 @@ document.getElementById("resave").addEventListener("click", function () {
 // 스타일시트(style태그), 하위프레임(iframe)등의 외부 리소스가 아직 로드되지 않아도 발생.
     document.addEventListener('DOMContentLoaded', function() {
     // 초기 파일 목록 불러오기
+        folderAndfile = '';
     loadFileList();
 });
 
@@ -592,41 +558,78 @@ function closeModal6() {
         });
 }
     // 페이지 로드 시에 실행되도록
-    function loadFileList() {
+function loadFileList() {
     axios.get('/editor/fileList').then(response => {
-        console.log("실행됨!")
+        console.log("실행됨!");
         const fileList = response.data;
-        console.log("결과값:"+fileList);
-        // 이미 트리가 있는지 여부 확인하고 없다면 새로운 div요소를 생성하여 해당요소에 트리뷰 추가
+        console.log("결과값:" + fileList);
+
+        // 이미 트리가 있는지 여부 확인하고 없다면 새로운 div요소를 생성하여 해당 요소에 트리뷰 추가
         if ($('#pane').find('#tree').length === 0) {
             $('#pane').append('<div id="tree"></div>');
         }
 
         // 새로운 파일 목록으로 트리뷰 재구성
-      var tree=   $('#tree').tree({
+        var tree = $('#tree').tree({
             primaryKey: 'id',
             uiLibrary: 'materialdesign',
             dataSource: transformToTreeViewFormat(fileList),
             imageUrlField: 'flagUrl',
-            // dragAndDrop: true, // 드래그 앤 드롭 활성화
+            dragAndDrop: true, // 드래그 앤 드롭 활성화
         });
-        // tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
-        //     var file = { id: id, parentId: parentId, orderNumber: orderNumber };
-        //    axios.post('/editor/drag',file).then((response) => {
-        //        $('#tree').remove(); // 트리를 완전히 제거합니다.
-        //        loadFileList();
-        //    })
-        //     console.log("parma??:"+params)
-        // });
 
+        tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+            var data = tree.getDataById(id),
+                parent = parentId ? tree.getDataById(parentId) : {};
 
+            // JSON 문자열에서 직접 값을 추출
+            var dragFileHref = data.text.match(/href='([^']*)'/)[1];
+            var dragFolderHref = parent.text.match(/href='([^']*)'/)[1];
+
+// 마지막 '\'의 인덱스를 찾음
+            var lastBackslashIndex = dragFolderHref.lastIndexOf('\\');
+
+// '\' 다음의 문자열을 추출
+            var lastPart = dragFolderHref.substring(lastBackslashIndex + 1);
+
+// 추출한 문자열 중에 '.'이 포함되어 있다면 '.' 이전까지의 부분만 유지
+            if (lastPart.includes('.')) {
+                dragFolderHref  = dragFolderHref.substring(0, lastBackslashIndex)+'\\';
+
+                console.log("자름: "+dragFolderHref);
+            } else {
+                console.log("안자름: "+dragFolderHref);  // '.'이 없으면 원래 문자열 유지
+            }
+
+            console.log("폴더위치: "+dragFolderHref);
+            // 추가: 파일인 경우에만 이동 요청을 서버로 보냄
+                let DragFile = { 'filehref': dragFileHref, 'folderhref': dragFolderHref };
+                axios.post("/editor/drag", DragFile)
+                    .then((response) => {
+                        saveTreeState();
+                        $('#tree').remove();
+                        loadFileList();
+                    })
+                    .catch((error) => {
+                       showFileList();
+                        console.error("에러응답:", error.response);
+                    });
+        });
 
         // 트리 재구성 후 상태 복원
         restoreTreeState();
-        treeEvent();
+        treeEvent(tree); // 트리 객체를 전달
+        console.log("되나?")
     }).catch(error => {
         console.error('Error fetching file list:', error);
     });
+}
+
+
+function isDropAllowed(data, parent) {
+    // 여기에 특정 조건을 추가하여 드롭을 허용할지 여부를 결정
+    // 예: 폴더인 경우에만 드롭을 허용하도록 설정
+    return parent.flagUrl.includes('folder.svg');
 }
 
     // FileNode 객체를 트리뷰 형식으로 변환
@@ -639,23 +642,33 @@ function closeModal6() {
     }
 
     // FileNode 객체를 트리뷰 노드로 변환
-    function convertNode(fileNode, treeData, nodeId) {
-        //새로운 노드 객체를 생성
-    var node = {
-    id: nodeId, // 노드의 고유한 식별자
-    text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>", //트리에 표시될 텍스트
-    flagUrl: fileNode.flagUrl, // 노드에 대한 이미지 url
-    children: [] //자식 노드들을 저장할 배열
-};
+function convertNode(fileNode, treeData, parentId) {
+    var nodeId;
 
-    fileNode.children.forEach(function (child) {
-    convertNode(child, node.children, nodeId + 1);
-    nodeId++;
-});
+    // 이미지의 URL을 통해 파일과 폴더를 구분
+    var isFolder = fileNode.flagUrl.includes('folder.svg');
+
+    if (isFolder) {
+        // 폴더인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId +'_'+"Folder"+'_' + fileNode.name;
+    } else {
+        // 파일인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId+'_'+"File"+'_' + fileNode.name;
+    }
+
+    var node = {
+        id: nodeId,
+        text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
+        flagUrl: fileNode.flagUrl,
+        children: []
+    };
+
+    fileNode.children.forEach(function (child, index) {
+        convertNode(child, node.children, nodeId + '_' + index); // 자식 노드의 ID 생성에 부모 노드 ID를 추가
+    });
 
     treeData.push(node);
 }
-
     //html , css, jscode값을 분배하는 코드
     function setCodeValues(htmlCode, cssCode, jsCode) {
 
@@ -720,7 +733,7 @@ function closeModal6() {
     treeArea.addEventListener('dblclick', function(event) {
     const anchor = event.target.closest('a');
         console.log("폴더파일1:"+anchor)
-    const folderAndfile = anchor.getAttribute('href');
+    folderAndfile = anchor.getAttribute('href');
     console.log("폴더파일2:"+folderAndfile)
     htmlEditor.setValue("");
     cssEditor.setValue("");
@@ -735,7 +748,7 @@ function closeModal6() {
     params: { filename2: folderAndfile }
 })
     .then(response => {
-    const fileContent = response.data;
+        const { fileContent, folderAndFile } = response.data;
     const codeEl = document.querySelector("[data-code]").contentWindow.document;
     const matchResult = fileContent.match(/<style>([\s\S]*?)<\/style>|<body>([\s\S]*?)<\/body>|<script>([\s\S]*?)<\/script>/g);
 
@@ -745,10 +758,11 @@ function closeModal6() {
     const cssCode = styleMatch ? styleMatch.replace(/<style>|<\/style>/g, '').trim() : '';
     const htmlCode = bodyMatch ? bodyMatch.replace(/<body>|<\/body>/g, '').trim() : '';
     const jsCode = scriptMatch ? scriptMatch.replace(/<script>|<\/script>/g, '').trim() : '';
-
     setCodeValues(htmlCode, cssCode, jsCode);
+    showFileList();
 } else {
     console.log('No match found in the HTML file.');
+    showFileList();
 }
 })
     .catch(error => console.error('Error fetching file content:', error))
@@ -779,6 +793,52 @@ function closeModal6() {
 });
 
 }
+
+<!--저장버튼 작동하는 스크립트-->
+document.getElementById("popupBtn").addEventListener("click",function () {
+    if(loginCheck == 'false') {
+        alert("로그인 후 사용 가능합니다:)");
+        return;
+    }
+
+    var filename = document.getElementById("downloadName").value;
+    if (filename === "untitled") {
+        modal.style.display = 'block';
+    } else{
+        // let filename = document.getElementById("downloadName").value;
+        const htmlCode = htmlEditor.getValue();
+        const cssCode = cssEditor.getValue();
+        const jsCode = jsEditor.getValue();
+        const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
+        // "\\"를 기준으로 폴더 경로를 나누고, 마지막 요소를 제외한 나머지를 합침
+        const folderPathArray = folderAndfile.split("\\");
+        folderPathArray.pop(); // 마지막 요소(파일명)를 제외
+        const fileroot = folderPathArray.join("\\"); // 새로운 폴더 경로
+        console.log("저장폴더경로: "+fileroot)
+        let Code = {'filename': filename, 'content': content , 'filehref':fileroot};
+        console.log("코드값: "+Code)
+        axios.post("/editor/save", Code)
+            .then((response) => {
+                saveTreeState();
+                $('#tree').remove();
+                loadFileList();
+                alert("파일이 성공적으로 저장되었습니다");
+            })
+            .catch((error) => {
+                console.error("에러 응답:", error.response); // 에러 응답 자세히 보기
+
+                if (error.response && error.response.data) {
+                    if (error.response.data.msg) {
+                        alert(error.response.data.msg);
+                    } else {
+                        alert(JSON.stringify(error.response.data, null, 2)); // 에러 응답 자세히 보기
+                    }
+                } else {
+                    alert("에러 발생! 자세한 내용은 콘솔을 확인해주세요.");
+                    console.error("에러:", error.message);
+                }
+            })}
+});
 
 <!--선택한 파일 이름을 받음-->
     let selectedFile = null;
@@ -1204,6 +1264,7 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     console.log("폴더추가 경로"+path)
     let dir = { 'mkdirname': mkdirname, 'path': path };
     axios.post("/editor/mkdir", dir).then((response) => {
+        saveTreeState();
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
