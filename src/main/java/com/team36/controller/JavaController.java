@@ -52,7 +52,8 @@ public class JavaController {
 //        String rootDirectoryPath = "D:\\kimleeho";
 
         //현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
         //경로 확인
