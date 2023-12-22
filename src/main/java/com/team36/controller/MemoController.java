@@ -391,6 +391,27 @@ public class MemoController {
         }
     }
 
+    //파일 다운로드(우클릭)
+    @PostMapping("/fileDownload")
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadFile(@RequestBody Map<String, String> payload, Principal principal) throws IOException {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename;
+
+        // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
+        File file = new File(unZipFilePath);
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", file.getName());
+
+        return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+    }
+
+
     //zip 다운로드
     @PostMapping("/zipDownload")
     @ResponseBody
@@ -398,10 +419,12 @@ public class MemoController {
 
         String mid = principal.getName();
         String filename = payload.get("filename");
+        String [] filename2 = filename.split("[\\\\/]");
+        String filename3 = filename2[filename2.length-1].replace(".java", "");
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
         String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
-        String unZipFile = mid+"java"+filename.split("/")[1].toString();
+        String unZipFile = mid+"java"+filename3;
         String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
         log.info("파일경로:"+unZipFilePath);
 

@@ -724,6 +724,7 @@ icon2.addEventListener('mouseout', function (){
 
 $.contextMenu({
     selector: '[data-role="display"]',
+
     items: {
         item1: {
             name: '파일 생성',
@@ -757,23 +758,29 @@ $.contextMenu({
                 openRenameFileModal(); // 모달 열기
             }
         },
-        item4: {
-            name: 'zip 다운로드',
-            icon: 'fa-solid fa-file-zipper',
-            callback: function (key, options) {
+        item4:{
+            name: '다운로드',
+            icon : 'fa-solid fa-file-arrow-down',
+            visible: function (key, options) {
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                return filename.includes('.java');
+            },
+            callback : function (key, options) {
                 console.log("key", key);
                 console.log("options", options);
                 var $trigger = options.$trigger;
                 var filename = $trigger.find('a').attr('href')
                 // span 안의 a 태그의 텍스트를 가져옴
                 console.log("Clicked on " + key + " for element with filename: " + filename);
-
-                axios.post("/api/zipDownload", {filename: filename}, {responseType: 'blob'})
+                var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
+                console.log(filename2);
+                axios.post("/api/fileDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', filename.split("/")[1]+'.zip');
+                        link.setAttribute('download', filename);
                         document.body.appendChild(link);
                         link.click();
                     })
@@ -783,6 +790,37 @@ $.contextMenu({
             }
         },
         item5: {
+            name: 'zip 다운로드',
+            icon: 'fa-solid fa-file-zipper',
+            visible: function (key, options) {
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                return !filename.includes('.java');
+            },
+            callback: function (key, options) {
+                console.log("key", key);
+                console.log("options", options);
+                var $trigger = options.$trigger;
+                var filename = $trigger.find('a').attr('href')
+                // span 안의 a 태그의 텍스트를 가져옴
+                console.log("Clicked on " + key + " for element with filename: " + filename);
+                var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
+                console.log(filename2);
+                axios.post("/api/zipDownload", {filename: filename}, {responseType: 'blob'})
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', filename2+'.zip');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        console.error('다운로드 에러:', error);
+                    });
+            }
+        },
+        item6: {
             name: '삭제',
             icon:'fa-solid fa-trash',
             callback: function (key, options) {
