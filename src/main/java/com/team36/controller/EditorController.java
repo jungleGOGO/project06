@@ -32,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 @Controller
 @Log4j2
-@Slf4j
 @RequiredArgsConstructor
 public class EditorController {
     private final FileService fileService;
@@ -61,13 +60,16 @@ public ResponseEntity<String> handleFileUpload(
         @RequestBody Code code, Model model, Principal principal) {
     String mid = principal.getName();
     String html = "html";
+    String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
+
+    String folderPath = baseDir + code.getFilehref();
 
     try {
-        String filename = code.getFilename();
+        String filename ="\\"+code.getFilename();
         String content = code.getContent();
         System.out.println("저장기능 파일이름: "+filename);
 
-        String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+        String filePath = baseDir + code.getFilehref();
         File targetDirectorys = new File(filePath);
         System.out.println(filePath);
         // 디렉토리가 존재하지 않으면 생성
@@ -212,7 +214,7 @@ public ResponseEntity<String> handleFileUpload(
 
     @PostMapping("/editor/read")
     @ResponseBody
-    public String getFile(@RequestParam("filename2") String filename2,Principal principal) throws IOException {
+    public FileContentResponse getFile(@RequestParam("filename2") String filename2,Principal principal,Model model) throws IOException {
       String mid = principal.getName();
       String html = "html";
         // 파일 경로
@@ -224,7 +226,8 @@ public ResponseEntity<String> handleFileUpload(
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
-        return fileContent;
+        String folderAndfile = filename2;
+        return  new FileContentResponse(fileContent, filename2);
     }
 
     // 파일 내용을 읽어오는 메서드
@@ -538,6 +541,34 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("폴더 생성 실패: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/editor/drag")
+    public ResponseEntity<String> moveFile(@RequestBody DragFile fileMoveRequest,Principal principal) {
+        String mid = principal.getName();
+        String html = "html";
+        try {
+            String baseDir = "\\\\10.41.0.153\\storage\\" + mid + "\\" + html;
+            String filePath = baseDir + fileMoveRequest.getFilehref();
+            String folderPath = baseDir + fileMoveRequest.getFolderhref();
+            System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
+            File file = new File(filePath);
+            File folder = new File(folderPath);
+
+            if (file.exists() && folder.exists()) {
+                File newFile = new File(folder, file.getName());
+                if (file.renameTo(newFile)) {
+                    return ResponseEntity.ok("파일 이동 성공");
+                } else {
+                    return ResponseEntity.status(500).body("파일 이동 실패");
+                }
+            } else {
+                return ResponseEntity.status(400).body("파일 또는 폴더가 존재하지 않습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("서버 오류");
         }
     }
 

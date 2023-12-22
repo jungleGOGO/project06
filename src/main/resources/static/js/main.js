@@ -131,6 +131,9 @@ clearButtonEl.addEventListener("click", () => {
   htmlEditor.setValue("");
   cssEditor.setValue("");
   jsEditor.setValue("");
+  codeEl.open();
+  codeEl.innerHTML = "";
+  codeEl.close();
 });
 
 clearHtmlButtonEl.addEventListener("click", () => {
@@ -143,10 +146,4 @@ clearCssButtonEl.addEventListener("click", () => {
 
 clearJsButtonEl.addEventListener("click", () => {
   jsEditor.setValue("");
-});
-
-clearResult.addEventListener("click", () => {
-  codeEl.open();
-  codeEl.innerHTML = "";
-  codeEl.close();
 });
