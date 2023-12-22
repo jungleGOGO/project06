@@ -3,7 +3,6 @@ package com.team36.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.team36.domain.Member;
-import com.team36.domain.QMember;
 import com.team36.dto.PageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,5 +50,6 @@ public class SearchImpl extends QuerydslRepositorySupport implements Search {
         long total = query.fetchCount();
 
         return new PageImpl<>(list, pageable, total);
+    }
     }
 }

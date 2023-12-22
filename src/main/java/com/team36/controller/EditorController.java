@@ -60,7 +60,7 @@ public ResponseEntity<String> handleFileUpload(
         @RequestBody Code code, Model model, Principal principal) {
     String mid = principal.getName();
     String html = "html";
-    String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
+    String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
 
     String folderPath = baseDir + code.getFilehref();
 
@@ -122,7 +122,7 @@ public ResponseEntity<String> handleFileUpload(
             String filename = code.getFilename();
             String content = code.getContent();
 
-            String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+            String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
             File targetDirectorys = new File(filePath);
 
             // 디렉토리가 존재하지 않으면 생성
@@ -160,7 +160,7 @@ public ResponseEntity<String> handleFileUpload(
             String filename = code.getFilename();
             String content = code.getContent();
 
-            String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
+            String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
             File targetDirectorys = new File(filePath);
 
             // 디렉토리가 존재하지 않으면 생성
@@ -199,7 +199,7 @@ public ResponseEntity<String> handleFileUpload(
         String content = code.getContent();
         System.out.println("자동저장 파일이름:"+filename);
         String html = "html";
-        String filePath = "//10.41.0.153/storage/" + mid + "/" + html+"/" + filename;
+        String filePath = "//10.41.0.153/team36/" + mid + "/" + html+"/" + filename;
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(content);
@@ -218,11 +218,11 @@ public ResponseEntity<String> handleFileUpload(
       String mid = principal.getName();
       String html = "html";
         // 파일 경로
-//        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
+//        String filePath = "/Users/juncheol/Desktop/team36" + filename2;
 //        String filePath = "D:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
 //        String filePath = "D:\\kimleeho\\" + filename2;
-        String filePath = "//10.41.0.153/storage/" + mid +"/"+html+"/" + filename2;
+        String filePath = "//10.41.0.153/team36/" + mid +"/"+html+"/" + filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
@@ -252,7 +252,7 @@ public ResponseEntity<String> handleFileUpload(
     public List<FileNode> fileList(Principal principal) throws Exception {
         String mid = principal.getName();
         String html = "html";
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 
         String targetDirectoryPath = rootDirectoryPath +mid +"\\"+html;
         FileNode root = new FileNode(html, "", mid+"\\html"); // 상대 경로 사용
@@ -379,7 +379,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         // 파일 또는 폴더를 삭제할 디렉토리 경로
 //        String rootDirectoryPath = "D:\\kimleeho";
         String mid = principal.getName();
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+html;
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+html;
 //        String rootDirectoryPath = "C:\\kimleeho";
         String filePath = rootDirectoryPath + filename;
 
@@ -412,7 +412,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String mid = principal.getName();
         String html = "html";
 
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage"+"\\"+mid+"\\"+html;
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+html;
 
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
@@ -513,9 +513,9 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
 //        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
-//        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
-//        String baseDir = "\\\\Y:\\storage";
-        String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
+//        String baseDir = "/Users/juncheol/Desktop/team36"; // 기본 경로
+//        String baseDir = "\\\\Y:\\team36";
+        String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
         String filePath = baseDir + webPath.replace("\\", File.separator);
         System.out.println("폴더생성 filepath:"+filePath);
 
@@ -549,7 +549,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String mid = principal.getName();
         String html = "html";
         try {
-            String baseDir = "\\\\10.41.0.153\\storage\\" + mid + "\\" + html;
+            String baseDir = "\\\\10.41.0.153\\team36\\" + mid + "\\" + html;
             String filePath = baseDir + fileMoveRequest.getFilehref();
             String folderPath = baseDir + fileMoveRequest.getFolderhref();
             System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
@@ -579,7 +579,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 
         String mid = principal.getName();
         String filename = payload.get("filename");
-        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename;
+        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename;
 
         // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
         File file = new File(unZipFilePath);
@@ -603,19 +603,19 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String filename3 = filename2[filename2.length-1];
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
-        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
+        String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
         String unZipFile = mid+"html"+filename3;
-        String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
+        String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
         log.info("파일경로:"+unZipFilePath);
 
 
         log.info("============압축하기==============");
         CompressZip compressZip = new CompressZip();
-        compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile);
+        compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename, unZipPath, unZipFile);
 
 
         try {
-            if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
+            if (!compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
                 System.out.println("압축 실패");
             }
         } catch (Throwable e) {

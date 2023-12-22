@@ -1,10 +1,15 @@
 package com.team36.service;
 
+import com.team36.domain.Member;
 import com.team36.domain.Notice;
+import com.team36.dto.MemberJoinDTO;
 import com.team36.dto.NoticeDTO;
+import com.team36.dto.PageDTO;
 import com.team36.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,4 +57,14 @@ public class NoticeServcieImpl implements NoticeService{
     public void delete(Integer no) {
         noticeRepository.deleteById(no);
     }
+
+//    @Override
+//    public PageDTO<Notice, NoticeDTO> noticeList(PageDTO<Notice, NoticeDTO> pageDTO) {
+////        Pageable pageable = pageDTO.getPageable();
+////        Page<Notice> result = noticeRepository.searchPage(pageable,pageDTO);
+////        pageDTO.build(result);
+////        pageDTO.entity2dto(result, NoticeDTO.class);
+////        return pageDTO;
+//
+//    }
 }

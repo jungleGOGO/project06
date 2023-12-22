@@ -1,6 +1,7 @@
 package com.team36.controller;
 
 import com.team36.domain.Member;
+import com.team36.domain.Notice;
 import com.team36.dto.MemberJoinDTO;
 import com.team36.dto.MemberSecurityDTO;
 import com.team36.dto.NoticeDTO;
@@ -61,7 +62,19 @@ public class AdminController {
     }
 
     @GetMapping("/admin/noticeList")
-    public String getList(Model model){
+    public String getList(Model model, HttpServletRequest request){
+
+        PageDTO<Notice, NoticeDTO> pageDTO = new PageDTO<>();
+
+        String type = request.getParameter("type");
+        String keyword = request.getParameter("keyword");
+
+        int pageCurrent = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        pageDTO.setType(type);
+        pageDTO.setKeyword(keyword);
+        pageDTO.setPageCurrent(pageCurrent);
+
+//        pageDTO = noticeService.list(pageDTO);
 
         List<NoticeDTO> list = noticeService.list();
         model.addAttribute("list", list);

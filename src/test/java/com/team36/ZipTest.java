@@ -9,7 +9,7 @@ public class ZipTest {
         // String zipFile = "jsmpeg-player-master.zip";
 
         // 압축을 해제할 위치, 압축할 파일이름
-        String unZipPath = "\\\\10.41.0.153\\storage\\2\\java";
+        String unZipPath = "\\\\10.41.0.153\\team36\\2\\java";
         String unZipFile = "zipTest";
 
         System.out.println("--------- 압축 하기 ---------");
@@ -17,7 +17,7 @@ public class ZipTest {
 
         // 압축 하기
         try {
-            if (!compressZip.compress("\\\\10.41.0.153\\storage\\zip\\zipTest", unZipPath, unZipFile)) {
+            if (!compressZip.compress("\\\\10.41.0.153\\team36\\zip\\zipTest", unZipPath, unZipFile)) {
                 System.out.println("압축 실패");
             }
         } catch (Throwable e) {
