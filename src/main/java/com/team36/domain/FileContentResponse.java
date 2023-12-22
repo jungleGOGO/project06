@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Code {
-    private String filename;
-    private String content;
-    private String filehref;
+public class FileContentResponse {
+    private String fileContent;
+    private String folderAndFile;
 
 }

@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Code {
-    private String filename;
-    private String content;
+public class DragFile {
     private String filehref;
-
+    private String folderhref;
 }
