@@ -2,9 +2,12 @@ package com.team36.controller;
 
 import com.team36.domain.*;
 import com.team36.service.FileService;
+import com.team36.util.CompressZip;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -546,10 +549,10 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String mid = principal.getName();
         String html = "html";
         try {
-            String baseDir = "\\\\10.41.0.153\\storage\\" +mid + "\\" +html;
+            String baseDir = "\\\\10.41.0.153\\storage\\" + mid + "\\" + html;
             String filePath = baseDir + fileMoveRequest.getFilehref();
             String folderPath = baseDir + fileMoveRequest.getFolderhref();
-            System.out.println("파일로 위치잡았을때 값: "+fileMoveRequest.getFolderhref());
+            System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
             File file = new File(filePath);
             File folder = new File(folderPath);
 
@@ -567,6 +570,64 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             e.printStackTrace();
             return ResponseEntity.status(500).body("서버 오류");
         }
+    }
+
+    //파일 다운로드(우클릭)
+    @PostMapping("/editor/fileDownload")
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadFile(@RequestBody Map<String, String> payload, Principal principal) throws IOException {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename;
+
+        // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
+        File file = new File(unZipFilePath);
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", file.getName());
+
+        return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+    }
+
+    //zip 다운로드
+    @PostMapping("/editor/zipDownload")
+    @ResponseBody
+    public ResponseEntity<Resource> zipDownload(@RequestBody Map<String, String> payload, Principal principal) throws Throwable {
+
+        String mid = principal.getName();
+        String filename = payload.get("filename");
+        String [] filename2 = filename.split("[\\\\/]");
+        String filename3 = filename2[filename2.length-1];
+
+        // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
+        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
+        String unZipFile = mid+"html"+filename3;
+        String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
+        log.info("파일경로:"+unZipFilePath);
+
+
+        log.info("============압축하기==============");
+        CompressZip compressZip = new CompressZip();
+        compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile);
+
+        // 압축 하기
+        try {
+            if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
+                System.out.println("압축 실패");
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+
+        Resource fileSystemResource = new FileSystemResource(unZipFilePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileSystemResource.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(fileSystemResource);
     }
 }
 
