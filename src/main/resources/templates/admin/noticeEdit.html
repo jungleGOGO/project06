@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>공지사항 수정</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <script th:src="@{/static/js/scripts.js}"></script>
+    <link th:href="@{/static/css/admin.css}" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+<th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+<div id="layoutSidenav">
+    <th:block th:insert="~{layout/adminSidebar :: sidebar}"></th:block>
+    <div id="layoutSidenav_content" style="padding:0px;">
+        <main>
+            <div class="container" style="margin-top: 100px;">
+                <h2><strong>공지사항 수정&nbsp;<i class="fa-solid fa-bell" style="color: #1e1e1f;"></i></strong></h2>
+            </div>
+            <form th:action="@{/admin/noticeEdit}" method="post">
+                <div style="margin-top: 50px;">
+                    <div class="container" >
+                        <div class="mb-3">
+                            <label for="title" class="form-label" style="font-weight: bold !important; font-size: 20px;">제목</label>
+                            <input type="hidden" name="no" id="no" th:value="${notice.no }" >
+                            <input type="text" name="title" id="title" placeholder="제목 입력" th:value="${notice.title }" maxlength="98"  class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label" style="font-weight: bold !important; font-size: 20px;">내용</label>
+                            <textarea name="content" id="content" class="form-control" placeholder="내용 입력" rows="8" cols="100" maxlength="800" required  th:text="${notice.content}"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; margin-right: 200px;">
+                        <input type="submit" class="btn btn-light btn-lg" value="수정" style="width:200px; float: right; background-color: #4f5665; font-weight: bold; color: #fff;" />
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+    <th:block th:insert="~{layout/footer :: footer}"></th:block>
+</div>
+</body>
+</html>

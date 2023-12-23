@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>공지사항</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link th:href="@{/static/css/page.css}" rel="stylesheet">
+    <style>
+        .table th { color:#000; font-family: GongGothicMedium; font-size: 14px; text-align: center;}
+        .table td { color:#000; font-family: GongGothicMedium; font-size: 14px; text-align: center;}
+    </style>
+</head>
+<body>
+<div class="container" style="margin-top: 150px;">
+    <th:block th:insert="~{layout/header :: header}"></th:block>
+    <div class="container-xxl py-5" style="border-radius:5px;background-color: #fff;">
+        <div class="container">
+            <section style="padding-top: 0;">
+                <div>
+                    <h4 class="mb-4 pb-3 text-center" style="color:#000;margin-top:100px;">공지사항</h4>
+                    <div class="table-responsive-sm" style="margin:0 50px;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col" width="80">#</th>
+                                <th scope="col" width="400" style="text-align: left;">제목</th>
+                                <th scope="col">작성자</th>
+                                <th scope="col">작성일</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="notice, status: ${list}">
+                                <td>[[${status.count}]]</td>
+                                <td style="text-align: left;"><a th:text="${notice.title}" th:href="@{/notice/detail(no = ${notice.no})}" id="title" ></a></td>
+                                <td>[[${notice.author}]]</td>
+                                <td>[[${#temporals.format(notice.regDate, 'yyyy-MM-dd')}]]</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <th:block th:if="${not #lists.isEmpty(list)}"><div th:replace="/layout/page :: pagination('notice/list')"></div></th:block>
+                        <div th:if="${#lists.isEmpty(list)}" class="text-center">목록이 비어있습니다.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+</body>
+</html>
