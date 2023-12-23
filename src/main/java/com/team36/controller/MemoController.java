@@ -360,7 +360,7 @@ public class MemoController {
 //        String filePath = baseDir + code.getFilename().replace("/", "\\");
         String filePath = baseDir + code.getFilename();
 
-
+        System.out.println(filePath);
         try {
             Path path = Paths.get(filePath);
 

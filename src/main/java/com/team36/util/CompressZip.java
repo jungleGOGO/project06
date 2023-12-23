@@ -58,10 +58,10 @@ public class CompressZip {
     }
 
 
-      //@description 디렉토리 탐색
-      //@param file 현재 파일
-      //@param root 루트 경로
-      //@param zos  압축 스트림
+    //@description 디렉토리 탐색
+    //@param file 현재 파일
+    //@param root 루트 경로
+    //@param zos  압축 스트림
     private void searchDirectory(File file, String root, ZipOutputStream zos) throws Exception {
         // 지정된 파일이 디렉토리인지 파일인지 검색
         if (file.isDirectory()) {
@@ -83,11 +83,11 @@ public class CompressZip {
     }
 
 
-      //@description압축 메소드
-      //@param file
-      //@param root
-      //@param zos
-      //@throws Throwable
+    //@description압축 메소드
+    //@param file
+    //@param root
+    //@param zos
+    //@throws Throwable
     private void compressZip(File file, String root, ZipOutputStream zos) throws Throwable {
         FileInputStream fis = null;
         try {
