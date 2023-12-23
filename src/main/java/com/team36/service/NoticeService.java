@@ -15,6 +15,6 @@ public interface NoticeService {
     public void insert (NoticeDTO noticeDTO);
     public void edit (NoticeDTO noticeDTO);
     public void delete(Integer no);
-
+    PageDTO<Notice, NoticeDTO> noticeList(PageDTO<Notice, NoticeDTO> pageDTO);
 
 }

@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface Search {
     Page<Member> searchPage(Pageable pageable, PageDTO pageDTO);
-//    Page<Notice> searchPage(Pageable pageable, PageDTO pageDTO);
+    Page<Notice> noticeSearchPage(Pageable pageable, PageDTO pageDTO);
 }

@@ -13,7 +13,7 @@
     <div id="layoutSidenav_content">
         <main>
             <h2><strong>공지사항&nbsp;<i class="fa-solid fa-bell" style="color: #1e1e1f;"></i></strong></h2>
-            <div class="table-responsive" style="margin-top:50px;">
+            <div class="table-responsive" style="margin-top:50px; margin-bottom:50px;">
                 <table class="table text-nowrap mb-0 align-middle">
                     <thead class="text-dark fs-4">
                     <tr>
@@ -51,6 +51,7 @@
                     </tbody>
                 </table>
             </div>
+            <th:block th:if="${not #lists.isEmpty(list)}"><div th:replace="/layout/page :: pagination('admin/noticeList')"></div></th:block>
         </main>
     </div>
     <th:block th:insert="~{layout/footer :: footer}"></th:block>

@@ -58,13 +58,13 @@ public class NoticeServcieImpl implements NoticeService{
         noticeRepository.deleteById(no);
     }
 
-//    @Override
-//    public PageDTO<Notice, NoticeDTO> noticeList(PageDTO<Notice, NoticeDTO> pageDTO) {
-////        Pageable pageable = pageDTO.getPageable();
-////        Page<Notice> result = noticeRepository.searchPage(pageable,pageDTO);
-////        pageDTO.build(result);
-////        pageDTO.entity2dto(result, NoticeDTO.class);
-////        return pageDTO;
-//
-//    }
+    @Override
+    public PageDTO<Notice, NoticeDTO> noticeList(PageDTO<Notice, NoticeDTO> pageDTO) {
+        Pageable pageable = pageDTO.getPageable();
+        Page<Notice> result = noticeRepository.noticeSearchPage(pageable,pageDTO);
+        pageDTO.build(result);
+        pageDTO.entity2dto(result, NoticeDTO.class);
+        return pageDTO;
+    }
+
 }

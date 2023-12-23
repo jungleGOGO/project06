@@ -74,10 +74,11 @@ public class AdminController {
         pageDTO.setKeyword(keyword);
         pageDTO.setPageCurrent(pageCurrent);
 
-//        pageDTO = noticeService.list(pageDTO);
+        pageDTO = noticeService.noticeList(pageDTO);
 
-        List<NoticeDTO> list = noticeService.list();
+        List<NoticeDTO> list = pageDTO.getPagindDTO();
         model.addAttribute("list", list);
+        model.addAttribute("pageDTO", pageDTO);
 
         return "admin/noticeListAdmin";
     }
