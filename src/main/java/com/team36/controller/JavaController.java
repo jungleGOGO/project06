@@ -46,13 +46,14 @@ public class JavaController {
         // TODO : 경로 수정
         // 준철
 //      String rootDirectoryPath = "/Users/juncheol/mounttest/";
-//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage";
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/team36";
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 
         //현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
+//        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
         //경로 확인
@@ -144,10 +145,10 @@ public class JavaController {
 //    public ResponseEntity<Resource> downloadZip(Principal principal) throws IOException {
 //
 //        String mid = principal.getName();
-////        String sourceDirPath = "/Users/juncheol/Desktop/storage/user1/dir1"; // 압축할 폴더 경로
-////        String zipFilePath = "/Users/juncheol/Desktop/storage/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
-//        String sourceDirPath ="\\\\10.41.0.153\\storage\\"+mid+"\\java"; // 압축할 폴더 경로
-//        String zipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\java\\java.zip"; // 출력될 ZIP 파일 경로
+////        String sourceDirPath = "/Users/juncheol/Desktop/team36/user1/dir1"; // 압축할 폴더 경로
+////        String zipFilePath = "/Users/juncheol/Desktop/team36/user1/zip/dir1.zip"; // 출력될 ZIP 파일 경로
+//        String sourceDirPath ="\\\\10.41.0.153\\team36\\"+mid+"\\java"; // 압축할 폴더 경로
+//        String zipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java\\java.zip"; // 출력될 ZIP 파일 경로
 //
 //        compressToZip(sourceDirPath, zipFilePath);
 //
