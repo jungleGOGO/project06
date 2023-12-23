@@ -65,6 +65,7 @@ public class MemoController {
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+//        String baseDir = "C:\\hkdev\\proj\\storage\\"+mid+"/java"; // 기본 경로
         String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
         String filePath = baseDir + webPath.replace("/", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
@@ -155,6 +156,7 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+//        String filePath = "C:\\hkdev\\proj\\storage\\" + mid+"/java"+filename2;
         String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
 
 
