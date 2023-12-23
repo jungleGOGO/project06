@@ -442,12 +442,13 @@ function convertNode(fileNode, treeData, nodeId) {
                         anchorTags.forEach(anchor => {
                             anchor.style.fontWeight = 'normal';
                         });
-                        const fileContent = response.data;
+                        const fileContent = response.data.fileContent;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
                         document.getElementById('selectedFileName').textContent = filename;
                         document.getElementById('selectedFileName').title = filepath;
 
                         anchor.style.fontWeight = 'bold';
+                        $('#lastSaveTime').text('저장 : '+response.data.lastModifiedTime);
                     })
                     .catch(error => console.error('Error fetching file content:', error));
             }

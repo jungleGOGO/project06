@@ -171,11 +171,22 @@ public class MemoController {
 
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("(MemoController:151) 생성일 : "+attrs.creationTime());
-            System.out.println("(MemoController:152) 수정일 : "+attrs.lastModifiedTime());
+            LocalDateTime oriLastModifiedTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime oriCreationTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            String lastModifiedTime = oriLastModifiedTime.format(formatter);
+            String creationTime = oriCreationTime.format(formatter);
+            System.out.println("(MemoController:179) 생성일 : "+creationTime);
+            System.out.println("(MemoController:180) 수정일 : "+lastModifiedTime);
 
             String fileContent = readFile(filePath);
-            return ResponseEntity.ok(fileContent);
+
+            ResponseEntityDTO response = new ResponseEntityDTO();
+            response.setFileContent(fileContent);
+            response.setLastModifiedTime(lastModifiedTime);
+            response.setCreationTime(creationTime);
+
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 읽기 오류: " + e.getMessage());
@@ -385,62 +396,63 @@ public class MemoController {
             String creationTime = oriCreationTime.format(formatter);
 
             //파일의 inode 값 가져오기
-            Object fileKey = attrs.fileKey();
-            String inode = fileKey.toString().split("ino=")[1].split("\\)")[0];
-            System.out.println("(MemoController:374) 파일 Inode 번호: " + inode);
-
-            // debugfs 명령으로 파일의 세부정보 가져오기
-            String command = "sudo debugfs -R 'stat <" + inode + ">' " + "dev/sdb1";
-            String crtimePattern = "crtime:.*--\\s(.+)";
-            Pattern pattern = Pattern.compile(crtimePattern);
-            String formattedCrtime = "";
-            //서버에 명령어 실행하고 결과값 가져오기
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-                Process process = processBuilder.start();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-                SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.find()) {
-                        String crtime = matcher.group(1);
-                        try {
-                            Date date = originalFormat.parse(crtime);
-                            formattedCrtime = targetFormat.format(date);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    }
-                }
-
-                int exitCode = process.waitFor();
-                System.out.println("Exited with code : " + exitCode);
-
-                if (formattedCrtime != null) {
-                    System.out.println("Formatted crtime: " + formattedCrtime);
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+//            Object fileKey = attrs.fileKey();
+//            String inode = fileKey.toString().split("ino=")[1].split("\\)")[0];
+//            System.out.println("(MemoController:374) 파일 Inode 번호: " + inode);
+//
+//            // debugfs 명령으로 파일의 세부정보 가져오기
+//            String command = "sudo debugfs -R 'stat <" + inode + ">' " + "dev/sdb1";
+//            String crtimePattern = "crtime:.*--\\s(.+)";
+//            Pattern pattern = Pattern.compile(crtimePattern);
+//            String formattedCrtime = "";
+//            //서버에 명령어 실행하고 결과값 가져오기
+//            try {
+//                ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+//                Process process = processBuilder.start();
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//                String line;
+//                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+//                SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//
+//                while ((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                    Matcher matcher = pattern.matcher(line);
+//                    if (matcher.find()) {
+//                        String crtime = matcher.group(1);
+//                        try {
+//                            Date date = originalFormat.parse(crtime);
+//                            formattedCrtime = targetFormat.format(date);
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                        break;
+//                    }
+//                }
+//
+//                int exitCode = process.waitFor();
+//                System.out.println("Exited with code : " + exitCode);
+//
+//                if (formattedCrtime != null) {
+//                    System.out.println("Formatted crtime: " + formattedCrtime);
+//                }
+//            } catch (IOException | InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
 
             // 파일에 내용 쓰기
             Files.write(path, code.getContent().getBytes());
 
             // 생성일과 수정일 출력
-//            System.out.println("(MemoController:) 파일 생성일: " + creationTime);
-            System.out.println("(MemoController:) 파일 생성일: " + formattedCrtime);
+            System.out.println("(MemoController:) 파일 생성일: " + creationTime);
+//            System.out.println("(MemoController:) 파일 생성일: " + formattedCrtime);
             System.out.println("(MemoController:) 파일 수정일: " + lastModifiedTime);
 
             ResponseEntityDTO response = new ResponseEntityDTO();
             response.setMessage("파일 저장 완료");
-            response.setCreationTime(formattedCrtime);
+//            response.setCreationTime(formattedCrtime);
+            response.setCreationTime(creationTime);
             response.setLastModifiedTime(lastModifiedTime);
 
 
