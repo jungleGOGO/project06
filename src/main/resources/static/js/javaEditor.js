@@ -399,7 +399,9 @@ function convertNode(fileNode, treeData, nodeId) {
     //
     //     });
     // });
-    // document.addEventListener('DOMContentLoaded', function() {
+    // document.addEventListener('DOMContentLoaded', function() {폴
+
+    var contextFilePath ="";
     function treeEvent() {
         const treeArea = document.querySelector('#tree');
 
@@ -418,6 +420,7 @@ function convertNode(fileNode, treeData, nodeId) {
                 const filename = anchor2.textContent.trim();
                 handleFileSelection(filename);
                 rehandleFileSelection(anchor2.getAttribute("href"));
+                contextFilePath =  rehandleFileSelection(anchor2.getAttribute("href"));
                 console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
             }
         });
@@ -442,12 +445,13 @@ function convertNode(fileNode, treeData, nodeId) {
                         anchorTags.forEach(anchor => {
                             anchor.style.fontWeight = 'normal';
                         });
-                        const fileContent = response.data;
+                        const fileContent = response.data.fileContent;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
                         document.getElementById('selectedFileName').textContent = filename;
                         document.getElementById('selectedFileName').title = filepath;
 
                         anchor.style.fontWeight = 'bold';
+                        $('#lastSaveTime').text('저장 : '+response.data.lastModifiedTime); // 에디터 하단 저장 날짜 설정
                     })
                     .catch(error => console.error('Error fetching file content:', error));
             }
@@ -525,6 +529,35 @@ function openRenameFileModal() {
         alert('파일을 선택해주세요.');
     }
 }
+function openFileInfoModal() {
+
+        // console.log("chk >>>>>> "+contextFilePath);
+
+    if (selectedFile) {
+
+        axios.post('/api/readFile', null, {
+            params: { filename2: contextFilePath }
+        })
+            .then(response => {
+
+                // console.log("response.data")
+                // console.log(response.data)
+                document.getElementById('fileInfo_size').textContent = response.data.fileSize;
+                document.getElementById('fileInfo_creation').textContent = response.data.creationTime;
+                document.getElementById('fileInfo_modify').textContent = response.data.lastModifiedTime;
+            })
+            .catch(error => console.error('Error fetching file content:', error));
+
+        document.getElementById('fileInfo_name').textContent = selectedFile; // o
+        document.getElementById('fileInfo_path').textContent = contextFilePath;  // o
+
+
+        document.getElementById('fileInfoModal').style.display = 'block';
+    } else {
+        alert('파일을 선택해주세요.');
+    }
+
+}
 
 // 현재 선택된 파일의 이름을 가져오는 함수 (수정이 필요할 수 있음)
 function getSelectedFile() {
@@ -543,6 +576,9 @@ function getSelectedFile() {
 // 모달 닫기 함수
 function closeRenameFileModal() {
     document.getElementById('renameFileModal').style.display = 'none';
+}
+function closeFileInfoModal() {
+    document.getElementById('fileInfoModal').style.display = 'none';
 }
 
 // 파일 이름 변경 함수
@@ -652,6 +688,8 @@ const modal3 = document.getElementById('modalWrap3');
 const closeBtn3 = document.getElementById('closeBtn3');
 
 const modal4 = document.getElementById('renameFileModal');
+const modal5 = document.getElementById('fileInfoModal');
+
 
 const icon = document.getElementById('iconNav');
 const balloon = document.getElementById('balloon');
@@ -667,11 +705,12 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal || event.target == modal2 || event.target == modal3 || event.target == modal4) {
+    if (event.target == modal || event.target == modal2 || event.target == modal3 || event.target == modal4 || event.target == modal5) {
         modal.style.display = "none";
         modal2.style.display = "none";
         modal3.style.display = "none";
         modal4.style.display = "none";
+        modal5.style.display = "none";
     }
 }
 
@@ -846,6 +885,16 @@ $.contextMenu({
                     console.log(error);
                 });
             }
+        },
+        item7: {
+            name: '정보',
+            icon:'fa-solid fa-circle-info',
+            callback: function (key, options) {
+                console.log(key);
+                console.log(options);
+                console.log("정보");
+                openFileInfoModal(); // 모달 열기
+            }
         }
     }
 });
@@ -853,3 +902,58 @@ $.contextMenu({
 
 
 
+const checkbox = document.getElementById("autoSaveCheck");
+let auto; // 변수 선언
+
+checkbox.addEventListener("change", function() {
+
+    // 파일 미선택시 처리
+    if (document.getElementById('selectedFileName').textContent === '') {
+        alert("선택된 파일이 없습니다.");
+        checkbox.checked = false;
+        return false;
+    }
+
+    if (checkbox.checked) {
+        clearInterval(auto);
+        console.log("자동저장중");
+
+        auto = setInterval(autoSave,10000);
+
+
+    } else {
+        clearInterval(auto);
+        console.log("자동저장해제");
+        // setInterval(saveToLocalStorage, 4000);
+    }
+});
+
+
+function autoSave() {
+
+    var fileName = document.getElementById('selectedFileName').title // 파일 경로
+    var mid = document.getElementById("user_mid").value;
+
+    var filePath = "/"+ fileName;
+    var fileContent = monaco_test.getValue();
+
+    console.log("파일 경로 : "+fileName)
+    console.log("에디터 내용 : "+monaco_test.getValue())
+
+    $.ajax({
+        type: "POST",
+        url: "/api/saveFile",
+        data: JSON.stringify({ "content": fileContent ,"filename":fileName}),
+        contentType: "application/json",
+        success: function(response) {
+            // alert(response.message + '\n생성일: ' + response.creationTime + '\n수정일: ' + response.lastModifiedTime);
+            console.log(response.message);
+            console.log(response.creationTime);
+            console.log(response.lastModifiedTime);
+            $('#lastSaveTime').text('저장 : '+response.lastModifiedTime);
+        },
+        error: function(error) {
+            // alert('파일 저장 실패: ' + error.responseText);
+        }
+    });
+}

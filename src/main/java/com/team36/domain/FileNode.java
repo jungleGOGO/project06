@@ -24,8 +24,8 @@ public class FileNode {
 //        this.flagUrl = determineFlagUrl("D:\\kimleeho\\"+text);
 
         // TODO : 경로 수정
-        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+mid+text);
-//        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/team36/"+text);
+//        this.flagUrl = determineFlagUrl("/Users/juncheol/mounttest/"+mid+text);
+        this.flagUrl = determineFlagUrl("/Users/juncheol/Desktop/storage/"+mid+text);
 //        this.flagUrl = determineFlagUrl("Y:\\team36\\"+text);
 //        this.flagUrl = determineFlagUrl("\\\\10.41.0.153\\team36\\"+mid+text);
 
