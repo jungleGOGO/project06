@@ -46,13 +46,13 @@ public class JavaController {
         // TODO : 경로 수정
         // 준철
 //      String rootDirectoryPath = "/Users/juncheol/mounttest/";
-//        String rootDirectoryPath = "/Users/juncheol/Desktop/team36";
+        String rootDirectoryPath = "/Users/juncheol/Desktop/storage/";
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 
         //현경
-        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
+//        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 //        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
@@ -114,7 +114,8 @@ public class JavaController {
 
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
-        String[] parts = path.split("\\\\");
+        String[] parts = path.split("/");
+//        String[] parts = path.split("\\\\");
 //        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];

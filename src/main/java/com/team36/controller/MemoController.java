@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.Map;
+import java.text.DecimalFormat;
 
 @Controller
 @Slf4j
@@ -65,8 +66,9 @@ public class MemoController {
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
 //        String baseDir = "C:\\hkdev\\proj\\storage\\"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
         String filePath = baseDir + webPath.replace("/", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
 
@@ -156,8 +158,9 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+        String filePath = "/Users/juncheol/Desktop/storage/" + mid+"/java"+filename2;
 //        String filePath = "C:\\hkdev\\proj\\storage\\" + mid+"/java"+filename2;
-        String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
+//        String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
 
 
         File file = new File(filePath);
@@ -178,13 +181,20 @@ public class MemoController {
             String creationTime = oriCreationTime.format(formatter);
             System.out.println("(MemoController:179) 생성일 : "+creationTime);
             System.out.println("(MemoController:180) 수정일 : "+lastModifiedTime);
+            long fileSizeInBytes = attrs.size();
+            double fileSizeInKB = fileSizeInBytes / 1024.0;
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            String fileSizeString = df.format(fileSizeInKB) + " KB";
 
             String fileContent = readFile(filePath);
 
             ResponseEntityDTO response = new ResponseEntityDTO();
-            response.setFileContent(fileContent);
-            response.setLastModifiedTime(lastModifiedTime);
-            response.setCreationTime(creationTime);
+            response.setFileContent(fileContent); // 코드 내용
+            response.setLastModifiedTime(lastModifiedTime); // 수정일
+            response.setCreationTime(creationTime); // 생성일
+            response.setFileSize(fileSizeString); // 크기
+
 
             return ResponseEntity.ok(response);
         } catch (IOException e) {
@@ -231,8 +241,8 @@ public class MemoController {
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-//        String baseDir = "/Users/juncheol/Desktop/team36"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
         String filePath = baseDir + webPath.replace("/", File.separator);
 
         long count=0;
@@ -250,7 +260,7 @@ public class MemoController {
 
 
         Path directoryPath;
-
+        System.out.println(filePath);
         File file = new File(filePath);
         if (file.isDirectory()) {
             // 디렉토리인 경우
@@ -282,11 +292,10 @@ public class MemoController {
 
         String mid = principal.getName();
         // TODO : 경로 수정
-//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/team36/"+mid+"/"+filename);
+        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\user1\\"+filename); //
-//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
 
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
@@ -368,7 +377,8 @@ public class MemoController {
 //        System.out.println("(MemoController:325) filePath : "+filePath);
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 
 //        String filePath = baseDir + code.getFilename().replace("/", "\\");
         String filePath = baseDir + code.getFilename();

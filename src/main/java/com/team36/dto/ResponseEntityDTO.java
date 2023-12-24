@@ -13,6 +13,8 @@ public class ResponseEntityDTO {
         private String lastModifiedTime;
 
         private String fileContent;
+        private String fileSize;
+        private String filePath;
 
 
 }
