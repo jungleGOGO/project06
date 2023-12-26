@@ -1747,10 +1747,11 @@ document.getElementById("btn1").addEventListener("click", function() {
         modal8.style.display = 'none';
         console.log(response)
 
+
     }).catch((error) => {
         console.log("에러 : "+error.response.data);
         // console.log("에러 : "+error.response.status);
-        if (error.response.status === 409) {
+        if (error.response.status === 409 || error.response.status === 400) {
             $('#btn1').blur();
             alert("이미 같은 이름으로 생성된 파일이 존재합니다.")
         }
