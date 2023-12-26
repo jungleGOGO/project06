@@ -270,7 +270,7 @@ public ResponseEntity<String> handleFileUpload(
 //        String filePath = "C:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
-        String filePath = "//10.41.0.153/storage/" + mid +"/"+html+"/" + filename2;
+        String filePath = "//10.41.0.153/team36/" + mid +"/"+html+"/" + filename2;
 //        String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\"+filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
@@ -718,7 +718,8 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 //        String unZipPath = "C:\\kimleeho\\savef\\zip\\";
         String unZipFile = mid+"html"+filename3;
 //        String unZipFilePath = "C:\\kimleeho\\savef\\zip\\"+unZipFile+".zip";
-        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename;
+//        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename;
+        String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
         log.info("파일경로:"+unZipFilePath);
 
 

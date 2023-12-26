@@ -369,12 +369,13 @@ public class MemoController {
 
         String mid = principal.getName();
 
-        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java\\";
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
         Path newFile = Paths.get(filePath);
-
+        log.info("=======filePath:"+filePath);
         if (Files.exists(newFile)) {
             String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
             model.addAttribute("msg", msg);
@@ -390,6 +391,45 @@ public class MemoController {
         }
 
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
+    }
+
+    @PostMapping("/renamefolder")
+    public ResponseEntity<String> renameFolder(
+            @RequestParam("currentFoldername") String currentFoldername,
+            @RequestParam("newFoldername") String newFoldername,
+            @RequestParam("currentFolder") String currentFolder,
+            Model model, Principal principal) {
+
+        String mid = principal.getName();
+        System.out.println("==========fdfdfdfdfdfdf" + currentFolder+newFoldername+currentFolder);
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+"\\java\\";
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\" + mid + "\\" + html;
+
+        // 현재 폴더의 경로와 새로운 폴더의 경로를 구성
+        String currentFolderPath = rootDirectoryPath + currentFolder;
+        String newFolderPath = rootDirectoryPath +"\\"+ newFoldername;
+
+        // 현재 폴더와 새로운 폴더의 Path 객체 생성
+        Path folder = Paths.get(currentFolderPath);
+        Path newFolder = Paths.get(newFolderPath);
+
+        // 중복 폴더명 체크
+        if (Files.exists(newFolder)) {
+            String msg = "해당 폴더명으로 저장하실 수 없습니다. (폴더명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+        try {
+            // 폴더 이동
+            Files.move(folder, newFolder, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 폴더 이동 중 에러가 발생한 경우 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("폴더 이동 중 에러 발생");
+        }
+
+        return ResponseEntity.ok("폴더가 성공적으로 이동되었습니다");
     }
 
 

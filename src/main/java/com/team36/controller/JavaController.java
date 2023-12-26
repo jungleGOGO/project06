@@ -118,8 +118,8 @@ public class JavaController {
 
         // TODO : 경로 수정   윈도우 -> \\
         FileNode current = root;
-        String[] parts = path.split("/");
-//        String[] parts = path.split("\\\\");
+//        String[] parts = path.split("/");
+        String[] parts = path.split("\\\\");
 //        String[] parts = path.split("/");
         for (int i = 0; i < (isDirectory ? parts.length : parts.length - 1); i++) {
             String part = parts[i];

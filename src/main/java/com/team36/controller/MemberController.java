@@ -7,6 +7,7 @@ import com.team36.dto.MemberJoinDTO;
 import com.team36.dto.ProfileDTO;
 import com.team36.repository.MemberRepository;
 import com.team36.repository.ProfileRepository;
+import com.team36.service.EmailService;
 import com.team36.service.MemberService;
 import com.team36.service.ProfileService;
 import jakarta.validation.Valid;
@@ -44,6 +45,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final ProfileService profileService;
+    private final EmailService emailService;
 
     @Autowired
     private BCryptPasswordEncoder passEncoder;
@@ -217,6 +219,38 @@ public class MemberController {
         model.addAttribute("msg", "탈퇴되었습니다.안녕히가세요!");
         model.addAttribute("url", "/logout");
         return "layout/alert";
+    }
+
+    //비밀번호 찾기
+    @PostMapping("/findPw")
+    @ResponseBody
+    public String findPassword(@RequestParam("email") String email, Model model) {
+        System.out.println("받은 이메일주소"+email);
+        Member mem = memberRepository.findByEmail(email);
+        System.out.println("찾았는지"+mem.getEmail());
+        MemberJoinDTO member = new MemberJoinDTO();
+        String result = "fail";
+        System.out.println();
+        if(email.equals(mem.getEmail())){
+            System.out.println("===============================");
+            //임시비밀번호 암호화해서 DB에 저장
+            String tempPassword = emailService.getRamdomPassword(8);
+            System.out.println("바귄비민ㄹ번호"+tempPassword);
+            member.setMid(Integer.parseInt(String.valueOf(mem.getMid())));
+            member.setMpw(tempPassword);
+            memberService.changePw(member);
+            System.out.println("==============바뀌었느지");
+
+            //이메일 전송
+            emailService.sendTempPasswordEmail(email, tempPassword);
+
+            result="success";
+            return result;
+       } else {
+            model.addAttribute("msg","정보가 일치하지 않습니다.");
+            return result;
+        }
+
     }
 
 }
