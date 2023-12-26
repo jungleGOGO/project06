@@ -967,7 +967,8 @@ function loadFileList() {
         // 트리 재구성 후 상태 복원
         restoreTreeState();
         treeEvent(tree); // 트리 객체를 전달
-        console.log("되나?")
+        updateTreeView();
+        // console.log("되나?")
     }).catch(error => {
         console.error('Error fetching file list:', error);
     });
@@ -1046,6 +1047,7 @@ function treeEvent() {
         if (event.target.closest('a')) {
             event.preventDefault();
         }
+        updateTreeView();
     });
 
     treeArea.addEventListener('contextmenu', function (event) {
@@ -1763,4 +1765,19 @@ document.getElementById("btn1").addEventListener("click", function() {
 });
 
 
+//////////////////////////////////// 폴더 확장 여부에 따른 아이콘 변경 ////////////////////////////////////
+// treeEvent()의 a 태그 이동 막는 부분에서 사용하면 됨
+function updateTreeView() {
+    var expanders = document.querySelectorAll('[data-role="expander"]');
 
+    expanders.forEach(function(expander) {
+        var image = expander.nextElementSibling; // 'image' span은 'expander' span의 바로 다음 요소
+        var icon = expander.querySelector('i'); // 'expander' 내부의 'i' 태그를 찾기
+
+        if (expander.getAttribute('data-mode') === 'open') {
+            image.innerHTML = '<img src="/static/img/icon/folder_open_FILL0_wght400_GRAD0_opsz24.svg" width="17.9948" height="31.9878">';
+        } else if (expander.getAttribute('data-mode') === 'close' && icon && icon.classList.contains('chevron-right')) {
+            image.innerHTML = '<img src="/static/img/icon/folder.svg" width="17.9948" height="31.9878">';
+        }
+    });
+}
