@@ -54,6 +54,8 @@ public class MemberServiceImpl implements MemberService{
     public void changePw(MemberJoinDTO memberJoinDTO) {
         Optional<Member> result = memberRepository.findById(String.valueOf(memberJoinDTO.getMid()));
         Member member = result.orElseThrow();
+        System.out.println("============암호화전:"+memberJoinDTO.getMpw());
+        System.out.println("===========암호화후"+passwordEncoder.encode(memberJoinDTO.getMpw()));
         member.changePassword(passwordEncoder.encode(memberJoinDTO.getMpw()));
         memberRepository.save(member);
     }

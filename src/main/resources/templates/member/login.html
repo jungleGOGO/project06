@@ -9,6 +9,40 @@
             color: #bd2130;
             font-weight: bolder;
         }
+        #modalWrap {
+            position: fixed;
+            z-index: 1;
+            padding-top:300px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            display: none;
+        }
+
+        #modalBody {
+            width: 470px;
+            height: 250px;
+            padding: 15px 30px;
+            margin: 0 auto;
+            background-color: #1e2022;
+            border-radius: 30px;
+        }
+
+        #closeBtn {
+            float:right;
+            font-weight: bold;
+            color: #777;
+            font-size:25px;
+            cursor: pointer;
+        }
+
+        #modalContent {
+            margin-top: 70px;
+        }
+
     </style>
     <script>
         $(document).ready(function(){
@@ -47,7 +81,7 @@
                                                 <input type="password" name="password" class="form-style" placeholder="비밀번호" autocomplete="off" required>
                                             </div>
                                             <button type="submit" class="btn mt-4">로그인</button>
-                                            <p class="mb-0 mt-4 text-center"><a href="#0" class="link">비밀번호를 잊으셨나요?</a></p>
+                                            <p class="mb-0 mt-4 text-center" id="popupBtn" style="cursor: pointer;">비밀번호를 잊으셨나요?</p>
                                         </form>
                                     </div>
                                 </div>
@@ -88,6 +122,24 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!--비밀번호 찾기 모달창-->
+        <div id="modalWrap">
+            <div id="modalBody">
+                <span id="closeBtn">&times;</span>
+                <form id="modalContent" th:action="@{/findPw}" method="post">
+                    <div class="row mb-2">
+                        <strong >이메일</strong>
+                    </div>
+                    <div class="col d-flex align-items-center mb-2">
+                        <input type="email" placeholder="이메일을 입력하세요" class="form-control" id="email" name="email" required />
+                    </div>
+                    <div class="d-grid gap-2 col-12 mx-auto">
+                        <button type="submit" class="btn btn-secondary" id="save" style="font-family: 'GongGothicMedium';">찾기</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -141,6 +193,57 @@
         }
     }
 
+</script>
+<script>
+    const btn = document.getElementById('popupBtn');
+    const modal = document.getElementById('modalWrap');
+    const closeBtn = document.getElementById('closeBtn');
+
+    btn.onclick = function() {
+        modal.style.display = 'block';
+    }
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $("#modalContent").submit(function(event) {
+            event.preventDefault(); // 폼의 기본 제출 방지
+            console.log($("#email").val());
+
+            $.ajax({
+                type: "POST",
+                url: "/findPw",
+                // dataType: "json",
+                data: {
+                    email: $("#email").val()
+                },
+                success: function(result) {
+                    console.log(result);
+                    var chk = result;
+
+                    if (chk == "success"){
+                        alert("등록된 주소로 메일이 발송되었습니다.");
+                        window.location.href = '/login';
+
+                    } else {
+                        alert("입력하신 정보가 일치하지 않습니다.")
+                    }
+
+                },
+                error: function(error) {
+                    alert("오류가 발생했습니다.");
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
