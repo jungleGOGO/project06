@@ -1228,16 +1228,16 @@ function handleFolderSelection(filename) {
 }
 
 //////////////////////우클릭으로 이름변경시 값을 추출/////////
-let reselectedFolder = null;
+// let reselectedFolder = null;
 
-function rehandleFolderSelection(anchor2) {
-    if (selectedFolder) {
-        reselectedFolder = anchor2;
-
-        return reselectedFolder;
-        // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
-    }
-}
+// function rehandleFolderSelection(anchor2) {
+//     if (selectedFolder) {
+//         reselectedFolder = anchor2;
+//
+//         return reselectedFolder;
+//         // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+//     }
+// }
 
 //////////////폴더 이름 변경시 사용할수 없는 문자////////////
 function isValidFoldername(newFoldername) {

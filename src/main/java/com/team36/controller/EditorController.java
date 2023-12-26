@@ -66,6 +66,19 @@ public class EditorController {
         String folderPath = baseDir + memo.getPath();
         System.out.println("folderPath: " + folderPath);
 
+        long count=0;
+        try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
+            count = files.count();
+            System.out.println("파일/디렉토리 개수: " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 파일/폴더 30개 제한
+        if (count>30){
+            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
+                    .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
+        }
+
         try {
             String filename = "\\" + memo.getFilename(); // \\파일이름.html로 나옴
             System.out.println("저장기능 파일이름: " + filename);
@@ -116,13 +129,15 @@ public ResponseEntity<String> handleFileUpload(
         String content = code.getContent();
         System.out.println("저장기능 파일이름: "+filename);
         String path2 = baseDir + code.getFilehref()+"\\";
-        String filePath = baseDir + code.getFilehref()+"\\"+filename;
+        System.out.println("path2: "+path2);
+        String filePath = baseDir + code.getFilehref()+"\\";
         File targetDirectorys = new File(filePath);
         System.out.println(filePath);
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectorys.exists()) {
             targetDirectorys.mkdirs();
         }
+
 
 
 //         중복 파일명 체크 함수
@@ -133,7 +148,11 @@ public ResponseEntity<String> handleFileUpload(
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
 //        }
 
-        // 파일 생성 및 쓰기
+//        // 파일 생성 및 쓰기
+//        Path file = Paths.get(filePath + filename);
+//        System.out.println("file: "+file);
+//        Files.createFile(file);
+
         writeFile(path2+filename, content);
 
         return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
@@ -169,8 +188,8 @@ public ResponseEntity<String> handleFileUpload(
             String filename = code.getFilename();
             String content = code.getContent();
             // TODO : 경로 수정
-            //String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
-            String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
+            String filePath =  "\\\\10.41.0.153\\storage\\" + mid + "\\" + html+"\\";
+//            String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
 //            String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\";
             File targetDirectorys = new File(filePath);
 
@@ -250,7 +269,7 @@ public ResponseEntity<String> handleFileUpload(
         System.out.println("자동저장 파일이름:"+filename);
         String html = "html";
         // TODO : 경로 수정
-        String filePath = "//10.41.0.153/team36/" + mid + "/" + html+"/" + filename;
+        String filePath = "//10.41.0.153/team36\\" + mid + "/" + html+"/" + filename;
 //        String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html + code.getFilehref()+"\\"+filename;
         System.out.println("자동저장 파일경로"+filePath);
         try (FileWriter fileWriter = new FileWriter(filePath)) {
@@ -275,7 +294,7 @@ public ResponseEntity<String> handleFileUpload(
 //        String filePath = "C:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
-        String filePath = "//10.41.0.153/team36/" + mid +"/"+html+"/" + filename2;
+        String filePath = "\\\\10.41.0.153\\team36\\" + mid +"\\"+html + filename2;
 //        String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\"+filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
@@ -619,12 +638,24 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-        String baseDir = "/Users/juncheol/mounttest/"+mid + "/" +html; // 기본 경로
+//        String baseDir = "/Users/juncheol/mounttest/"+mid + "/" +html; // 기본 경로
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
 //        String baseDir = "\\\\Y:\\storage";
-//        String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
+        String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
 //        String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
         String filePath = baseDir + webPath.replace("/", File.separator);
+        long count=0;
+        try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
+            count = files.count();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 파일/폴더 30개 제한
+        if (count>30){
+            return ResponseEntity.status(HttpStatus.INSUFFICIENT_STORAGE) // 507 에러 코드 반환(서버 용량 부족 에러 코드)
+                    .body("파일 생성 실패: 더 이상 파일 및 폴더를 생성할 수 없습니다.");
+        }
+
         System.out.println("폴더생성 filepath:"+filePath);
 
 
