@@ -148,14 +148,14 @@ $.contextMenu({
                 var filename = $trigger.find('a').attr('href')
                 // span 안의 a 태그의 텍스트를 가져옴
                 console.log("Clicked on " + key + " for element with filename: " + filename);
-                var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
+                var filename2 = filename.split(/[\\/]/).pop().replace(/\[^]+$/, '');
                 console.log(filename2);
                 axios.post("/editor/fileDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', filename);
+                        link.setAttribute('download', filename2);
                         document.body.appendChild(link);
                         link.click();
                     })
