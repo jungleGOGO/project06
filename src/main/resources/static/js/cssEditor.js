@@ -1080,7 +1080,7 @@ function treeEvent() {
                 htmlEditor.setValue("");
                 cssEditor.setValue("");
                 jsEditor.setValue("");
-
+                console.log("folderAndfile: "+folderAndfile)
                 const filename = anchor.textContent;
                 document.getElementById("downloadName").value = filename;
                 document.getElementById("autoname").value = filename;
