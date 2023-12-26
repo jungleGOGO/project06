@@ -4,9 +4,12 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.util.Date;
 import java.util.Random;
 
 @Service
@@ -86,4 +89,34 @@ public class EmailServiceImpl implements EmailService {
     public String getVerificationCode() {
         return ePw;
     }
+
+    @Override
+    public void sendTempPasswordEmail(String email, String tempPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("비밀번호 재설정");
+        message.setText("귀하의 새로운 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해 주세요.");
+        message.setFrom("juncheol08@naver.com");
+        emailSender.send(message);
+
+    }
+
+    @Override
+    public String getRamdomPassword(int size) {
+        char[] charSet = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                '!', '@', '#', '$', '%', '^', '&' };
+        StringBuffer sb = new StringBuffer();
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(new Date().getTime());
+        int idx = 0;
+        int len = charSet.length;
+        for (int i=0; i<size; i++) {
+            idx = (int) (len * Math.random());
+            idx = sr.nextInt(len);
+            // 강력한 난수를 발생시키기 위해 SecureRandom을 사용한다.
+            sb.append(charSet[idx]);
+        }
+        return sb.toString();    }
 }
