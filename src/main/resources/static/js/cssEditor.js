@@ -406,7 +406,6 @@ $(document).on('contextmenu:hide', function (e) {
     // 감지된 contextmenu 요소의 selector와 items를 추출
     const selector = contextMenuConfig.selector;
     const items = contextMenuConfig.items;
-
     // 이벤트를 통해 selector와 items를 전달하여 다시 정의
     callContextMenu(selector, items);
 
@@ -883,9 +882,9 @@ function loadFileList() {
             dragAndDrop: true // 드래그 앤 드롭 활성화
         });
 
-        tree.on('contextmenu', function(e) {
-            e.preventDefault();
-        });
+        // tree.on('contextmenu', function(e) {
+        //     e.preventDefault();
+        // });
 
         tree.on('mousedown', function(e) {
             if (e.which !== 1) {
