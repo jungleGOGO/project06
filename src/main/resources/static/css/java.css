@@ -39,7 +39,7 @@ strong {
 
 #left-pane #tree {
     min-width: 300px;
-
+    user-select: none;
     /* 내부 컨텐츠의 최소 너비 */
 }
 #tree a {
@@ -570,4 +570,9 @@ span.material-symbols-outlined {
 }
 .info-content {
     font-size: 14px;
+    color: white;
+}
+
+.javaInfo {
+    color: white;
 }

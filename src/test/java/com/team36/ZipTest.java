@@ -8,6 +8,7 @@ public class ZipTest {
         // String zipPath = "G:/ZIP_TEST/";
         // String zipFile = "jsmpeg-player-master.zip";
 
+        // TODO : 경로 수정
         // 압축을 해제할 위치, 압축할 파일이름
         String unZipPath = "\\\\10.41.0.153\\team36\\2\\java";
         String unZipFile = "zipTest";
