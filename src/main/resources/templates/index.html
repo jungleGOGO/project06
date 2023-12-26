@@ -17,6 +17,7 @@
             <div class="d-inline-flex">
                 <a data-aos="fade-up" data-aos-delay="200" th:href="@{/login}" class="btn-get-started scrollto" style="font-weight: bold">로그인</a>
                 <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder">연습장</a>
+                <a data-aos="fade-up" data-aos-delay="200" th:href="@{/notice/list}" class="btn-get-started scrollto" style="font-weight: bolder">공지사항</a>
             </div>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
@@ -25,6 +26,7 @@
                 <a data-aos="fade-up" data-aos-delay="200"><i class="fa-solid fa-user" style="color:#FFEBA7FF;"></i></a>
                 <div id="balloon-wrap">
                     <ul id="balloon">
+                        <li><a th:href="@{/notice/list}">공지사항</a> </li>
                         <th:block sec:authorize="hasRole('USER')">
                             <li><a th:href="@{/member/mypage}">마이페이지</a></li>
                         </th:block>

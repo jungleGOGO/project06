@@ -269,6 +269,19 @@ img {
     display: none;
 }
 
+#fileInfoModal {
+    position: fixed;
+    z-index: 1;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
 #modalBody4 {
     width: 470px;
     height: 250px;
@@ -276,6 +289,25 @@ img {
     margin: 0 auto;
     background-color: #1e2022;
     border-radius: 30px;
+}
+#modalBody5 {
+    width: 470px;
+    height: 350px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+#modalBody5 th {
+    height: 40px;
+    width: 50px;
+    text-align: right;
+    color: #cccccc;
+    font-weight: bold;
+}
+#modalBody5 td {
+    padding-left: 20px;
+    color: #cccccc;
 }
 
 #closeBtn4 {
@@ -285,8 +317,18 @@ img {
     font-size:25px;
     cursor: pointer;
 }
+#closeBtn5 {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
 
 #modalContent4 {
+    margin-top: 60px;
+}
+#modalContent5 {
     margin-top: 60px;
 }
 
@@ -397,9 +439,34 @@ button {
 .editor-bottom {
     background-color: #1e1e1e;
     border-top: 1px solid #cccccc;
-    height: 20px;
+    height: 24px;
     width: 100%;
     position: relative;
     bottom: 0;
     z-index: 9999;
+}
+
+#autoSaveCheck {
+    background-color: #4e4e4e;
+    color: white;
+    border: black;
+    font-size: 18px;
+    height: 18px;
+    float: right;
+    position: relative;
+    vertical-align: middle;
+}
+
+#saveAT {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #868686;
+}
+
+#savetext {
+    vertical-align: middle;
+    /*padding-top: 3px;*/
+    padding-left: 8px;
+    font-size: 14px;
+    color: #cccccc;
 }

@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.Map;
+import java.text.DecimalFormat;
 
 @Controller
 @Slf4j
@@ -65,8 +66,11 @@ public class MemoController {
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"/java";
+
+//        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
+//        String baseDir = "C:\\hkdev\\proj\\storage\\"+mid+"/java"; // 기본 경로
         String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
+
         String filePath = baseDir + webPath.replace("/", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
 
@@ -74,7 +78,7 @@ public class MemoController {
 //        System.out.println("(MemoController:58) :"+baseDir); //경로 확인
 
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
-//        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 //        String filePath = baseDir + webPath.replace("\\", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
 
@@ -156,8 +160,14 @@ public class MemoController {
         String mid = principal.getName();
         // TODO : 경로 수정
 //        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+
 //        String filePath = "\\\\10.41.0.153\\storage\\" + mid+"\\java"+filename2;
         String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
+
+//        String filePath = "/Users/juncheol/Desktop/storage/" + mid+"/java"+filename2;
+//        String filePath = "C:\\hkdev\\proj\\storage\\" + mid+"/java"+filename2;
+//        String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
+
 
 
         File file = new File(filePath);
@@ -171,11 +181,29 @@ public class MemoController {
 
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("(MemoController:151) 생성일 : "+attrs.creationTime());
-            System.out.println("(MemoController:152) 수정일 : "+attrs.lastModifiedTime());
+            LocalDateTime oriLastModifiedTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime oriCreationTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            String lastModifiedTime = oriLastModifiedTime.format(formatter);
+            String creationTime = oriCreationTime.format(formatter);
+            System.out.println("(MemoController:179) 생성일 : "+creationTime);
+            System.out.println("(MemoController:180) 수정일 : "+lastModifiedTime);
+            long fileSizeInBytes = attrs.size();
+            double fileSizeInKB = fileSizeInBytes / 1024.0;
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            String fileSizeString = df.format(fileSizeInKB) + " KB";
 
             String fileContent = readFile(filePath);
-            return ResponseEntity.ok(fileContent);
+
+            ResponseEntityDTO response = new ResponseEntityDTO();
+            response.setFileContent(fileContent); // 코드 내용
+            response.setLastModifiedTime(lastModifiedTime); // 수정일
+            response.setCreationTime(creationTime); // 생성일
+            response.setFileSize(fileSizeString); // 크기
+
+
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("파일 읽기 오류: " + e.getMessage());
@@ -220,9 +248,14 @@ public class MemoController {
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
 //        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
         String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+
+//        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+
         String filePath = baseDir + webPath.replace("/", File.separator);
 
         long count=0;
@@ -240,7 +273,7 @@ public class MemoController {
 
 
         Path directoryPath;
-
+        System.out.println(filePath);
         File file = new File(filePath);
         if (file.isDirectory()) {
             // 디렉토리인 경우
@@ -272,12 +305,19 @@ public class MemoController {
 
         String mid = principal.getName();
         // TODO : 경로 수정
+
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\"+mid+"\\"+filename);
         OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
+
+//        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
+//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\user1\\"+filename); //
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
+
 
 
         byte[] bt = monaco.getBytes(); //OutputStream은 바이트 단위로 저장됨
@@ -292,7 +332,9 @@ public class MemoController {
         String mid = principal.getName();
         String filename = payload.get("filename");
         System.out.println(filename);
+
 //        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+"\\java\\";
+
         String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java\\";
         String filePath = rootDirectoryPath +filename;
 
@@ -323,7 +365,7 @@ public class MemoController {
             Model model, Principal principal) {
 
         String mid = principal.getName();
-//        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
+
         String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
@@ -361,13 +403,21 @@ public class MemoController {
 //        System.out.println("(MemoController:325) filePath : "+filePath);
         // TODO : 경로 수정
 //        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+
 //        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
         String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+
+//        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+
 
 //        String filePath = baseDir + code.getFilename().replace("/", "\\");
         String filePath = baseDir + code.getFilename();
 
+
         System.out.println(filePath);
+
+
         try {
             Path path = Paths.get(filePath);
 
@@ -388,62 +438,63 @@ public class MemoController {
             String creationTime = oriCreationTime.format(formatter);
 
             //파일의 inode 값 가져오기
-            Object fileKey = attrs.fileKey();
-            String inode = fileKey.toString().split("ino=")[1].split("\\)")[0];
-            System.out.println("(MemoController:374) 파일 Inode 번호: " + inode);
-
-            // debugfs 명령으로 파일의 세부정보 가져오기
-            String command = "sudo debugfs -R 'stat <" + inode + ">' " + "dev/sdb1";
-            String crtimePattern = "crtime:.*--\\s(.+)";
-            Pattern pattern = Pattern.compile(crtimePattern);
-            String formattedCrtime = "";
-            //서버에 명령어 실행하고 결과값 가져오기
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-                Process process = processBuilder.start();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-                SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.find()) {
-                        String crtime = matcher.group(1);
-                        try {
-                            Date date = originalFormat.parse(crtime);
-                            formattedCrtime = targetFormat.format(date);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    }
-                }
-
-                int exitCode = process.waitFor();
-                System.out.println("Exited with code : " + exitCode);
-
-                if (formattedCrtime != null) {
-                    System.out.println("Formatted crtime: " + formattedCrtime);
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+//            Object fileKey = attrs.fileKey();
+//            String inode = fileKey.toString().split("ino=")[1].split("\\)")[0];
+//            System.out.println("(MemoController:374) 파일 Inode 번호: " + inode);
+//
+//            // debugfs 명령으로 파일의 세부정보 가져오기
+//            String command = "sudo debugfs -R 'stat <" + inode + ">' " + "dev/sdb1";
+//            String crtimePattern = "crtime:.*--\\s(.+)";
+//            Pattern pattern = Pattern.compile(crtimePattern);
+//            String formattedCrtime = "";
+//            //서버에 명령어 실행하고 결과값 가져오기
+//            try {
+//                ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+//                Process process = processBuilder.start();
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//                String line;
+//                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+//                SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//
+//                while ((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                    Matcher matcher = pattern.matcher(line);
+//                    if (matcher.find()) {
+//                        String crtime = matcher.group(1);
+//                        try {
+//                            Date date = originalFormat.parse(crtime);
+//                            formattedCrtime = targetFormat.format(date);
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                        break;
+//                    }
+//                }
+//
+//                int exitCode = process.waitFor();
+//                System.out.println("Exited with code : " + exitCode);
+//
+//                if (formattedCrtime != null) {
+//                    System.out.println("Formatted crtime: " + formattedCrtime);
+//                }
+//            } catch (IOException | InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
 
             // 파일에 내용 쓰기
             Files.write(path, code.getContent().getBytes());
 
             // 생성일과 수정일 출력
-//            System.out.println("(MemoController:) 파일 생성일: " + creationTime);
-            System.out.println("(MemoController:) 파일 생성일: " + formattedCrtime);
+            System.out.println("(MemoController:) 파일 생성일: " + creationTime);
+//            System.out.println("(MemoController:) 파일 생성일: " + formattedCrtime);
             System.out.println("(MemoController:) 파일 수정일: " + lastModifiedTime);
 
             ResponseEntityDTO response = new ResponseEntityDTO();
             response.setMessage("파일 저장 완료");
-            response.setCreationTime(formattedCrtime);
+//            response.setCreationTime(formattedCrtime);
+            response.setCreationTime(creationTime);
             response.setLastModifiedTime(lastModifiedTime);
 
 
@@ -461,7 +512,7 @@ public class MemoController {
 
         String mid = principal.getName();
         String filename = payload.get("filename");
-//        String unZipFilePath = "\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename;
+
         String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename;
 
         // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
@@ -487,22 +538,28 @@ public class MemoController {
         String filename3 = filename2[filename2.length-1].replace(".java", "");
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
+
 //        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
         String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
         String unZipFile = mid+"java"+filename3;
 //        String unZipFilePath = "\\\\10.41.0.153\\storage\\zip\\"+unZipFile+".zip";
+
         String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
         log.info("파일경로:"+unZipFilePath);
 
 
         log.info("============압축하기==============");
         CompressZip compressZip = new CompressZip();
-//        compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename, unZipPath, unZipFile);
+
+
         compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile);
 
-        // 압축 하기
+
+
         try {
+
 //            if (!compressZip.compress("\\\\10.41.0.153\\storage\\"+mid+"\\java"+filename, unZipPath, unZipFile)) {
+
             if (!compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile)) {
                 System.out.println("압축 실패");
             }

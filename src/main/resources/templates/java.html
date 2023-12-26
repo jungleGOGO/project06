@@ -58,7 +58,10 @@
 
                     <pre id="monaco"></pre>
                     <div class="editor-bottom">
-                        <p id="lastSaveTime" style="margin:0; padding:2px 10px 0 0; color: #b6b6b6; font-size: 14px; float:right;" title="최종 저장된 시간"></p>
+                        <div style="float: right; width: 100px">
+                            <span id="savetext">자동저장</span><div class="form-check form-switch" style="height: 20px;width: 30px; position:relative; padding: 0;margin: 0; float: right"><input class="form-check-input" type="checkbox" role="switch" id="autoSaveCheck"></div>
+                        </div>
+                        <p id="lastSaveTime" style="margin:0; padding:4px 10px 0 0; color: #b6b6b6; font-size: 14px; float:left;" title="최종 저장된 시간"></p>
                     </div>
                 </div>
                 <!--컴파일 영역 -->
@@ -98,10 +101,6 @@
                 <h4>파일 다운로드</h4>
                 <button type="button" id="saveBtn9" class="btn btn-primary">다운로드</button>
                 <button type="button" id="saveZip9" class="btn btn-primary">ZIP 다운로드</button>
-                <hr>
-<!--                <input type="text" name="mkdirname9" id="mkdirname9" placeholder="폴더명" oninput="validateInput(this)">-->
-<!--                <button type="button" id="mkdir29" class="btn btn-primary">폴더 생성</button>-->
-<!--                선택한 위치 기준으로 생성-->
                 <hr>
             </div>
         </div>
@@ -183,6 +182,40 @@
             </div>
         </div>
     </div>
+
+
+    <!-- 파일정보 모달창 -->
+    <div id="fileInfoModal">
+        <div id="modalBody5">
+            <span id="closeBtn5" onclick="closeFileInfoModal()">&times;</span>
+            <div id="modalContent5">
+                <div class="mb-3 row mx-3">
+                    <p id="fileInfo_name" style="font-size: 26px; color: white; font-weight: bold">filename</p>
+                    <table>
+                        <tr>
+                            <th>경로</th>
+                            <td id="fileInfo_path">/New2.java</td>
+                        </tr>
+                        <tr>
+                            <th>크기</th>
+                            <td id="fileInfo_size">0.07 KB</td>
+                        </tr>
+                        <tr>
+                            <th>생성일</th>
+                            <td id="fileInfo_creation">2023/12/24 14:50:14</td>
+                        </tr>
+                        <tr>
+                            <th>수정일</th>
+                            <td id="fileInfo_modify">2023/12/24 14:50:14</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 </div>
 <input type="hidden" th:value="${mid}" id="user_mid">
 <script th:src="@{/static/js/javaEditor.js}" th:inline="javascript"></script>
