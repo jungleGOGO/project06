@@ -1,6 +1,5 @@
 package com.team36.controller;
 
-import com.team36.service.EmailService;
 import com.team36.service.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,12 +26,12 @@ public class EmailController {
     public int verifyCode(@RequestParam("code") String code) {
         System.out.println("리다이렉트?");
         int result = 0;
-        System.out.println("code : "+code);
-        System.out.println("code match : "+ emailService.ePw.equals(code));
-        if(emailService.ePw.equals(code)) {
-            result =1;
+        String storedCode = emailService.getVerificationCode();
+        System.out.println("code : " + code);
+        System.out.println("code match : " + storedCode.equals(code));
+        if (storedCode.equals(code)) {
+            result = 1;
         }
         return result;
     }
-
 }

@@ -5,7 +5,6 @@ import com.team36.service.FileService;
 import com.team36.util.CompressZip;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -27,8 +26,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
+;
 
 @Controller
 @Log4j2
@@ -54,6 +53,50 @@ public class EditorController {
     //ResponseEntity는 상태코드, 헤더, 본문 등을 세밀하게 제어가능
     //ResponseBody는 메서드가 직접 응답의 본문만을 반환한다
     //클라이언트에서 객체 형식으로 데이터를 보냈을때는 @RequestParam보다는 @RequestBody를 사용한다.
+
+    @PostMapping("/editor/newfile")
+    @ResponseBody
+    public ResponseEntity<String> newfile(
+            @RequestBody Memo memo, Model model, Principal principal) {
+        String mid = principal.getName();
+        String html = "html";
+//        String baseDir = "C:\\kimleeho\\savef\\" + mid + "\\" + html;
+        String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
+        String folderPath = baseDir + memo.getPath();
+        System.out.println("folderPath: " + folderPath);
+
+        try {
+            String filename = "\\" + memo.getFilename(); // \\파일이름.html로 나옴
+            System.out.println("저장기능 파일이름: " + filename);
+
+            String filePath = baseDir + memo.getPath();
+            System.out.println("filePath: " + filePath);
+            File targetDirectorys = new File(filePath);
+            System.out.println("targetDirectory" + targetDirectorys);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!targetDirectorys.exists()) {
+                targetDirectorys.mkdirs();
+            }
+
+            // 중복 파일명 체크 함수
+            if (isFileExists(filePath, filename)) {
+                String msg = "해당 파일명으로 저장하실 수 없습니다.(파일명 중복)";
+                model.addAttribute("msg", msg);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+            }
+
+            // 파일 생성 및 쓰기
+            Path file = Paths.get(filePath + filename);
+            System.out.println("file: "+file);
+            Files.createFile(file);
+
+            return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 쓰기 오류");
+        }
+    }
 @PostMapping("/editor/save")
 @ResponseBody
 public ResponseEntity<String> handleFileUpload(
@@ -61,11 +104,12 @@ public ResponseEntity<String> handleFileUpload(
     String mid = principal.getName();
     String html = "html";
     String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
+//    String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
 
     String folderPath = baseDir + code.getFilehref();
 
     try {
-        String filename ="\\"+code.getFilename();
+        String filename ="\\"+code.getFilename(); // \\파일이름.html로 나옴
         String content = code.getContent();
         System.out.println("저장기능 파일이름: "+filename);
 
@@ -122,7 +166,9 @@ public ResponseEntity<String> handleFileUpload(
             String filename = code.getFilename();
             String content = code.getContent();
 
+//            String filePath =  "//10.41.0.153/storage/" + mid + "/" + html+"/";
             String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
+//            String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\";
             File targetDirectorys = new File(filePath);
 
             // 디렉토리가 존재하지 않으면 생성
@@ -161,6 +207,7 @@ public ResponseEntity<String> handleFileUpload(
             String content = code.getContent();
 
             String filePath =  "//10.41.0.153/team36/" + mid + "/" + html+"/";
+//            String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\";
             File targetDirectorys = new File(filePath);
 
             // 디렉토리가 존재하지 않으면 생성
@@ -195,12 +242,13 @@ public ResponseEntity<String> handleFileUpload(
     @ResponseBody
     public ResponseEntity<String> autoSave(@RequestBody Code code,Principal principal){
         String mid = principal.getName();
-        String filename = code.getFilename();
+        String filename = code.getFilename(); // \\없이 파일이름만 나옴
         String content = code.getContent();
         System.out.println("자동저장 파일이름:"+filename);
         String html = "html";
         String filePath = "//10.41.0.153/team36/" + mid + "/" + html+"/" + filename;
-
+//        String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html + code.getFilehref()+"\\"+filename;
+        System.out.println("자동저장 파일경로"+filePath);
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(content);
             fileWriter.flush();
@@ -218,11 +266,12 @@ public ResponseEntity<String> handleFileUpload(
       String mid = principal.getName();
       String html = "html";
         // 파일 경로
-//        String filePath = "/Users/juncheol/Desktop/team36" + filename2;
-//        String filePath = "D:\\hk\\project\\file\\" + filename2;
+//        String filePath = "/Users/juncheol/Desktop/storage" + filename2;
+//        String filePath = "C:\\hk\\project\\file\\" + filename2;
 //        String filePath = "C:\\kimleeho\\" + filename2;
-//        String filePath = "D:\\kimleeho\\" + filename2;
-        String filePath = "//10.41.0.153/team36/" + mid +"/"+html+"/" + filename2;
+//        String filePath = "C:\\kimleeho\\" + filename2;
+        String filePath = "//10.41.0.153/storage/" + mid +"/"+html+"/" + filename2;
+//        String filePath = "C:\\kimleeho\\savef\\" +mid + "\\" +html+"\\"+filename2;
 
         // 파일 내용을 읽어오는 메서드 호출
         String fileContent = readFile(filePath);
@@ -253,11 +302,11 @@ public ResponseEntity<String> handleFileUpload(
         String mid = principal.getName();
         String html = "html";
         String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
-
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\";
         String targetDirectoryPath = rootDirectoryPath +mid +"\\"+html;
         FileNode root = new FileNode(html, "", mid+"\\html"); // 상대 경로 사용
 
-//        String rootDirectoryPath = "D:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
+//        String rootDirectoryPath = "C:\\kimleeho"; //파일 및 디렉토리를 읽어올 루트 디렉토리 경로
 //        String rootDirectoryPath = "C:\\kimleeho";
 //        String targetDirectoryPath = rootDirectoryPath + "\\savef"; // 실제로 읽어올 대상 디렉토리 경로 설정
 //        FileNode root = new FileNode("savef", "savef"); // 루트 노드를 생성하고 초기화. 루트 노드는 트리의 시작점이다. savef라는 이름을 가진 파일또는 디렉토리이며, savef라는 파일또는 디렉토리경로(상대경로)
@@ -325,10 +374,21 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 
         });
 
+        if (files.isEmpty()) {
+            // 파일이 없으면 새로운 파일 생성
+            String newFilePath = targetDirectoryPath + File.separator + "untitled";
+            Path newFile = Paths.get(newFilePath);
+            Files.createFile(newFile);
+
+            // 새로운 파일을 노드로 추가
+            String fileRelativePath = "untitled";
+            String parentDirPath = "";
+            FileNode parentNode = findOrCreateNode(root, parentDirPath, true, principal);
+            parentNode.addChild(new FileNode("untitled", fileRelativePath, mid + "\\html"));
+        }
+
         System.out.println("respin"+root.getChildren());
         return root.getChildren();
-
-
 
     }
 
@@ -377,9 +437,10 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String html = "html";
         System.out.println("삭제할 파일: "+filename);
         // 파일 또는 폴더를 삭제할 디렉토리 경로
-//        String rootDirectoryPath = "D:\\kimleeho";
+//        String rootDirectoryPath = "C:\\kimleeho";
         String mid = principal.getName();
         String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+html;
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
 //        String rootDirectoryPath = "C:\\kimleeho";
         String filePath = rootDirectoryPath + filename;
 
@@ -413,7 +474,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String html = "html";
 
         String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+html;
-
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
         Path file = Paths.get(rootDirectoryPath + currentFolder + currentFilename);
@@ -436,6 +497,44 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         return ResponseEntity.ok("파일이 성공적으로 이동되었습니다");
     }
 
+    @PostMapping("/editor/renamefolder")
+    public ResponseEntity<String> renameFolder(
+            @RequestParam("currentFoldername") String currentFoldername,
+            @RequestParam("newFoldername") String newFoldername,
+            @RequestParam("currentFolder") String currentFolder,
+            Model model, Principal principal) {
+
+        String mid = principal.getName();
+        String html = "html";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+html;
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\" + mid + "\\" + html;
+
+        // 현재 폴더의 경로와 새로운 폴더의 경로를 구성
+        String currentFolderPath = rootDirectoryPath + currentFolder;
+        String newFolderPath = rootDirectoryPath +"\\"+ newFoldername;
+
+        // 현재 폴더와 새로운 폴더의 Path 객체 생성
+        Path folder = Paths.get(currentFolderPath);
+        Path newFolder = Paths.get(newFolderPath);
+
+        // 중복 폴더명 체크
+        if (Files.exists(newFolder)) {
+            String msg = "해당 폴더명으로 저장하실 수 없습니다. (폴더명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+        try {
+            // 폴더 이동
+            Files.move(folder, newFolder, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 폴더 이동 중 에러가 발생한 경우 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("폴더 이동 중 에러 발생");
+        }
+
+        return ResponseEntity.ok("폴더가 성공적으로 이동되었습니다");
+    }
 
 
     @PostMapping("/editor/readFile")
@@ -513,11 +612,14 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
 //        String baseDir = "/Users/juncheol/mounttest"; // 기본 경로
-//        String baseDir = "/Users/juncheol/Desktop/team36"; // 기본 경로
-//        String baseDir = "\\\\Y:\\team36";
+//        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
+//        String baseDir = "\\\\Y:\\storage";
         String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
+//        String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
         String filePath = baseDir + webPath.replace("\\", File.separator);
         System.out.println("폴더생성 filepath:"+filePath);
+
+
 
         Path directoryPath;
 
@@ -533,6 +635,12 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
             System.out.println("파일인경우"+directoryPath);
         }
         System.out.println("directoryPath : "+directoryPath);
+
+        File newDirectory = new File(directoryPath.toString());
+        if (newDirectory.exists()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 폴더명입니다.");
+        }
+
         try {
             System.out.println("폴더 생성 시도 경로: " + directoryPath.toString());
             Files.createDirectories(directoryPath);
@@ -543,13 +651,13 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
                     .body("폴더 생성 실패: " + e.getMessage());
         }
     }
-
     @PostMapping("/editor/drag")
     public ResponseEntity<String> moveFile(@RequestBody DragFile fileMoveRequest,Principal principal) {
         String mid = principal.getName();
         String html = "html";
         try {
             String baseDir = "\\\\10.41.0.153\\team36\\" + mid + "\\" + html;
+//            String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
             String filePath = baseDir + fileMoveRequest.getFilehref();
             String folderPath = baseDir + fileMoveRequest.getFolderhref();
             System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
@@ -580,6 +688,8 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String mid = principal.getName();
         String filename = payload.get("filename");
         String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename;
+//        String unZipFilePath = "C:\\kimleeho\\savef\\" +mid + "\\" +"html"+filename;
+
 
         // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
         File file = new File(unZipFilePath);
@@ -603,19 +713,24 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
         String filename3 = filename2[filename2.length-1];
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
+
         String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
+//        String unZipPath = "C:\\kimleeho\\savef\\zip\\";
         String unZipFile = mid+"html"+filename3;
-        String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
+//        String unZipFilePath = "C:\\kimleeho\\savef\\zip\\"+unZipFile+".zip";
+        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename;
         log.info("파일경로:"+unZipFilePath);
 
 
         log.info("============압축하기==============");
         CompressZip compressZip = new CompressZip();
         compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename, unZipPath, unZipFile);
+//        compressZip.compress("C:\\kimleeho\\savef\\"+mid+"\\html"+filename, unZipPath, unZipFile);
 
-
+        // 압축 하기
         try {
             if (!compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
+//            if (!compressZip.compress("C:\\kimleeho\\savef\\"+mid+"\\html"+filename, unZipPath, unZipFile)) {
                 System.out.println("압축 실패");
             }
         } catch (Throwable e) {
