@@ -46,14 +46,18 @@ public class JavaController {
         // TODO : 경로 수정
         // 준철
 //      String rootDirectoryPath = "/Users/juncheol/mounttest/";
-        String rootDirectoryPath = "/Users/juncheol/Desktop/storage/";
+//        String rootDirectoryPath = "/Users/juncheol/Desktop/storage/";
 
         // 이호
 //        String rootDirectoryPath = "D:\\kimleeho";
 
         //현경
+//        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
+
 //        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 //        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
+
         String targetDirectoryPath = rootDirectoryPath+mid + "/java";
         FileNode root = new FileNode("java", "",mid+"/java" );
         //경로 확인

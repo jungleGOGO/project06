@@ -128,12 +128,13 @@ span.material-symbols-outlined {
 
 
 select,input {
+  text-align: center;
   font-family: 'GongGothicMedium';
   background-color: #444141;
   color: white;
   border: black;
   font-size: 20px;
-  width: 120px;
+  width: 250px;
   padding-left: 20px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -269,7 +270,7 @@ label{
 .modal-content {
   background-color: rgb(42, 42, 42);
   margin: 5% auto;
-  border: 0.1em solid gray;
+  border: 0.1em solid rgb(128, 128, 128);
   width: 100%;
 }
 
@@ -296,7 +297,7 @@ label{
   border: 2px solid #555;
   border-radius: 5px;
   height: 500px;
-  overflow-y: scroll;
+  overflow: scroll;
 }
 
 #tree a {
@@ -423,8 +424,41 @@ label{
   margin-top: 60px;
 }
 
-#moreNav {
+#renameFolderModal {
   position: fixed;
+  z-index: 999;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody7 {
+  width: 470px;
+  height: 335px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e2022;
+  border-radius: 30px;
+}
+
+#closeBtn7 {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent7 {
+  margin-top: 60px;
+}
+
+#moreNav {
+  position: absolute;
   z-index: 1;
   left: 0;
   top: 0;
@@ -436,14 +470,14 @@ label{
 }
 
 #modalBody3 {
-  top: -60px!important;
-  right: -752px!important;
-  position: relative;
-  width: 10%;
+  top: 99px !important;
+  right: 107px !important;
+  position: absolute;
+  width: 13%;
   margin: 0 auto;
-  background-color: #2a2a2a;
+  background-color: #2A2A2A;
   border-radius: 5px;
-  border: 0.1em solid gray;
+  border: 0.1em solid rgb(128, 128, 128);
 }
 
 #balloon2 {
@@ -467,7 +501,7 @@ label{
 
 
 #moreNav2 {
-  position: fixed;
+  position: absolute;
   z-index: 998;
   padding-top: 150px;
   left: 0;
@@ -479,15 +513,49 @@ label{
 }
 
 #modalBody4 {
-  top: -60px!important;
-  right: -650px!important;
-  position: relative;
+  top: 99px!important;
+  right: 0px!important;
+  position: absolute;
   width: 590px;
   padding-left: 10px;
   margin: 0 auto;
-  background-color: #2a2a2a;
+  background-color: #2A2A2A;
   border-radius: 5px;
-  border: 0.1em solid gray;
+  border: 0.1em solid rgb(128, 128, 128);
+}
+
+#modalWrap2 {
+  position: fixed;
+  z-index: 999;
+  padding-top: 150px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: none;
+}
+
+#modalBody8 {
+  width: 470px;
+  height: 250px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  background-color: #1e2022;
+  border-radius: 30px;
+}
+
+#closeBtn8 {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+#modalContent8 {
+  margin-top: 70px;
 }
 
 /*--------------------------------------------------------------
@@ -556,6 +624,7 @@ label{
 }
 
 #popupBtn2 {
+  position: relative;
   width: 18px!important;
   padding: 3px 0;
   margin-left: 0px;
@@ -574,10 +643,11 @@ label{
 }
 
 #popupBtn3 {
+  position: relative;
   font-family: 'GongGothicMedium';
   padding-top: 7px;
   padding-bottom: 7px;
-  /*z-index: 990;*/
+  z-index: 990;
 }
 
 #popupBtn4 {

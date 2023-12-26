@@ -57,7 +57,7 @@
         <!--불러온파일의 확장자를 따로 값 저장해야됨...hidden으로 숨길예정 -->
         <!--모달창으로 저장,다른이름으로 저장-->
             <div class="col-9 d-flex gx-5" style=" margin-bottom: 5px; ">
-            <input type="text" name="downloadName" value="untitled" id="downloadName" readonly>
+            <input type="text" name="downloadName" value="" id="downloadName" readonly>
             <div id="customExtensionInput" style="display: none;">
                 <label for="customExtension">직접입력 확장자</label>
                 <input type="text" id="customExtension" name="customExtension" placeholder=".html, .txt, ...">
@@ -98,6 +98,32 @@
         </div>
 
 
+        <!--새파일 모달창 -->
+        <div id="modalWrap2">
+            <div id="modalBody8">
+                <span id="closeBtn8">&times;</span>
+                <form id="modalContent8">
+                    <div class="col-auto">
+                        <strong>파일명</strong>
+                    </div>
+                    <div class="col d-flex align-items-center mb-2">
+                        <input type="hidden" name="downloadName2" id="downloadName2">
+                        <input type="text" class="form-control me-2" name="filename2" id="filename2" placeholder="파일명" >
+                        <select id="extension7" class="form-select">
+                            <option value=".html">.html</option>
+                            <option value=".css">.css</option>
+                            <option value=".js">.js</option>
+                            <option value=".txt">.txt</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2 col-12 mx-auto">
+                        <button type="button" id="btn1" class="btn btn-secondary mb-3" style="font-family: 'GongGothicMedium';">파일 생성</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
         <!--도움말 모달창-->
         <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
             <div class="modal-dialog">
@@ -131,7 +157,8 @@
                         <strong >파일명</strong>
                     </div>
                     <div class="col d-flex align-items-center mb-2">
-                        <input type="text" class="form-control me-2" name="filename" id="filename" value="untitled">
+                        <input type="text" class="form-control me-2" name="filename" id="filename">
+                        <input type="hidden" class="form-control me-2" name="autoname" id="autoname" value="untitled">
                         <select id="extension" class="form-select">
                             <option value=".html">.html</option>
                             <option value=".css">.css</option>
@@ -200,6 +227,23 @@
                 </div>
             </div>
         </div>
+
+            <!--폴더이름변경 모달창-->
+            <div id="renameFolderModal">
+                <div id="modalBody7">
+                    <span id="closeBtn7" onclick="closeRenameFolderModal()">&times;</span>
+                    <div id="modalContent7">
+                        <div class="mb-3 row mx-3">
+                            <input class="col-sm form-control" type="hidden" id="selectedFolder" name="selectedFolder" readonly>
+                            <label for="newFilename" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">폴더명</label>
+                            <input class="col-sm form-control" type="text" id="newFoldername" name="newFoldername" placeholder="폴더명을 입력해주세요">
+                        </div>
+                        <div class="d-grid mb-3 row mx-3">
+                            <button class="btn btn-danger" onclick="renameFolder()">변경</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <!--폴더 생성 모달창 -->
         <div id="modalWrap5">
