@@ -46,7 +46,7 @@ public class JavaController {
         String mid = principal.getName();
         // TODO : 경로 수정
         // 준철
-      String rootDirectoryPath = "/Users/juncheol/mounttest/";
+//      String rootDirectoryPath = "/Users/juncheol/mounttest/";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage/";
 
         // 이호
@@ -54,7 +54,7 @@ public class JavaController {
 
         //현경
 //        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
-//        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 
 //        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 //        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
@@ -69,6 +69,21 @@ public class JavaController {
         // 디렉토리가 존재하지 않으면 생성
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
+
+            String codeFileName = "New.java";
+            String code = "public class " + codeFileName.replace(".java", "") + " {\n" +
+                    "\tpublic static void main(String[] args) {\n" +
+                    "\t\t\n" +
+                    "\t}\n" +
+                    "}";
+            Path codeFilePath = Paths.get(targetDirectoryPath, codeFileName);
+            try {
+                Files.write(codeFilePath, code.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+                // 예외 처리
+            }
+
         }
 
         List<Path> directories = new ArrayList<>();
@@ -153,8 +168,8 @@ public class JavaController {
 
         try {
             // TODO : 경로 수정
-            String baseDir = "/Users/juncheol/mounttest/" + mid + "/" + "java";
-//            String baseDir = "\\\\10.41.0.153\\team36\\" + mid + "\\" + html;
+//            String baseDir = "/Users/juncheol/mounttest/" + mid + "/" + "java";
+            String baseDir = "\\\\10.41.0.153\\team36\\" + mid + "\\" + "java";
 //            String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
             String filePath = baseDir + fileMoveRequest.getFilehref();
             String folderPath = baseDir + fileMoveRequest.getFolderhref();
