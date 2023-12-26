@@ -3,7 +3,10 @@
 <head>
     <title>로그인</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
-    <link th:href="@{/static/css/page.css}" rel="stylesheet">
+    <link th:href="@{/css/page.css}" rel="stylesheet">
+    <script th:inline="javascript">
+        let realpath = /*[[@{'/'}]]*/ 'default';
+    </script>
     <style>
         .fieldError {
             color: #bd2130;
@@ -63,7 +66,7 @@
         <div class="row full-height justify-content-center">
             <div class="col-12 text-center align-self-center py-5">
                 <div class="section pb-5 pt-5 pt-sm-2 text-center">
-                    <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/static/img/logo/logo.png}" alt=""></a>
+                    <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/img/logo/logo.png}" alt=""></a>
                     <h6 class="mb-0 pb-3"><span>로그인 </span><span>회원가입</span></h6>
                     <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
                     <label for="reg-log"></label>
@@ -73,7 +76,7 @@
                                 <div class="center-wrap">
                                     <div class="section text-center">
                                         <h4 class="mb-4 pb-3">로그인</h4>
-                                        <form action="/login" method="post">
+                                        <form th:action="@{/login}" method="post">
                                             <div class="form-group">
                                                 <input type="email" name="username" class="form-style" placeholder="이메일"  autocomplete="off" required>
                                             </div>
@@ -91,7 +94,7 @@
                                 <div class="center-wrap">
                                     <div class="section text-center">
                                         <h4 class="mb-4 pb-3">회원가입</h4>
-                                        <form action="/join" method="post"  th:object="${memberJoinDTO}">
+                                        <form th:action="@{/join}" method="post"  th:object="${memberJoinDTO}">
                                             <div class="form-group">
                                                 <input type="text" th:field="*{mname}" class="form-style" placeholder="이름" autocomplete="off">
                                                 <p th:if="${#fields.hasErrors('mname')}" th:errors="*{mname}" class="fieldError">Incorrect data</p>
@@ -159,7 +162,7 @@
     $checkEmail.click(function () {
         $.ajax({
             type: "POST",
-            url: "/emailConfirm",
+            url: realpath+"emailConfirm",
             data: {
                 "email": $memail.val()
             },
@@ -227,7 +230,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/findPw",
+                url: realpath+"findPw",
                 // dataType: "json",
                 data: {
                     email: $("#email").val()
@@ -238,7 +241,7 @@
 
                     if (chk == "success"){
                         alert("등록된 주소로 메일이 발송되었습니다.");
-                        window.location.href = '/login';
+                        window.location.href = realpath+'login';
 
                     } else {
                         alert("입력하신 정보가 일치하지 않습니다.")

@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8082
   error:
     path: /error
 
@@ -21,9 +21,9 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://localhost:3306/tcoding
-    url: jdbc:mariadb://10.41.1.152:3306/tcoding
-    username : root
-    password: 1234
+    url: jdbc:mariadb://10.41.1.127:3306/team36
+    username : team36
+    password: team36
   #    url: jdbc:mariadb://team36.c1oby0nabaqs.ap-northeast-2.rds.amazonaws.com:3306/
 #    username: admin
 #    password: cjswo123!

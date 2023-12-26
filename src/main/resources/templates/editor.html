@@ -4,9 +4,9 @@
 <head>
     <title>연습장</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
-    <link rel="stylesheet" th:href="@{/static/css/main.css}" />
-    <script th:src="@{/static/js/split.min.js}"></script>
-    <script th:src="@{/static/js/main.js}" defer></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <script th:src="@{/js/split.min.js}"></script>
+    <script th:src="@{/js/main.js}" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
@@ -20,11 +20,14 @@
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script src="https://cdn.rawgit.com/swisnl/jQuery-contextMenu/2.9.0/dist/jquery.contextMenu.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        let realpath = /*[[@{'/'}]]*/ 'default';
+    </script>
 </head>
 <body>
 <!--헤더 -->
 <nav class="navbar navbar-light bg-dark" style="justify-content: space-between;">
-    <a th:href="@{/}" style="padding: 1px"><img th:src="@{/static/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
+    <a th:href="@{/}" style="padding: 1px"><img th:src="@{/img/logo/logo.png}" alt="로고이미지" title="tcoding 로고" id="logoImage"></a>
     <span class="material-symbols-outlined" id="if" data-bs-toggle="modal" data-bs-target="#exampleModal">info</span>
 </nav>
 
@@ -307,6 +310,6 @@
     </div>
     <input type="hidden" id="loginCheck" th:value="${loginCheck}">
 </main>
-<script th:src="@{/static/js/cssEditor.js}" th:inline="javascript"></script>
+<script th:src="@{/js/cssEditor.js}" th:inline="javascript"></script>
 </body>
 </html>

@@ -7,8 +7,9 @@
 </head>
 <body>
 <script th:inline="javascript">
+    let realpath = /*[[@{'/'}]]*/ 'default';
     var msg = [[${msg}]]
-    var url = [[${url}]]
+    var url = realpath+[[${url}]]
     alert(msg);
     location.href = url;
 </script>

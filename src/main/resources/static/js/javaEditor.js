@@ -57,7 +57,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         //현재 선택된 경로
         let path = href;
         let dir = { 'mkdirname': mkdirname, 'path': path };
-        axios.post("/api/mkdir", dir).then((response) => {
+        axios.post(realpath+"api/mkdir", dir).then((response) => {
             // 저장 후 파일 목록 다시 불러오기
             $('#tree').remove(); // 트리를 완전히 제거합니다.
             loadFileList();
@@ -107,7 +107,7 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         let path = href;
         let dir = { 'filename': filename, 'path': path };
 
-        axios.post("/api/test1", dir).then((response) => {
+        axios.post(realpath+"api/test1", dir).then((response) => {
             // 저장 후 파일 목록 다시 불러오기
             $('#tree').remove(); // 트리를 완전히 제거합니다.
             loadFileList();
@@ -173,7 +173,7 @@ function saveFile() {
 
     $.ajax({
         type: "POST",
-        url: "/api/saveFile",
+        url: realpath+"api/saveFile",
         data: JSON.stringify({ "content": fileContent ,"filename":fileName}),
         contentType: "application/json",
         success: function(response) {
@@ -231,7 +231,7 @@ function saveFile() {
 
     $.ajax({
     type: "POST",
-    url: "/compile",
+    url: realpath+"compile",
     data: JSON.stringify({ "code": monaco_test.getValue() ,"fileName":fileName}),
     contentType: "application/json",
     success: function(response) {
@@ -346,7 +346,7 @@ function saveFile() {
 //드래그 우클릭방지에 필요
 var isLeftMouseDown = false;
     function loadFileList() {
-    axios.get('/java/fileList').then(response => {
+    axios.get(realpath+'java/fileList').then(response => {
         const fileList = response.data;
         if ($('#left-pane').find('#tree').length === 0) {
             $('#left-pane').append('<div id="tree"></div>');
@@ -426,7 +426,7 @@ var isLeftMouseDown = false;
             console.log("폴더위치: "+dragFolderHref);
             // 추가: 파일인 경우에만 이동 요청을 서버로 보냄
             let DragFile = { 'filehref': dragFileHref, 'folderhref': dragFolderHref };
-            axios.post("/java/drag", DragFile)
+            axios.post(realpath+"java/drag", DragFile)
                 .then((response) => {
                     saveTreeState();
                     $('#tree').remove();
@@ -592,7 +592,7 @@ function convertNode(fileNode, treeData, parentId) {
                 console.log("filename")
                 console.log(filepath)
                 console.log(filename)
-                axios.post('/api/readFile', null, {
+                axios.post(realpath+'api/readFile', null, {
                     params: { filename2: filepath }
                 })
                     .then(response => {
@@ -718,7 +718,7 @@ function openFileInfoModal() {
 
     if (selectedFile) {
 
-        axios.post('/api/readFile', null, {
+        axios.post(realpath+'api/readFile', null, {
             params: { filename2: contextFilePath }
         })
             .then(response => {
@@ -789,7 +789,7 @@ function renameFile() {
     console.log(currentFolder);
 
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
-    axios.post("/api/rename", null, {
+    axios.post(realpath+"api/rename", null, {
         params: {
             currentFilename: currentFilename,
             newFilename: newFileSet,
@@ -832,7 +832,7 @@ function renameFolder() {
     console.log("currentFolder"+currentFolder);
 
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
-    axios.post("/api/renamefolder", null, {
+    axios.post(realpath+"api/renamefolder", null, {
         params: {
             currentFoldername: currentFoldername,
             newFoldername: newFolderSet,
@@ -890,7 +890,7 @@ document.getElementById("newFile2").addEventListener("click", function (){
     let newFile = document.getElementById("newFile").value;
     let newMonaco =  "";
     let memo = { 'filename': newFile, 'monaco': newMonaco };
-    axios.post("/api/newFile", memo).then((response) => {
+    axios.post(realpath+"api/newFile", memo).then((response) => {
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.
         loadFileList();
@@ -902,7 +902,7 @@ document.getElementById("newFile2").addEventListener("click", function (){
 });
 
 function fileload(filename) {
-    axios.post('/api/readFile', null, {
+    axios.post(realpath+'api/readFile', null, {
         params: { filename2: filename }
     }).then((response) => {
             const fileContent = response.data;
@@ -1073,7 +1073,7 @@ $.contextMenu({
                 console.log("Clicked on " + key + " for element with filename: " + filename);
                 var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
                 console.log(filename2);
-                axios.post("/api/fileDownload", {filename: filename}, {responseType: 'blob'})
+                axios.post(realpath+"api/fileDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
@@ -1105,7 +1105,7 @@ $.contextMenu({
                 console.log("Clicked on " + key + " for element with filename: " + filename);
                 var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
                 console.log(filename2);
-                axios.post("/api/zipDownload", {filename: filename}, {responseType: 'blob'})
+                axios.post(realpath+"api/zipDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
@@ -1132,7 +1132,7 @@ $.contextMenu({
                 // span 안의 a 태그의 텍스트를 가져옴
                 console.log("Clicked on " + key + " for element with filename: " + filename);
 
-                axios.post("/api/deleteFile", { filename: filename }).then((response) => {
+                axios.post(realpath+"api/deleteFile", { filename: filename }).then((response) => {
                     $('#tree').remove();
                     loadFileList();
                     console.log("삭제됨");
@@ -1195,7 +1195,7 @@ function autoSave() {
 
     $.ajax({
         type: "POST",
-        url: "/api/saveFile",
+        url: realpath+"api/saveFile",
         data: JSON.stringify({ "content": fileContent ,"filename":fileName}),
         contentType: "application/json",
         success: function(response) {
@@ -1281,7 +1281,7 @@ function renameFolder() {
     console.log("currentFolder"+currentFolder);
 
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
-    axios.post("/java/renamefolder", null, {
+    axios.post(realpath+"java/renamefolder", null, {
         params: {
             currentFoldername: folder,
             newFoldername: newFolderSet, //새로지은폴더명

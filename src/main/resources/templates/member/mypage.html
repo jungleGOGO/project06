@@ -3,7 +3,7 @@
 <head>
     <title>마이페이지</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
-    <link th:href="@{/static/css/page.css}" rel="stylesheet">
+    <link th:href="@{/css/page.css}" rel="stylesheet">
     <style>
         .footer-area {position:relative!important;}
         #popupBtn {
@@ -62,7 +62,7 @@
                 <div class="center-wrap">
                 <div class="row g-0">
                     <div class="col-md-4 d-flex justify-content-center mt-2">
-                        <img th:src="@{/static/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" alt="...">
+                        <img th:src="@{/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" alt="...">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -120,7 +120,7 @@
     <div id="modalWrap">
         <div id="modalBody" class="d-flex flex-column align-items-center" style=" border-radius: 30px;">
             <span id="closeBtn">&times;</span>
-            <img th:src="@{/static/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" id="previewImage" alt="...">
+            <img th:src="@{/img/basic.png}" style="width: 200px; height: 200px;" class="img-fluid rounded-start" id="previewImage" alt="...">
             <label class="file-label" for="fileInput">Choose File</label>
             <input type="file" class="file" accept="image/png, image/jpeg" id="fileInput"><br>
             <label class="file-label" for="changeImage">이미지 변경</label>

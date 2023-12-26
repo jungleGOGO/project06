@@ -59,9 +59,15 @@ public class MemberController {
     @GetMapping("/member/loginFail")
     public String loginFail (Model model) {
         model.addAttribute("msg", "로그인 실패! 다시 시도해 주세요:)");
-        model.addAttribute("url", "/login");
+        model.addAttribute("url", "login");
         return "layout/alert";
     }
+
+    @GetMapping("/loginPro")
+    public String loginPro() {
+        return "redirect:/";
+    }
+
     @PostMapping("/join")
     public String joinPOST(@Valid MemberJoinDTO memberJoinDTO, BindingResult bindingResult, Model model){
         String email = memberJoinDTO.getEmail();
@@ -83,7 +89,7 @@ public class MemberController {
 
         memberService.join(memberJoinDTO);
         model.addAttribute("msg", "회원가입이 정상적으로 처리되었습니다:)");
-        model.addAttribute("url", "/login");
+        model.addAttribute("url", "login");
         return "layout/alert";
     }
 
@@ -147,7 +153,7 @@ public class MemberController {
             return "redirect:/member/memberUpdate";
         } else{
             model.addAttribute("msg", "비밀번호가 틀렸습니다. 다시 작성해주세요:)");
-            model.addAttribute("url", "/member/check");
+            model.addAttribute("url", "member/check");
             return "layout/alert";
         }
     }
@@ -190,7 +196,7 @@ public class MemberController {
         mem.setMpw(memberJoinDTO.getMpw());
         memberService.changePw(mem);
         model.addAttribute("msg", "비밀번호가 정상적으로 변경되었습니다:)");
-        model.addAttribute("url", "/member/mypage");
+        model.addAttribute("url", "member/mypage");
 
         return "layout/alert";
     }

@@ -4,13 +4,13 @@
 <head>
     <title>TCODING</title>
     <th:block th:insert="~{layout/head :: head}"></th:block>
-    <link th:href="@{/static/css/index.css}" rel="stylesheet">
+    <link th:href="@{/css/index.css}" rel="stylesheet">
 </head>
 <body>
 
-<section id="hero">
+<section id="hero" style="background-color: #000000;">
     <div class="hero-container">
-        <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/static/img/logo/logo.png}" alt=""></a>
+        <a th:href="@{/}" class="hero-logo" data-aos="zoom-in"><img th:src="@{/img/logo/logo.png}" alt=""></a>
         <h1 data-aos="zoom-in">T 코딩입니다!</h1>
         <h2 data-aos="fade-up">웹 브라우저에서 손쉽게 코딩을 해보고 테스트할 수 있는 편리함이 가득해요.</h2>
         <th:block sec:authorize="isAnonymous()">
@@ -44,7 +44,7 @@
                     <div class="row m-4 pt-5" >
                         <div class="col">
                             <div>
-                                <img th:src="@{/static/img/java.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
+                                <img th:src="@{/img/java.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
                                 <div>
                                     <p class="mb-0 mt-4"><i class="fa-brands fa-java" style="color:#007396; font-size: 20px;"></i></p>
                                     <a data-aos="fade-up" data-aos-delay="200" th:href="@{/java/project}" class="btn-get-started scrollto" style="font-weight: bolder; border-radius:25px; margin-top: 35px;">프로젝트</a></div>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="col">
                             <div>
-                                <img th:src="@{/static/img/editor.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
+                                <img th:src="@{/img/editor.png}" style=" width:300px; height:200px; border-radius: 20px;" class="card-img-top" alt="...">
                                 <div>
                                     <p class="mb-0 mt-4"><i class="fa-brands fa-css3-alt"style="color:#1572b6; font-size: 20px;"></i>&nbsp;<i class="fa-brands fa-html5" style="color:#e34f26; font-size: 20px;"></i>&nbsp;<i class="fa-brands fa-square-js" style="color:#f7df1e; font-size: 20px;"></i></p>
                                     <a data-aos="fade-up" data-aos-delay="200" th:href="@{/editor}" class="btn-get-started scrollto" style="font-weight: bolder; border-radius:25px; margin-top: 35px;">연습장</a>

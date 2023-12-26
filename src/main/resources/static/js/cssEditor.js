@@ -155,7 +155,7 @@ var contextMenuConfig = {
                 console.log("Clicked on " + key + " for element with filename: " + filename);
                 var filename2 = filename.split(/[\\/]/).pop().replace(/\[^]+$/, '');
                 console.log(filename2);
-                axios.post("/editor/fileDownload", {filename: filename}, {responseType: 'blob'})
+                axios.post(realpath+"editor/fileDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
@@ -189,7 +189,7 @@ var contextMenuConfig = {
                 console.log("Clicked on " + key + " for element with filename: " + filename);
                 var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
                 console.log(filename2);
-                axios.post("/editor/zipDownload", {filename: filename}, {responseType: 'blob'})
+                axios.post(realpath+"editor/zipDownload", {filename: filename}, {responseType: 'blob'})
                     .then(response => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
@@ -223,7 +223,7 @@ var contextMenuConfig = {
                     // span 안의 a 태그의 텍스트를 가져옴
                     console.log("Clicked on " + key + " for element with filename: " + filename);
 
-                    axios.post("/editor/delete", {filename: filename})
+                    axios.post(realpath+"editor/delete", {filename: filename})
                         .then((response) => {
                             showFileList();
                             console.log("삭제됨");
@@ -303,7 +303,7 @@ function callContextMenu(selector, items) {
                     console.log("Clicked on " + key + " for element with filename: " + filename);
                     var filename2 = filename.split(/[\\/]/).pop().replace(/\[^]+$/, '');
                     console.log(filename2);
-                    axios.post("/editor/fileDownload", {filename: filename}, {responseType: 'blob'})
+                    axios.post(realpath+"editor/fileDownload", {filename: filename}, {responseType: 'blob'})
                         .then(response => {
                             const url = window.URL.createObjectURL(new Blob([response.data]));
                             const link = document.createElement('a');
@@ -337,7 +337,7 @@ function callContextMenu(selector, items) {
                     console.log("Clicked on " + key + " for element with filename: " + filename);
                     var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
                     console.log(filename2);
-                    axios.post("/editor/zipDownload", {filename: filename}, {responseType: 'blob'})
+                    axios.post(realpath+"editor/zipDownload", {filename: filename}, {responseType: 'blob'})
                         .then(response => {
                             const url = window.URL.createObjectURL(new Blob([response.data]));
                             const link = document.createElement('a');
@@ -371,7 +371,7 @@ function callContextMenu(selector, items) {
                         // span 안의 a 태그의 텍스트를 가져옴
                         console.log("Clicked on " + key + " for element with filename: " + filename);
 
-                        axios.post("/editor/delete", {filename: filename})
+                        axios.post(realpath+"editor/delete", {filename: filename})
                             .then((response) => {
                                 showFileList();
                                 console.log("삭제됨");
@@ -717,7 +717,7 @@ document.getElementById("save").addEventListener("click", function () {
     //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
 
     let Code = {'filename' : filename,'content' : content };
-    axios.post("/editor/newsave", Code)
+    axios.post(realpath+"editor/newsave", Code)
 
         .then((response) => {
             saveTreeState();
@@ -760,7 +760,7 @@ document.getElementById("resave").addEventListener("click", function () {
     }
     //code라는 변수 선언, 이 변수에 객체 할당(중괄호로 객체생성함.). 객체의 각 속성은 filename, content.
     let Code = {'filename' : filename,'content' : content };
-    axios.post("/editor/renamesave", Code)
+    axios.post(realpath+"editor/renamesave", Code)
         .then((response) => {
             document.getElementById('filename3').value = '';
             saveTreeState();
@@ -952,7 +952,7 @@ function loadFileList() {
             console.log("폴더위치: "+dragFolderHref);
             // 추가: 파일인 경우에만 이동 요청을 서버로 보냄
                 let DragFile = { 'filehref': dragFileHref, 'folderhref': dragFolderHref };
-                axios.post("/editor/drag", DragFile)
+                axios.post(realpath+"editor/drag", DragFile)
                     .then((response) => {
                         saveTreeState();
                         $('#tree').remove();
@@ -1087,7 +1087,7 @@ function treeEvent() {
                 document.getElementById("downloadName").value = filename;
                 document.getElementById("autoname").value = filename;
                 updateChangeNameVisibility();
-                axios.post('/editor/read', null, {
+                axios.post(realpath+'editor/read', null, {
                     params: {
                         filename2: folderAndfile
                     }
@@ -1168,7 +1168,7 @@ document.getElementById("popupBtn").addEventListener("click",function () {
         console.log("filename: "+filename)
         let Code = {'filename': filename, 'content': content , 'filehref':fileroot};
         console.log("코드값: "+Code)
-        axios.post("/editor/save", Code)
+        axios.post(realpath+"editor/save", Code)
             .then((response) => {
                 document.getElementById('filename').value = ''
                 saveTreeState();
@@ -1307,7 +1307,7 @@ function closeRenameFolderModal() {
 
 
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
-    axios.post("/editor/rename", null, {
+    axios.post(realpath+"editor/rename", null, {
     params: {
     currentFilename: currentFilename,
     newFilename: newFilename,
@@ -1352,7 +1352,7 @@ function renameFolder() {
     console.log("currentFolder"+currentFolder);
 
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
-    axios.post("/editor/renamefolder", null, {
+    axios.post(realpath+"editor/renamefolder", null, {
         params: {
             currentFoldername: folder,
             newFoldername: newFolderSet,
@@ -1414,7 +1414,7 @@ function renameFolder() {
     let code = {'filename' : name,'content' : content, 'filehref':fileroot };
 console.log("filename:"+filename);
 console.log("content:"+content);
-    axios.post("/editor/autoSave", code)
+    axios.post(realpath+"editor/autoSave", code)
     .then((response) => {
     // 서버 응답이 성공한 경우
     showSuccessMessage();
@@ -1563,7 +1563,7 @@ console.log("content:"+content);
     formData.append('file', this.files[0]);
 
     // 파일 업로드를 위한 Axios 요청
-    axios.post('/editor/readFile', formData, {
+    axios.post(realpath+'editor/readFile', formData, {
     headers: {
     'Content-Type': 'multipart/form-data',
 }
@@ -1677,7 +1677,7 @@ document.getElementById("mkdir2").addEventListener("click", function() {
     let path = href;
     console.log("폴더추가 경로"+path)
     let dir = { 'mkdirname': mkdirname, 'path': path };
-    axios.post("/editor/mkdir", dir).then((response) => {
+    axios.post(realpath+"editor/mkdir", dir).then((response) => {
         document.getElementById('mkdirname').value = '';
         saveTreeState();
         // 저장 후 파일 목록 다시 불러오기
@@ -1740,7 +1740,7 @@ document.getElementById("btn1").addEventListener("click", function() {
     let path = href;
     let dir = { 'filename': filename, 'path': sanitizedPath };
 
-    axios.post("/editor/newfile", dir).then((response) => {
+    axios.post(realpath+"editor/newfile", dir).then((response) => {
         document.getElementById('filename2').value = ''; //파일생성 모달
         // 저장 후 파일 목록 다시 불러오기
         $('#tree').remove(); // 트리를 완전히 제거합니다.

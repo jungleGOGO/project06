@@ -14,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import javax.sql.DataSource;
 
@@ -28,45 +31,50 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
 
-
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         log.info("-------------------  filter Chain  ------------------");
 
         http
-            .authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                    .requestMatchers("/admin/**").hasAnyRole("ADMIN")
-                    .requestMatchers("/", "/**","/login","/emailConfrim","/editor").permitAll()
-                    .requestMatchers("/member/**","/java/project" ).hasAnyRole("USER")
-                    .anyRequest().authenticated());
+                .authorizeHttpRequests((authorizeHttpRequests) ->
+                        authorizeHttpRequests
+                                .requestMatchers(new MvcRequestMatcher(introspector,"/")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/loginPro")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/member/loginFail")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/join")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/findPw")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/emailConfirm")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/editor")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/notice/**")).permitAll()
+                                .anyRequest().authenticated());
 
         http
-            .formLogin((formLogin) -> formLogin
-                    .loginPage("/login")
-                    .failureUrl("/member/loginFail")
-            );
+                .formLogin((formLogin) -> formLogin
+                        .loginPage("/login")
+                        .failureUrl("/member/loginFail")
+                        .defaultSuccessUrl("/loginPro", true)
+                );
 
         http
-            .csrf((csrf) ->
-                csrf.disable()
-            );
+                .csrf((csrf) ->
+                        csrf.disable()
+                );
 
         http
-            .logout((logout) ->
-                logout.logoutUrl("/logout").logoutSuccessUrl("/")
-            );
+                .logout((logout) ->
+                        logout.logoutUrl("/logout").logoutSuccessUrl("/")
+                );
 
         http
-            .exceptionHandling((exceptionHandling) ->
-                exceptionHandling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-            );
+                .exceptionHandling((exceptionHandling) ->
+                        exceptionHandling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                );
         http
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
@@ -77,9 +85,13 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
-        log.info("-------------------- WebSecurity ----------------------");
-        return (web) -> web.ignoring().requestMatchers(
-                PathRequest.toStaticResources().atCommonLocations());
+        return (web) -> web.ignoring().
+                requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers(new AntPathRequestMatcher( "/css/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/js/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/img/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/vendor/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/node_modules/**"));
     }
 
 }
