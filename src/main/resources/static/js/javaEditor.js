@@ -332,6 +332,10 @@ function saveFile() {
             node.children('ul').hide();
         }
         });
+        // 드래그 기능 막음
+        document.addEventListener('dragstart', function(event) {
+            event.preventDefault();
+        });
     }
     // 페이지 로드 시에 실행되도록
     document.addEventListener('DOMContentLoaded', function() {
@@ -350,22 +354,66 @@ function saveFile() {
 
 
         // 새로운 파일 목록으로 트리뷰 재구성
-        $('#tree').tree({
+        var tree = $('#tree').tree({
             primaryKey: 'id',
             uiLibrary: 'materialdesign',
-            // dataSource: transformToTreeViewFormat(fileList),
             dataSource: transformToTreeViewFormat(fileList),
+            imageUrlField: 'flagUrl',
+            dragAndDrop: true, // 드래그 앤 드롭 활성화
+        });
 
-            imageUrlField: 'flagUrl'
+        tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+            var data = tree.getDataById(id),
+                parent = parentId ? tree.getDataById(parentId) : {};
+
+            // JSON 문자열에서 직접 값을 추출
+            var dragFileHref = data.text.match(/href='([^']*)'/)[1];
+            var dragFolderHref = parent.text.match(/href='([^']*)'/)[1];
+
+// 마지막 '\'의 인덱스를 찾음
+            var lastBackslashIndex = dragFolderHref.lastIndexOf('/');
+
+// '\' 다음의 문자열을 추출
+            var lastPart = dragFolderHref.substring(lastBackslashIndex + 1);
+
+// 추출한 문자열 중에 '.'이 포함되어 있다면 '.' 이전까지의 부분만 유지
+            if (lastPart.includes('.')) {
+                dragFolderHref  = dragFolderHref.substring(0, lastBackslashIndex)+'/';
+
+                console.log("자름: "+dragFolderHref);
+            } else {
+                console.log("안자름: "+dragFolderHref);  // '.'이 없으면 원래 문자열 유지
+            }
+
+            console.log("폴더위치: "+dragFolderHref);
+            // 추가: 파일인 경우에만 이동 요청을 서버로 보냄
+            let DragFile = { 'filehref': dragFileHref, 'folderhref': dragFolderHref };
+            axios.post("/java/drag", DragFile)
+                .then((response) => {
+                    saveTreeState();
+                    $('#tree').remove();
+                    loadFileList();
+                })
+                .catch((error) => {
+                    // showFileList();
+                    console.error("에러응답:", error.response);
+                });
         });
 
         // 트리 재구성 후 상태 복원
         restoreTreeState();
         treeEvent();
+        updateTreeView();
         }).catch(error => {
             console.error('Error fetching file list:', error);
         });
     }
+
+function isDropAllowed(data, parent) {
+    // 여기에 특정 조건을 추가하여 드롭을 허용할지 여부를 결정
+    // 예: 폴더인 경우에만 드롭을 허용하도록 설정
+    return parent.flagUrl.includes('folder.svg' || 'folder_open_FILL0_wght400_GRAD0_opsz24.svg');
+}
 
     // FileNode 객체를 트리뷰 형식으로 변환
 function transformToTreeViewFormat(fileList) {
@@ -380,10 +428,12 @@ function transformToTreeViewFormat(fileList) {
 }
 
 function convertNode(fileNode, treeData, parentId) {
+
+
     var nodeId;
 
     // 이미지의 URL을 통해 파일과 폴더를 구분
-    var isFolder = fileNode.flagUrl.includes('folder.svg');
+    var isFolder = fileNode.flagUrl.includes('folder.svg' || 'folder_open_FILL0_wght400_GRAD0_opsz24.svg');
 
     if (isFolder) {
         // 폴더인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
@@ -403,6 +453,10 @@ function convertNode(fileNode, treeData, parentId) {
     fileNode.children.forEach(function (child, index) {
         convertNode(child, node.children, nodeId + '_' + index); // 자식 노드의 ID 생성에 부모 노드 ID를 추가
     });
+    // fileNode.children.forEach(function(child) {
+    //     convertNode(child, node.children, nodeId + 1);
+    //     nodeId++;
+    // });
 
     treeData.push(node);
 }
@@ -435,19 +489,26 @@ function convertNode(fileNode, treeData, parentId) {
             if (event.target.closest('a')) {
                 event.preventDefault();
             }
+            updateTreeView();
         });
 
         //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
         treeArea.addEventListener('contextmenu', function (event) {
             const anchor2 = event.target.closest('a');
             if (anchor2) {
-                event.preventDefault();
                 const filename = anchor2.textContent.trim();
                 handleFileSelection(filename);
+                handleFolderSelection(filename);
                 rehandleFileSelection(anchor2.getAttribute("href"));
-                contextFilePath =  rehandleFileSelection(anchor2.getAttribute("href"));
+                rehandleFolderSelection(anchor2.getAttribute("href"));
                 console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
             }
+            const displayElement = event.target.closest('[data-role="node"]');
+            // 이전에 선택된 요소의 클래스와 속성 초기화
+            $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
+            // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
+            $(displayElement).addClass('gj-list-md-active');
+            $(displayElement).attr('data-selected', 'true');
         });
 
         treeArea.addEventListener('contextmenu', function (event) {
@@ -576,6 +637,17 @@ function rehandleFileSelection(anchor2) {
     }
 }
 
+<!--우클릭으로 이름변경시 값을 추출-->
+let reselectedFolder = null;
+function rehandleFolderSelection(anchor2) {
+    if (selectedFolder) {
+        reselectedFolder = anchor2;
+
+        return reselectedFolder;
+        // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+    }
+}
+
 <!--파일 이름 바꾸는 스크립트-->
 // 모달 열기 함수
 function openRenameFileModal() {
@@ -587,6 +659,21 @@ function openRenameFileModal() {
         alert('파일을 선택해주세요.');
     }
 }
+
+function openRenameFolderModal() {
+
+    const selectedFile = getSelectedFile();
+    console.log("selectedFile1:"+selectedFile);
+    if (selectedFile) {
+        document.getElementById('selectedFile').value = selectedFile;
+        console.log("selectedFile값:"+selectedFile)
+        document.getElementById('renameFolderModal').style.display = 'block';
+    } else {
+        alert('파일을 선택해주세요.');
+    }
+}
+
+
 function openFileInfoModal() {
 
         // console.log("chk >>>>>> "+contextFilePath);
@@ -617,6 +704,8 @@ function openFileInfoModal() {
 
 }
 
+
+
 // 현재 선택된 파일의 이름을 가져오는 함수 (수정이 필요할 수 있음)
 function getSelectedFile() {
     if (selectedFile) {
@@ -637,6 +726,9 @@ function closeRenameFileModal() {
 }
 function closeFileInfoModal() {
     document.getElementById('fileInfoModal').style.display = 'none';
+}
+function closeRenameFolderModal() {
+    document.getElementById('renameFolderModal').style.display = 'none';
 }
 
 // 파일 이름 변경 함수
@@ -683,6 +775,48 @@ function renameFile() {
         });
 }
 
+function renameFolder() {
+    const currentFoldername = document.getElementById("selectedFolder").value; //현재폴더명
+    const newFolderSet = document.getElementById("newFoldername").value; //새로 입력한 파일이름 값 (파일이름명 규칙 때문에 따로 만듬)
+    const currentFolder = reselectedFolder; // 선택한 파일의 href값
+    console.log("reselectedFile"+reselectedFolder)
+    console.log("newFolderSet: "+newFolderSet);
+    console.log("currentFolder: "+currentFolder);
+    console.log("currentFoldername: "+currentFoldername);
+
+    //파일이름명 규칙 실행
+    if (!isValidFoldername(newFolderSet)) {
+        alert("폴더명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+        return; // 추가 실행 중단
+    }
+    // 마지막 역슬래시 이후의 경로 부분 추출
+    //href값에서 뒤의 파일명은 제거한 폴더 경로값만 추출
+    console.log("currentFolder"+currentFolder);
+
+    // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
+    axios.post("/api/renamefolder", null, {
+        params: {
+            currentFoldername: currentFoldername,
+            newFoldername: newFolderSet,
+            currentFolder: currentFolder
+        }
+    })
+        .then((response) => {
+            document.getElementById('newFoldername').value = ''
+            showFileList();
+            closeRenameFolderModal();
+            alert("폴더명 변경 완료");
+        })
+        .catch((error) => {
+            console.error("에러 응답:", error.response); // 에러 응답 출력
+            if (error.response && error.response.data) {
+                alert(error.response.data);
+            } else {
+                console.error("에러:", error.message);
+            }
+        });
+}
+
 <!--파일 이름 변경시 사용할수 없는 문자-->
 function isValidFilename2(newfilename) {
     // 사용할 수 없는 문자와 규칙을 정의합니다.
@@ -691,6 +825,20 @@ function isValidFilename2(newfilename) {
 
     // 사용자가 입력한 파일 이름을 확인합니다.
     if (!newfilename || invalidChars.test(newfilename) || invalidNames.includes(newfilename.toLowerCase())) {
+        return false;
+    }
+
+    return true;
+}
+
+<!--폴더 이름 변경시 사용할수 없는 문자-->
+function isValidFoldername(newFoldername) {
+    // 사용할 수 없는 문자와 규칙을 정의합니다.
+    const invalidChars = /[\/:*?"<>|.]/;
+    const invalidNames = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+
+    // 사용자가 입력한 폴더 이름을 확인합니다.
+    if (!newFoldername || invalidChars.test(newFoldername) || invalidNames.includes(newFoldername.toLowerCase())) {
         return false;
     }
 
@@ -747,7 +895,7 @@ const closeBtn3 = document.getElementById('closeBtn3');
 
 const modal4 = document.getElementById('renameFileModal');
 const modal5 = document.getElementById('fileInfoModal');
-
+const modal6 =document.getElementById('renameFolderModal');
 
 const icon = document.getElementById('iconNav');
 const balloon = document.getElementById('balloon');
@@ -763,12 +911,13 @@ closeBtn.onclick = function() {
 }
 
 window.onclick = function(event) {
-    if (event.target == modal || event.target == modal2 || event.target == modal3 || event.target == modal4 || event.target == modal5) {
+    if (event.target == modal || event.target == modal2 || event.target == modal3 || event.target == modal4 || event.target == modal5 || event.target == modal6) {
         modal.style.display = "none";
         modal2.style.display = "none";
         modal3.style.display = "none";
         modal4.style.display = "none";
         modal5.style.display = "none";
+        modal6.style.display = "none";
     }
 }
 
@@ -855,11 +1004,13 @@ $.contextMenu({
             name: '이름 변경',
             icon: 'fa-solid fa-pen-to-square',
             callback: function (key, options) {
-                console.log(key);
-                console.log(options);
                 var $trigger = $(options.$trigger);
                 console.log("트리거값: "+$trigger)
                 var filename =  $trigger.attr('data-id')
+                console.log("데이터아이디"+filename)
+                console.log(key);
+                console.log(options);
+
                 if(filename.includes('_File_')) {
                     openRenameFileModal();
                 } else {
@@ -889,6 +1040,7 @@ $.contextMenu({
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
                         link.href = url;
+                        // link.setAttribute('download', filename);
                         link.setAttribute('download', filename2+".java");
                         document.body.appendChild(link);
                         link.click();
@@ -1027,6 +1179,7 @@ var oriContent = ""; // 처음 코드 내용 저장할 변수
 // 파일 불러올때, 저장할 때마다 초기화 필요
 
 
+
 ///////////////////선택한 파일 이름 받기/////////
 <!--선택한 파일 이름을 받음-->
 let selectedFolder = null;
@@ -1137,3 +1290,34 @@ function showFileList() {
     // 모달 열기
     openModal();
 }
+=======
+//////////////////////////////////// 폴더 확장 여부에 따른 아이콘 변경 ////////////////////////////////////
+// treeEvent()의 a 태그 이동 막는 부분에서 사용하면 됨
+function updateTreeView() {
+    var expanders = document.querySelectorAll('[data-role="expander"]');
+
+    expanders.forEach(function(expander) {
+        var image = expander.nextElementSibling; // 'image' span은 'expander' span의 바로 다음 요소
+        var icon = expander.querySelector('i'); // 'expander' 내부의 'i' 태그를 찾기
+
+        if (expander.getAttribute('data-mode') === 'open') {
+            image.innerHTML = '<img src="/static/img/icon/folder_open_FILL0_wght400_GRAD0_opsz24.svg" width="17.9948" height="31.9878">';
+        } else if (expander.getAttribute('data-mode') === 'close' && icon && icon.classList.contains('chevron-right')) {
+            image.innerHTML = '<img src="/static/img/icon/folder.svg" width="17.9948" height="31.9878">';
+        }
+    });
+}
+//
+// <ul className="gj-list gj-list-md gj-unselectable gj-tree-drag-el gj-tree-md-drag-el"
+// data-role="draggable-clone" data-type="draggable" data-guid="d74bda09-86f8-14a7-97d1-8962a967d88b"
+// data-draggable="false" draggable-dragging="false"
+// style="position: fixed; top: 227px; left: 989px; width: 245.009px;"
+// draggable-x="1077" draggable-y="258">
+// <li className="undefined">
+// <div data-role="wrapper">
+// <span data-role="indicator" className=""></span>
+// <span data-role="display" className=""><a href="/._dir1">._dir1
+// </a></span></div></li></ul>
+
+// data-draggable="true"
+

@@ -1,5 +1,6 @@
 package com.team36.controller;
 
+import com.team36.domain.DragFile;
 import com.team36.domain.FileNode;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -45,7 +46,7 @@ public class JavaController {
         String mid = principal.getName();
         // TODO : 경로 수정
         // 준철
-//      String rootDirectoryPath = "/Users/juncheol/mounttest/";
+      String rootDirectoryPath = "/Users/juncheol/mounttest/";
 //        String rootDirectoryPath = "/Users/juncheol/Desktop/storage/";
 
         // 이호
@@ -53,7 +54,7 @@ public class JavaController {
 
         //현경
 //        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\";
-        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
+//        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 
 //        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 //        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
@@ -146,6 +147,36 @@ public class JavaController {
         return current;
     }
 
+    @PostMapping("/drag")
+    public ResponseEntity<String> moveFile(@RequestBody DragFile fileMoveRequest, Principal principal) {
+        String mid = principal.getName();
+
+        try {
+            // TODO : 경로 수정
+            String baseDir = "/Users/juncheol/mounttest/" + mid + "/" + "java";
+//            String baseDir = "\\\\10.41.0.153\\team36\\" + mid + "\\" + html;
+//            String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
+            String filePath = baseDir + fileMoveRequest.getFilehref();
+            String folderPath = baseDir + fileMoveRequest.getFolderhref();
+            System.out.println("파일로 위치잡았을때 값: " + fileMoveRequest.getFolderhref());
+            File file = new File(filePath);
+            File folder = new File(folderPath);
+
+            if (file.exists() && folder.exists()) {
+                File newFile = new File(folder, file.getName());
+                if (file.renameTo(newFile)) {
+                    return ResponseEntity.ok("파일 이동 성공");
+                } else {
+                    return ResponseEntity.status(500).body("파일 이동 실패");
+                }
+            } else {
+                return ResponseEntity.status(400).body("파일 또는 폴더가 존재하지 않습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("서버 오류");
+        }
+    }
 //    @GetMapping("/download-zip")
 //    public ResponseEntity<Resource> downloadZip(Principal principal) throws IOException {
 //
