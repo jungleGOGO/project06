@@ -424,6 +424,7 @@ function convertNode(fileNode, treeData, nodeId) {
             if (event.target.closest('a')) {
                 event.preventDefault();
             }
+            updateTreeView();
         });
 
         //컨텍스트 메뉴를 여는 이벤트. 우클릭시 해당 파일의 href값을 rehandleFileSelection의 reselected에 저장.
@@ -853,7 +854,8 @@ $.contextMenu({
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', filename);
+                        // link.setAttribute('download', filename);
+                        link.setAttribute('download', filename2+".java");
                         document.body.appendChild(link);
                         link.click();
                     })
@@ -989,3 +991,19 @@ function autoSave() {
 ///////////////////////////////////// 파일 전환시 저장 여부 확인 /////////////////////////////////////////////
 var oriContent = ""; // 처음 코드 내용 저장할 변수
 // 파일 불러올때, 저장할 때마다 초기화 필요
+
+
+//////////////////////////////////// 폴더 확장 여부에 따른 아이콘 변경 ////////////////////////////////////
+function updateTreeView() {
+    var expanders = document.querySelectorAll('[data-role="expander"]');
+
+    expanders.forEach(function(expander) {
+        var image = expander.nextElementSibling; // 'image' span은 'expander' span의 바로 다음 요소입니다.
+
+        if (expander.getAttribute('data-mode') === 'open') {
+            image.innerHTML = '<img src="/static/img/icon/folder_open_FILL0_wght400_GRAD0_opsz24.svg" width="17.9948" height="31.9878">';
+        } else {
+            image.innerHTML = '<img src="/static/img/icon/folder.svg" width="17.9948" height="31.9878">';
+        }
+    });
+}

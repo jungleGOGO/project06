@@ -534,4 +534,9 @@ span.material-symbols-outlined {
 }
 .info-content {
     font-size: 14px;
+    color: white;
+}
+
+.javaInfo {
+    color: white;
 }

@@ -222,17 +222,16 @@
         <div class="modal-dialog">
             <div class="modal-content" id="info">
                 <div class="modal-header" style="border-bottom: 1px solid #717578">
-                    <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-circle-question"></i>&nbsp;&nbsp;도움말</h5>
+                    <h5 class="modal-title" id="exampleModalLabel" style="color: white"><i class="fa-solid fa-circle-info" style="color: white"></i>&nbsp;&nbsp;도움말</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: #fff; margin-right: 6px;"></button>
                 </div>
                 <div class="modal-body">
                     <!-- 모달 내용 -->
-                    <p><span class="material-symbols-outlined">save</span> 다운로드 버튼 </p>
-                    <p><span class="material-symbols-outlined">download</span>현재 파일 다운받기</p>
-                    <p><span class="material-symbols-outlined">play_circle</span>결과 보기</p>
-                    <p class="info-content"z>자동저장 on/off 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p>
-                    <p class="info-content">자동저장 off 상태에서는 입력한 값이 10초마다 로컬스토리지에 저장되고 있습니다. </p>
-                    <p class="info-content">로컬스토리지에 저장된 값이 있으면 페이지 로딩시 이전 작업물을 이어서 작업할지 선택할 수 있습니다.</p>
+                    <p class="javaInfo"><img th:src="@{/static/img/icon/newFolder.svg}" alt="폴더생성" title="폴더생성" style="margin-left: 0; margin-right: 10px">폴더 생성 버튼 : 선택한 위치에 폴더를 생성합니다.</p>
+                    <p class="javaInfo"><img th:src="@{/static/img/icon/newFile.svg}" alt="파일생성" title="파일생성" style="margin-left: 0; margin-right: 10px">파일 생성 버튼 : 선택한 위치에 파일을 생성합니다.</p>
+                    <p class="javaInfo"><span class="material-symbols-outlined">save</span>저장 버튼 : 현재 선택된 파일의 내용을 저장합니다.</p>
+                    <p class="javaInfo"><span class="material-symbols-outlined">play_circle</span>RUN 버튼 : 코드의 실행하여 결과를 확인합니다.</p>
+                    <p class="info-content">자동저장 : 에디터 하단의 on/off 토글 버튼으로 설정 제어 가능합니다. on 경우 10초마다 자동저장을 합니다</p>
                 </div>
             </div>
         </div>
