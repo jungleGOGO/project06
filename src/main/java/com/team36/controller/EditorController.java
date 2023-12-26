@@ -108,14 +108,15 @@ public ResponseEntity<String> handleFileUpload(
     String baseDir = "\\\\10.41.0.153\\team36\\" +mid + "\\" +html;
 //    String baseDir = "C:\\kimleeho\\savef\\" +mid + "\\" +html;
 
-    String folderPath = baseDir + code.getFilehref();
+    String folderPath = baseDir + code.getFilehref()+"\\";
+    System.out.println("코드 a경로: "+code.getFilehref());
 
     try {
-        String filename ="\\"+code.getFilename(); // \\파일이름.html로 나옴
+        String filename =code.getFilename(); // \\파일이름.html로 나옴
         String content = code.getContent();
         System.out.println("저장기능 파일이름: "+filename);
-
-        String filePath = baseDir + code.getFilehref();
+        String path2 = baseDir + code.getFilehref()+"\\";
+        String filePath = baseDir + code.getFilehref()+"\\"+filename;
         File targetDirectorys = new File(filePath);
         System.out.println(filePath);
         // 디렉토리가 존재하지 않으면 생성
@@ -133,7 +134,7 @@ public ResponseEntity<String> handleFileUpload(
 //        }
 
         // 파일 생성 및 쓰기
-        writeFile(filePath+filename, content);
+        writeFile(path2+filename, content);
 
         return ResponseEntity.ok("파일이 성공적으로 저장되었습니다");
     } catch (IOException e) {
@@ -518,7 +519,7 @@ Path::toString은 Path 객체를 문자열로 변환함. Path 객체를 문자�
 
         // 현재 폴더의 경로와 새로운 폴더의 경로를 구성
         String currentFolderPath = rootDirectoryPath + currentFolder;
-        String newFolderPath = rootDirectoryPath +"\\"+ newFoldername;
+        String newFolderPath = rootDirectoryPath +currentFoldername+"\\"+ newFoldername;
 
         // 현재 폴더와 새로운 폴더의 Path 객체 생성
         Path folder = Paths.get(currentFolderPath);

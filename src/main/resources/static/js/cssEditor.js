@@ -92,7 +92,7 @@ data-checked:
  */
 
 //마우스 우클릭으로 여는 메뉴
-$.contextMenu({
+var contextMenuConfig = {
     selector: '[data-role="node"]',
     items: {
         item1: {
@@ -123,6 +123,11 @@ $.contextMenu({
                 var $trigger = $(options.$trigger);
                 console.log("트리거값: "+$trigger)
                 var filename =  $trigger.attr('data-id')
+                var filename2 = $trigger.find('a').text();
+                if (filename2 === "untitled") {
+                    alert("이 파일의 이름은 변경할 수 없습니다.");
+                    return;
+                }
                 console.log("데이터아이디"+filename)
                 console.log(key);
                 console.log(options);
@@ -170,7 +175,10 @@ $.contextMenu({
             visible: function (key, options) {
                 var $trigger = options.$trigger;
                 var filename = $trigger.find('a').attr('href');
-                return !filename.endsWith('.html') || filename.endsWith('.txt') || filename.endsWith('.css') || filename.endsWith('.js');
+                var dataId = $trigger.attr('data-id');
+
+                // data-id에 '_File_'이 없고, 확장자가 특정한 파일들이 아닌 경우에만 보이도록 설정
+                return !dataId.includes('_File_') && (!filename.endsWith('.html') || !filename.endsWith('.txt') || !filename.endsWith('.css') || !filename.endsWith('.js'));
             },
             callback: function (key, options) {
                 console.log("key", key);
@@ -228,6 +236,187 @@ $.contextMenu({
                 }}
         }
     }
+};
+
+function callContextMenu(selector, items) {
+    // 직접 contextMenu 호출이 아니라 items만 전달
+    $.contextMenu({
+        selector: '[data-role="node"]',
+        items: {
+            item1: {
+                name: '파일 생성',
+                icon: 'fa-solid fa-file',
+                callback: function (key, options) {
+                    console.log("item1 클릭됨");
+                    console.log("key", key);
+                    console.log("options", options);
+                    modal8.style.display = 'block';
+                    document.getElementById('filename2').focus();
+                }
+            },
+            item2: {
+                name: '폴더 생성',
+                icon: 'fa-solid fa-folder',
+                callback: function (key, options) {
+                    console.log("item2 클릭됨");
+                    console.log("key", key);
+                    console.log("options", options);
+                    modal5.style.display = 'block';
+                }
+            },
+            item3: {
+                name: '이름 변경',
+                icon: 'fa-solid fa-pen-to-square',
+                callback: function (key, options) {
+                    var $trigger = $(options.$trigger);
+                    console.log("트리거값: "+$trigger)
+                    var filename =  $trigger.attr('data-id')
+                    var filename2 = $trigger.find('a').text();
+                    if (filename2 === "untitled") {
+                        alert("이 파일의 이름은 변경할 수 없습니다.");
+                        return;
+                    }
+                    console.log("데이터아이디"+filename)
+                    console.log(key);
+                    console.log(options);
+                    if(filename.includes('_File_')) {
+                        openRenameFileModal();
+                    } else {
+                        openRenameFolderModal();
+                    }// 모달 열기
+                }
+            },
+            item4:{
+                name: '다운로드',
+                icon : 'fa-solid fa-file-arrow-down',
+                visible: function (key, options) {
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href');
+                    return filename.endsWith('.html') || filename.endsWith('.txt') || filename.endsWith('.css') || filename.endsWith('.js');
+                },
+                callback : function (key, options) {
+                    console.log("key", key);
+                    console.log("options", options);
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href')
+                    // span 안의 a 태그의 텍스트를 가져옴
+                    console.log("Clicked on " + key + " for element with filename: " + filename);
+                    var filename2 = filename.split(/[\\/]/).pop().replace(/\[^]+$/, '');
+                    console.log(filename2);
+                    axios.post("/editor/fileDownload", {filename: filename}, {responseType: 'blob'})
+                        .then(response => {
+                            const url = window.URL.createObjectURL(new Blob([response.data]));
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.setAttribute('download', filename2);
+                            document.body.appendChild(link);
+                            link.click();
+                        })
+                        .catch(error => {
+                            console.error('다운로드 에러:', error);
+                        });
+                }
+            },
+            item5: {
+                name: 'zip 다운로드',
+                icon: 'fa-solid fa-file-zipper',
+                visible: function (key, options) {
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href');
+                    var dataId = $trigger.attr('data-id');
+
+                    // data-id에 '_File_'이 없고, 확장자가 특정한 파일들이 아닌 경우에만 보이도록 설정
+                    return !dataId.includes('_File_') && (!filename.endsWith('.html') || !filename.endsWith('.txt') || !filename.endsWith('.css') || !filename.endsWith('.js'));
+                },
+                callback: function (key, options) {
+                    console.log("key", key);
+                    console.log("options", options);
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href');
+                    // span 안의 a 태그의 텍스트를 가져옴
+                    console.log("Clicked on " + key + " for element with filename: " + filename);
+                    var filename2 = filename.split(/[\\/]/).pop().replace(/\.[^.]+$/, '');
+                    console.log(filename2);
+                    axios.post("/editor/zipDownload", {filename: filename}, {responseType: 'blob'})
+                        .then(response => {
+                            const url = window.URL.createObjectURL(new Blob([response.data]));
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.setAttribute('download', filename2+'.zip');
+                            document.body.appendChild(link);
+                            link.click();
+                        })
+                        .catch(error => {
+                            console.error('다운로드 에러:', error);
+                        });
+                }
+            },
+            item6: {
+                name: '삭제',
+                icon:'fa-solid fa-trash',
+                callback: function (key, options) {
+                    var $trigger = options.$trigger;
+                    var filename = $trigger.find('a').attr('href');
+                    var filename2 = $trigger.find('a').text();
+                    if (filename2 === "untitled") {
+                        alert("이 파일은 삭제할 수 없습니다.");
+                        return;
+                    }
+                    var confirmed = confirm("정말로 삭제하시겠습니까? 파일명: " + filename2);
+                    if (confirmed) {
+                        console.log("Confirmed deletion for element with filename: " + filename);
+                        // 메뉴 아이템을 클릭한 경우의 동작
+                        console.log("key", key);
+                        console.log("options", options);
+                        // span 안의 a 태그의 텍스트를 가져옴
+                        console.log("Clicked on " + key + " for element with filename: " + filename);
+
+                        axios.post("/editor/delete", {filename: filename})
+                            .then((response) => {
+                                showFileList();
+                                console.log("삭제됨");
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }else {
+                        showFileList();
+                    }}
+            }
+        }
+    });
+    console.log("Context menu initialized");
+}
+
+// 우클릭 이벤트 발생 시 실행되는 코드
+$(document).on('contextmenu', contextMenuConfig.selector, function (e) {
+    e.preventDefault(); // 기본 컨텍스트 메뉴가 나타나지 않도록 합니다.
+
+    const $target = $(e.target);
+    if ($target.is('a')) {
+        callContextMenu(contextMenuConfig.selector, contextMenuConfig.items);
+    } else {
+        // 그 외의 경우 컨텍스트 메뉴 호출
+        callContextMenu(contextMenuConfig.selector, contextMenuConfig.items);
+    }
+});
+
+// 컨텍스트 메뉴를 닫을 때마다 다시 정의
+$(document).on('contextmenu:hide', function (e) {
+    // 감지된 contextmenu 요소의 selector와 items를 추출
+    const selector = contextMenuConfig.selector;
+    const items = contextMenuConfig.items;
+
+    // 이벤트를 통해 selector와 items를 전달하여 다시 정의
+    callContextMenu(selector, items);
+
+    // 추가: contextMenu 초기화
+    contextMenuInitialized = false;
+});
+var $nodes = $('[data-role="node"]');
+console.log($nodes.length + " nodes found");
+$(document).on('contextmenu', function (e) {
+    console.log("Document context menu triggered");
 });
 /////현재파일의 값이 빈칸이면 다른이름으로 저장 버튼 안보이게 설정
 var downloadName = document.getElementById('downloadName');
@@ -595,13 +784,12 @@ document.getElementById("resave").addEventListener("click", function () {
             }
         });
 });
-
+var folderAndfile = '';
 <!--불러오기 버튼-->
 // DOMContentLoaded는 문서의 초기 html 구조가 완전히 로드되고 파싱되었을때 발생하는 이벤트-
 // 스타일시트(style태그), 하위프레임(iframe)등의 외부 리소스가 아직 로드되지 않아도 발생.
     document.addEventListener('DOMContentLoaded', function() {
     // 초기 파일 목록 불러오기
-        folderAndfile = '';
     loadFileList();
 });
 
@@ -671,7 +859,10 @@ function closeModal6() {
             event.preventDefault();
         });
 }
-    // 페이지 로드 시에 실행되도록
+
+//드래그 우클릭방지에 필요
+var isLeftMouseDown = false;
+// 페이지 로드 시에 실행되도록
 function loadFileList() {
     axios.get('/editor/fileList').then(response => {
         console.log("실행됨!");
@@ -689,15 +880,58 @@ function loadFileList() {
             uiLibrary: 'materialdesign',
             dataSource: transformToTreeViewFormat(fileList),
             imageUrlField: 'flagUrl',
-            dragAndDrop: true, // 드래그 앤 드롭 활성화
+            dragAndDrop: true // 드래그 앤 드롭 활성화
         });
+
+        tree.on('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        tree.on('mousedown', function(e) {
+            if (e.which !== 1) {
+                e.preventDefault();
+            }
+        });
+        tree.on('dragstart', function(e) {
+            e.preventDefault();
+        });
+
+
+        function mouseMoveHandler(e) {
+            // 좌클릭인 경우에만 mousemove 이벤트 처리
+            if (isLeftMouseDown) {
+                // 여기에서 원하는 동작을 수행
+
+                // 좌클릭 드래그 이벤트 처리
+                // 예: 드래그 중 로직 추가
+            }
+        }
+
+        tree.on('mouseup', function(e) {
+            // 여기에서 원하는 동작을 수행
+
+            // 드래그 종료 로직 추가
+
+            // mousemove 이벤트 리스너 해제
+            tree.off('mousemove', mouseMoveHandler);
+
+            // 마우스 상태 초기화
+            isLeftMouseDown = false;
+        });
+
 
         tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
             var data = tree.getDataById(id),
                 parent = parentId ? tree.getDataById(parentId) : {};
-
             // JSON 문자열에서 직접 값을 추출
             var dragFileHref = data.text.match(/href='([^']*)'/)[1];
+            console.log("dragFileHref: " + dragFileHref)
+            if(dragFileHref === "\\untitled"){
+                console.log("dragFileHref: " + dragFileHref)
+                alert("이 파일의 위치를 변경시킬 수 없습니다.");
+                e.stopPropagation();  // 이벤트 전파 중단
+                return false;
+            }
             var dragFolderHref = parent.text.match(/href='([^']*)'/)[1];
 
 // 마지막 '\'의 인덱스를 찾음
@@ -865,9 +1099,11 @@ function treeEvent() {
                         const [styleMatch, bodyMatch, scriptMatch] = matchResult || ['', '', ''];
 
                         const cssCode = styleMatch && styleMatch.includes('<style>') ? styleMatch.replace(/<style>|<\/style>/g, '').trim() : '';
+                        // const cssCode = styleMatch ? styleMatch.replace(/<style>|<\/style>/g, '').trim() : '';
+                        console.log(cssCode)
                         const htmlCode = bodyMatch ? bodyMatch.replace(/<body>|<\/body>/g, '').trim() : '';
+                        console.log(htmlCode)
                         const jsCode = scriptMatch && scriptMatch.includes('<script>') ? scriptMatch.replace(/<script>|<\/script>/g, '').trim() : '';
-
                         console.log("jsCode: " + jsCode);
                         setCodeValues(htmlCode, cssCode, jsCode);
                         showFileList();
@@ -921,9 +1157,13 @@ document.getElementById("popupBtn").addEventListener("click",function () {
         const content = `<html>\n<head>\n<style>\n${cssCode}\n</style>\n</head>\n<body>\n${htmlCode}\n</body>\n<script>\n${jsCode}\n<\/script>\n</html>`;
         // "\\"를 기준으로 폴더 경로를 나누고, 마지막 요소를 제외한 나머지를 합침
         const folderPathArray = folderAndfile.split("\\");
+        console.log(folderAndfile);
         folderPathArray.pop(); // 마지막 요소(파일명)를 제외
-        const fileroot = folderPathArray.join("\\"); // 새로운 폴더 경로
-        console.log("저장폴더경로: "+fileroot)
+        const poppedElement = folderPathArray.pop(); // 마지막 요소(폴더명)를 저장
+        console.log("팝: " + poppedElement);
+        const fileroot = "\\" + poppedElement; // 새로운 폴더 경로
+        console.log("저장폴더경로: " + fileroot);
+        console.log("filename: "+filename)
         let Code = {'filename': filename, 'content': content , 'filehref':fileroot};
         console.log("코드값: "+Code)
         axios.post("/editor/save", Code)
@@ -1093,10 +1333,12 @@ function renameFolder() {
     const currentFoldername = document.getElementById("selectedFolder").value; //현재폴더명
     const newFolderSet = document.getElementById("newFoldername").value; //새로 입력한 파일이름 값 (파일이름명 규칙 때문에 따로 만듬)
     const currentFolder = reselectedFolder; // 선택한 파일의 href값
-    console.log("reselectedFile"+reselectedFolder)
+    const lastBackslashIndex2 = reselectedFolder.lastIndexOf('\\');
+    const folder = reselectedFolder.substring(0, lastBackslashIndex2);
+    console.log("folder"+folder)
     console.log("newFolderSet: "+newFolderSet);
     console.log("currentFolder: "+currentFolder);
-    console.log("currentFoldername: "+currentFoldername);
+    console.log("newpath: "+folder);
 
     //파일이름명 규칙 실행
     if (!isValidFoldername(newFolderSet)) {
@@ -1110,7 +1352,7 @@ function renameFolder() {
     // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
     axios.post("/editor/renamefolder", null, {
         params: {
-            currentFoldername: currentFoldername,
+            currentFoldername: folder,
             newFoldername: newFolderSet,
             currentFolder: currentFolder
         }

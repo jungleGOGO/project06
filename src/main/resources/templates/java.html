@@ -127,6 +127,23 @@
         </div>
     </div>
 
+    <!--폴더이름변경 모달창-->
+    <div id="renameFolderModal">
+        <div id="modalBody7">
+            <span id="closeBtn7" onclick="closeRenameFolderModal()">&times;</span>
+            <div id="modalContent7">
+                <div class="mb-3 row mx-3">
+                    <input class="col-sm form-control" type="hidden" id="selectedFolder" name="selectedFolder" readonly>
+                    <label for="newFilename" class="col-sm-4 col-form-label" style="color: #fff; font-family: 'GongGothicMedium';">폴더명</label>
+                    <input class="col-sm form-control" type="text" id="newFoldername" name="newFoldername" placeholder="폴더명을 입력해주세요">
+                </div>
+                <div class="d-grid mb-3 row mx-3">
+                    <button class="btn btn-danger" onclick="renameFolder()">변경</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--새파일 모달창 -->
     <div id="modalWrap2">
         <div id="modalBody2">

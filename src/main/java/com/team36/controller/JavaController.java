@@ -5,6 +5,7 @@ import com.team36.domain.FileNode;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,8 +59,8 @@ public class JavaController {
 //        String rootDirectoryPath = "\\\\10.41.0.153\\team36\\";
 //        String rootDirectoryPath = "C:\\hkdev\\proj\\storage\\";
 
-        String targetDirectoryPath = rootDirectoryPath+mid + "/java";
-        FileNode root = new FileNode("java", "",mid+"/java" );
+        String targetDirectoryPath = rootDirectoryPath+mid + "\\java";
+        FileNode root = new FileNode("java", "",mid+"\\java" );
         //경로 확인
 //        System.out.println("(JavaController:59) targetDirectoryPath : "+targetDirectoryPath);
 
@@ -104,7 +106,7 @@ public class JavaController {
             String fileRelativePath = file.toString().substring(targetDirectoryPath.length());
             String parentDirPath = fileRelativePath.substring(0, fileRelativePath.lastIndexOf(File.separator));
             FileNode parentNode = findOrCreateNode(root, parentDirPath, true,principal); // 파일의 상위 디렉토리 노드 찾기
-            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"/java")); // 파일 노드 추가
+            parentNode.addChild(new FileNode(file.getFileName().toString(), fileRelativePath,mid+"\\java")); // 파일 노드 추가
         });
         System.out.println(root.getChildren());
         return root.getChildren();
@@ -134,9 +136,9 @@ public class JavaController {
 
             } else {
 
-                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
-//                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
-                FileNode newNode = new FileNode(part, nodePath,mid+"/java");
+//                String nodePath = (current == root && i == 0) ? "/" + part : current.getText() + "/" + part;
+                String nodePath = (current == root && i == 0) ? "\\" + part : current.getText() + "\\" + part;
+                FileNode newNode = new FileNode(part, nodePath,mid+"\\java");
                 current.addChild(newNode);
                 current = newNode;
             }
@@ -211,4 +213,44 @@ public class JavaController {
 //                    });
 //        }
 //    }
+
+    /////폴더이름변경
+    @PostMapping("/renamefolder")
+    public ResponseEntity<String> renameFolder(
+            @RequestParam("currentFoldername") String currentFoldername,
+            @RequestParam("newFoldername") String newFoldername,
+            @RequestParam("currentFolder") String currentFolder,
+            Model model, Principal principal) {
+
+        String mid = principal.getName();
+        String java = "java";
+        String rootDirectoryPath = "\\\\10.41.0.153\\team36"+"\\"+mid+"\\"+java;
+//        String rootDirectoryPath = "C:\\kimleeho\\savef\\" + mid + "\\" + html;
+
+        // 현재 폴더의 경로와 새로운 폴더의 경로를 구성
+        String currentFolderPath = rootDirectoryPath + currentFolder;
+        String newFolderPath = rootDirectoryPath +currentFoldername+"\\"+ newFoldername;
+
+        // 현재 폴더와 새로운 폴더의 Path 객체 생성
+        Path folder = Paths.get(currentFolderPath);
+        Path newFolder = Paths.get(newFolderPath);
+
+        // 중복 폴더명 체크
+        if (Files.exists(newFolder)) {
+            String msg = "해당 폴더명으로 저장하실 수 없습니다. (폴더명 중복)";
+            model.addAttribute("msg", msg);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        }
+
+        try {
+            // 폴더 이동
+            Files.move(folder, newFolder, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 폴더 이동 중 에러가 발생한 경우 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("폴더 이동 중 에러 발생");
+        }
+
+        return ResponseEntity.ok("폴더가 성공적으로 이동되었습니다");
+    }
 }

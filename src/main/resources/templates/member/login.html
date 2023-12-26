@@ -148,51 +148,58 @@
     var emconfirmchk = false; // 이메일 인증
     var $memail = $("#memail");
     var $checkEmail = $("#checkEmail"); // 인증번호 발송 버튼
-    var $memailconfirm = $("#memailconfirm"); // 인증번호 확인input
+    var $memailconfirm = $("#memailconfirm"); // 인증번호 확인 input
     var $memailCode = $("#memailCode");
-    // 이메일 인증번호
-    $checkEmail.click(function() {
-        $.ajax({
-            type : "POST",
-            url : "/emailConfirm",
-            data : {
-                "email" : $memail.val()
-            },
-            success : function(data){
-                alert("해당 이메일로 인증번호 발송이 완료되었습니다. \n 확인부탁드립니다.")
-                $memail.attr("readonly",true);
-                console.log("data : "+data);
-                chkEmailConfirm(data, $memailconfirm);
-            }
-        })
-    })
-    // 이메일 인증번호 체크 함수
-    function chkEmailConfirm(data, $memailconfirm){
-        $memailconfirm.click( function(){
-            if (data != $memailCode.val()) {
-                emconfirmchk = false
-                alert("인증번호가 잘못되었습니다:)");
-            } else {
-                emconfirmchk = true
-                alert("인증번호 확인이 완료되었습니다:)");
-            }
+    var $submitButton = $("#submit"); // 가입 버튼
 
-            // 회원가입 버튼 활성/비활성화 여부 확인
-            checkSignUpButton();
+
+    var emailConfirmationData = null; // 이메일 인증 데이터 저장
+
+    // 이메일 인증번호 발송
+    $checkEmail.click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/emailConfirm",
+            data: {
+                "email": $memail.val()
+            },
+            success: function (data) {
+                alert("해당 이메일로 인증번호 발송이 완료되었습니다. \n 확인부탁드립니다.");
+                $memail.attr("readonly", true);
+                console.log("data : " + data);
+                emailConfirmationData = data; // 데이터 저장
+            }
         });
-    }
+    });
+
+    // 이메일 인증번호 체크 함수
+    $memailconfirm.click(function () {
+        if (emailConfirmationData !== null && emailConfirmationData === $memailCode.val()) {
+            emconfirmchk = true;
+            alert("인증번호 확인이 완료되었습니다:)");
+        } else {
+            emconfirmchk = false;
+            alert("인증번호가 잘못되었습니다:)");
+        }
+
+        // 회원가입 버튼 활성/비활성화 여부 확인
+        checkSignUpButton();
+    });
 
     function checkSignUpButton() {
-        var $signUpButton = $(".submitBtn");
         if (emconfirmchk) {
             // 모든 조건이 충족되면 회원가입 버튼 활성화
-            $signUpButton.prop("disabled", false);
+            $submitButton.prop("disabled", false);
         } else {
             // 어떤 조건이라도 충족되지 않으면 회원가입 버튼 비활성화
-            $signUpButton.prop("disabled", true);
+            $submitButton.prop("disabled", true);
         }
     }
 
+    $(document).ready(function() {
+        // 페이지 로드 시에 가입 버튼 비활성화
+        $submitButton.prop("disabled", true);
+    });
 </script>
 <script>
     const btn = document.getElementById('popupBtn');

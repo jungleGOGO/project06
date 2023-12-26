@@ -372,6 +372,39 @@ img {
 button {
     font-family: 'GongGothicMedium';
 }
+
+#renameFolderModal {
+    position: fixed;
+    z-index: 999;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+}
+
+#modalBody7 {
+    width: 470px;
+    height: 335px;
+    padding: 15px 30px;
+    margin: 0 auto;
+    background-color: #1e2022;
+    border-radius: 30px;
+}
+
+#closeBtn7 {
+    float:right;
+    font-weight: bold;
+    color: #777;
+    font-size:25px;
+    cursor: pointer;
+}
+
+#modalContent7 {
+    margin-top: 60px;
+}
 /*--------------------------------------------------------------
 # Menu
 --------------------------------------------------------------*/
