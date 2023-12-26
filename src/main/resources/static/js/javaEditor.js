@@ -379,18 +379,29 @@ function transformToTreeViewFormat(fileList) {
     return treeData;
 }
 
-function convertNode(fileNode, treeData, nodeId) {
+function convertNode(fileNode, treeData, parentId) {
+    var nodeId;
+
+    // 이미지의 URL을 통해 파일과 폴더를 구분
+    var isFolder = fileNode.flagUrl.includes('folder.svg');
+
+    if (isFolder) {
+        // 폴더인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId +'_'+"Folder"+'_' + fileNode.name;
+    } else {
+        // 파일인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId+'_'+"File"+'_' + fileNode.name;
+    }
+
     var node = {
         id: nodeId,
         text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
         flagUrl: fileNode.flagUrl,
         children: []
-
     };
 
-    fileNode.children.forEach(function(child) {
-        convertNode(child, node.children, nodeId + 1);
-        nodeId++;
+    fileNode.children.forEach(function (child, index) {
+        convertNode(child, node.children, nodeId + '_' + index); // 자식 노드의 ID 생성에 부모 노드 ID를 추가
     });
 
     treeData.push(node);
@@ -437,6 +448,24 @@ function convertNode(fileNode, treeData, nodeId) {
                 contextFilePath =  rehandleFileSelection(anchor2.getAttribute("href"));
                 console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
             }
+        });
+
+        treeArea.addEventListener('contextmenu', function (event) {
+            const anchor2 = event.target.closest('a');
+            if (anchor2) {
+                const filename = anchor2.textContent.trim();
+                handleFileSelection(filename);
+                handleFolderSelection(filename);
+                rehandleFileSelection(anchor2.getAttribute("href"));
+                rehandleFolderSelection(anchor2.getAttribute("href"));
+                console.log("파일폴더:" + rehandleFileSelection(anchor2.getAttribute("href")));
+            }
+            const displayElement = event.target.closest('[data-role="node"]');
+            // 이전에 선택된 요소의 클래스와 속성 초기화
+            $('.gj-list-md-active').removeClass('gj-list-md-active').removeAttr('data-selected');
+            // 선택된 [data-role="display"] 요소에 클래스와 속성 추가
+            $(displayElement).addClass('gj-list-md-active');
+            $(displayElement).attr('data-selected', 'true');
         });
 
 
@@ -796,7 +825,7 @@ icon2.addEventListener('mouseout', function (){
 ///////////////////////////////////////마우스 우클릭 메뉴(contextMenu) ////////////////////////////////////////
 
 $.contextMenu({
-    selector: '[data-role="display"]',
+    selector: '[data-role="node"]',
 
     items: {
         item1: {
@@ -828,7 +857,14 @@ $.contextMenu({
             callback: function (key, options) {
                 console.log(key);
                 console.log(options);
-                openRenameFileModal(); // 모달 열기
+                var $trigger = $(options.$trigger);
+                console.log("트리거값: "+$trigger)
+                var filename =  $trigger.attr('data-id')
+                if(filename.includes('_File_')) {
+                    openRenameFileModal();
+                } else {
+                    openRenameFolderModal();
+                }// 모달 열기
             }
         },
         item4:{
@@ -989,3 +1025,115 @@ function autoSave() {
 ///////////////////////////////////// 파일 전환시 저장 여부 확인 /////////////////////////////////////////////
 var oriContent = ""; // 처음 코드 내용 저장할 변수
 // 파일 불러올때, 저장할 때마다 초기화 필요
+
+
+///////////////////선택한 파일 이름 받기/////////
+<!--선택한 파일 이름을 받음-->
+let selectedFolder = null;
+
+function handleFolderSelection(filename) {
+    selectedFolder = filename;
+    // 필요에 따라 추가적인 로직을 수행할 수 있습니다.
+}
+
+//////////////////////우클릭으로 이름변경시 값을 추출/////////
+let reselectedFolder = null;
+
+function rehandleFolderSelection(anchor2) {
+    if (selectedFolder) {
+        reselectedFolder = anchor2;
+
+        return reselectedFolder;
+        // 선택한 파일에 대한 추가적인 로직을 수행할 수 있습니다.
+    }
+}
+
+//////////////폴더 이름 변경시 사용할수 없는 문자////////////
+function isValidFoldername(newFoldername) {
+    // 사용할 수 없는 문자와 규칙을 정의합니다.
+    const invalidChars = /[\/:*?"<>|.]/;
+    const invalidNames = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+
+    // 사용자가 입력한 폴더 이름을 확인합니다.
+    if (!newFoldername || invalidChars.test(newFoldername) || invalidNames.includes(newFoldername.toLowerCase())) {
+        return false;
+    }
+
+    return true;
+}
+/////모달닫기//////
+function closeRenameFolderModal() {
+    document.getElementById('newFoldername').value = '';
+    document.getElementById('renameFolderModal').style.display = 'none';
+}
+////////////////////////////폴더이름변경///////////////////
+function renameFolder() {
+    const currentFoldername = document.getElementById("selectedFolder").value; //현재폴더명
+    const newFolderSet = document.getElementById("newFoldername").value; //새로 입력한 파일이름 값 (파일이름명 규칙 때문에 따로 만듬)
+    const currentFolder = reselectedFolder; // 선택한 파일의 href값
+    console.log("reselected: "+ reselectedFolder)
+    const lastBackslashIndex3 = reselectedFolder.lastIndexOf('\\');
+    console.log("last: " + lastBackslashIndex3)
+    const folder = reselectedFolder.substring(0, lastBackslashIndex3);
+    console.log("folder"+folder)
+    console.log("newFolderSet: "+newFolderSet);
+    console.log("currentFolder: "+currentFolder);
+    console.log("newpath: "+folder);
+
+    //파일이름명 규칙 실행
+    if (!isValidFoldername(newFolderSet)) {
+        alert("폴더명에는 특수 문자 및 일부 예약어를 사용할 수 없습니다.");
+        return; // 추가 실행 중단
+    }
+    // 마지막 역슬래시 이후의 경로 부분 추출
+    //href값에서 뒤의 파일명은 제거한 폴더 경로값만 추출
+    console.log("currentFolder"+currentFolder);
+
+    // 파일을 백엔드에서 이름을 변경하도록 AJAX 요청을 보냅니다.
+    axios.post("/java/renamefolder", null, {
+        params: {
+            currentFoldername: folder,
+            newFoldername: newFolderSet, //새로지은폴더명
+            currentFolder: currentFolder //현재경로+이전이름
+        }
+    })
+        .then((response) => {
+            document.getElementById('newFoldername').value = ''
+            showFileList();
+            alert("폴더명 변경 완료");
+        })
+        .catch((error) => {
+            console.error("에러 응답:", error.response); // 에러 응답 출력
+            if (error.response && error.response.data) {
+                alert(error.response.data);
+            } else {
+                console.error("에러:", error.message);
+            }
+        })
+        .finally(() => {
+            closeRenameFolderModal(); // AJAX 요청 완료 후 모달 닫기
+        });
+}
+//////////////////폴더이름 변경 모달열기///////////
+function openRenameFolderModal() {
+
+    const selectedFile = getSelectedFile();
+    console.log("selectedFile1:"+selectedFile);
+    if (selectedFile) {
+        document.getElementById('selectedFile').value = selectedFile;
+        console.log("selectedFile값:"+selectedFile)
+        document.getElementById('renameFolderModal').style.display = 'block';
+    } else {
+        alert('파일을 선택해주세요.');
+    }
+}
+
+///////////////저장소 리로딩/////////
+function showFileList() {
+    saveTreeState();
+    $('#tree').remove();
+    loadFileList();
+    // 파일 목록을 불러오는 함수 호출
+    // 모달 열기
+    openModal();
+}
