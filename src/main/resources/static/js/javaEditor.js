@@ -332,6 +332,10 @@ function saveFile() {
             node.children('ul').hide();
         }
         });
+        // 드래그 기능 막음
+        document.addEventListener('dragstart', function(event) {
+            event.preventDefault();
+        });
     }
     // 페이지 로드 시에 실행되도록
     document.addEventListener('DOMContentLoaded', function() {
@@ -350,22 +354,66 @@ function saveFile() {
 
 
         // 새로운 파일 목록으로 트리뷰 재구성
-        $('#tree').tree({
+        var tree = $('#tree').tree({
             primaryKey: 'id',
             uiLibrary: 'materialdesign',
-            // dataSource: transformToTreeViewFormat(fileList),
             dataSource: transformToTreeViewFormat(fileList),
+            imageUrlField: 'flagUrl',
+            dragAndDrop: true, // 드래그 앤 드롭 활성화
+        });
 
-            imageUrlField: 'flagUrl'
+        tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+            var data = tree.getDataById(id),
+                parent = parentId ? tree.getDataById(parentId) : {};
+
+            // JSON 문자열에서 직접 값을 추출
+            var dragFileHref = data.text.match(/href='([^']*)'/)[1];
+            var dragFolderHref = parent.text.match(/href='([^']*)'/)[1];
+
+// 마지막 '\'의 인덱스를 찾음
+            var lastBackslashIndex = dragFolderHref.lastIndexOf('/');
+
+// '\' 다음의 문자열을 추출
+            var lastPart = dragFolderHref.substring(lastBackslashIndex + 1);
+
+// 추출한 문자열 중에 '.'이 포함되어 있다면 '.' 이전까지의 부분만 유지
+            if (lastPart.includes('.')) {
+                dragFolderHref  = dragFolderHref.substring(0, lastBackslashIndex)+'/';
+
+                console.log("자름: "+dragFolderHref);
+            } else {
+                console.log("안자름: "+dragFolderHref);  // '.'이 없으면 원래 문자열 유지
+            }
+
+            console.log("폴더위치: "+dragFolderHref);
+            // 추가: 파일인 경우에만 이동 요청을 서버로 보냄
+            let DragFile = { 'filehref': dragFileHref, 'folderhref': dragFolderHref };
+            axios.post("/java/drag", DragFile)
+                .then((response) => {
+                    saveTreeState();
+                    $('#tree').remove();
+                    loadFileList();
+                })
+                .catch((error) => {
+                    // showFileList();
+                    console.error("에러응답:", error.response);
+                });
         });
 
         // 트리 재구성 후 상태 복원
         restoreTreeState();
         treeEvent();
+        updateTreeView();
         }).catch(error => {
             console.error('Error fetching file list:', error);
         });
     }
+
+function isDropAllowed(data, parent) {
+    // 여기에 특정 조건을 추가하여 드롭을 허용할지 여부를 결정
+    // 예: 폴더인 경우에만 드롭을 허용하도록 설정
+    return parent.flagUrl.includes('folder.svg' || 'folder_open_FILL0_wght400_GRAD0_opsz24.svg');
+}
 
     // FileNode 객체를 트리뷰 형식으로 변환
 function transformToTreeViewFormat(fileList) {
@@ -379,7 +427,21 @@ function transformToTreeViewFormat(fileList) {
     return treeData;
 }
 
-function convertNode(fileNode, treeData, nodeId) {
+function convertNode(fileNode, treeData, parentId) {
+
+    var nodeId;
+
+    // 이미지의 URL을 통해 파일과 폴더를 구분
+    var isFolder = fileNode.flagUrl.includes('folder.svg' || 'folder_open_FILL0_wght400_GRAD0_opsz24.svg');
+
+    if (isFolder) {
+        // 폴더인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId +'_'+"Folder"+'_' + fileNode.name;
+    } else {
+        // 파일인 경우: 부모 노드 ID와 자식 노드 이름을 조합하여 유일한 ID 생성
+        nodeId = parentId+'_'+"File"+'_' + fileNode.name;
+    }
+
     var node = {
         id: nodeId,
         text: "<a href='" + fileNode.text + "'>" + fileNode.name + "</a>",
@@ -387,11 +449,13 @@ function convertNode(fileNode, treeData, nodeId) {
         children: []
 
     };
-
-    fileNode.children.forEach(function(child) {
-        convertNode(child, node.children, nodeId + 1);
-        nodeId++;
+    fileNode.children.forEach(function (child, index) {
+        convertNode(child, node.children, nodeId + '_' + index); // 자식 노드의 ID 생성에 부모 노드 ID를 추가
     });
+    // fileNode.children.forEach(function(child) {
+    //     convertNode(child, node.children, nodeId + 1);
+    //     nodeId++;
+    // });
 
     treeData.push(node);
 }
@@ -994,16 +1058,31 @@ var oriContent = ""; // 처음 코드 내용 저장할 변수
 
 
 //////////////////////////////////// 폴더 확장 여부에 따른 아이콘 변경 ////////////////////////////////////
+// treeEvent()의 a 태그 이동 막는 부분에서 사용하면 됨
 function updateTreeView() {
     var expanders = document.querySelectorAll('[data-role="expander"]');
 
     expanders.forEach(function(expander) {
-        var image = expander.nextElementSibling; // 'image' span은 'expander' span의 바로 다음 요소입니다.
+        var image = expander.nextElementSibling; // 'image' span은 'expander' span의 바로 다음 요소
+        var icon = expander.querySelector('i'); // 'expander' 내부의 'i' 태그를 찾기
 
         if (expander.getAttribute('data-mode') === 'open') {
             image.innerHTML = '<img src="/static/img/icon/folder_open_FILL0_wght400_GRAD0_opsz24.svg" width="17.9948" height="31.9878">';
-        } else {
+        } else if (expander.getAttribute('data-mode') === 'close' && icon && icon.classList.contains('chevron-right')) {
             image.innerHTML = '<img src="/static/img/icon/folder.svg" width="17.9948" height="31.9878">';
         }
     });
 }
+//
+// <ul className="gj-list gj-list-md gj-unselectable gj-tree-drag-el gj-tree-md-drag-el"
+// data-role="draggable-clone" data-type="draggable" data-guid="d74bda09-86f8-14a7-97d1-8962a967d88b"
+// data-draggable="false" draggable-dragging="false"
+// style="position: fixed; top: 227px; left: 989px; width: 245.009px;"
+// draggable-x="1077" draggable-y="258">
+// <li className="undefined">
+// <div data-role="wrapper">
+// <span data-role="indicator" className=""></span>
+// <span data-role="display" className=""><a href="/._dir1">._dir1
+// </a></span></div></li></ul>
+
+// data-draggable="true"

@@ -65,11 +65,11 @@ public class MemoController {
         System.out.println(webPath);
         // 웹 경로를 파일 시스템 경로로 변환
         // TODO : 경로 수정
-//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 
 //        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
 //        String baseDir = "C:\\hkdev\\proj\\storage\\"+mid+"/java"; // 기본 경로
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"/java";
 
         String filePath = baseDir + webPath.replace("/", File.separator);
 //        String filePath = baseDir + webPath.replace("/", File.separator);
@@ -160,10 +160,10 @@ public class MemoController {
 
         String mid = principal.getName();
         // TODO : 경로 수정
-//        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
+        String filePath = "/Users/juncheol/mounttest/" + mid+"/java"+filename2;
 
 //        String filePath = "\\\\10.41.0.153\\storage\\" + mid+"\\java"+filename2;
-        String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
+//        String filePath = "\\\\10.41.0.153\\team36\\" + mid+"\\java"+filename2;
 
 //        String filePath = "/Users/juncheol/Desktop/storage/" + mid+"/java"+filename2;
 //        String filePath = "C:\\hkdev\\proj\\storage\\" + mid+"/java"+filename2;
@@ -250,11 +250,11 @@ public class MemoController {
 
         // TODO : 경로 수정
         // 웹 경로를 파일 시스템 경로로 변환
-//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 
 //        String baseDir = "/Users/juncheol/Desktop/storage"; // 기본 경로
 //        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 
 //        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
 //        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
@@ -310,11 +310,10 @@ public class MemoController {
         // TODO : 경로 수정
 
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
-//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
+        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\user1\\"+filename); //
-//        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
 //        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\storage\\"+mid+"\\"+filename);
-        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
+//        OutputStream file = new FileOutputStream("\\\\10.41.0.153\\team36\\"+mid+"\\"+filename);
 
 //        OutputStream file = new FileOutputStream("/Users/juncheol/Desktop/storage/"+mid+"/"+filename);
 //        OutputStream file = new FileOutputStream("/Users/juncheol/mounttest/"+mid+"/"+filename); //
@@ -336,8 +335,8 @@ public class MemoController {
         String filename = payload.get("filename");
         System.out.println(filename);
 
+        // TODO : 경로 수정
 //        String rootDirectoryPath = "\\\\10.41.0.153\\storage\\"+mid+"\\java\\";
-
         String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java\\";
         String filePath = rootDirectoryPath +filename;
 
@@ -369,6 +368,7 @@ public class MemoController {
 
         String mid = principal.getName();
 
+        // TODO : 경로 수정
         String rootDirectoryPath = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 
         String filePath = rootDirectoryPath + currentFolder + newFilename;
@@ -405,10 +405,10 @@ public class MemoController {
         //파일 경로 확인
 //        System.out.println("(MemoController:325) filePath : "+filePath);
         // TODO : 경로 수정
-//        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
+        String baseDir = "/Users/juncheol/mounttest/"+mid+"/java"; // 기본 경로
 
 //        String baseDir = "\\\\10.41.0.153\\storage\\"+mid+"\\java";
-        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
+//        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
 
 //        String baseDir = "/Users/juncheol/Desktop/storage/"+mid+"/java"; // 기본 경로
 //        String baseDir = "\\\\10.41.0.153\\team36\\"+mid+"\\java";
@@ -516,6 +516,7 @@ public class MemoController {
         String mid = principal.getName();
         String filename = payload.get("filename");
 
+        // TODO : 경로 수정
         String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename;
 //        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename;
 //        String unZipFilePath = "/Users/juncheol/Desktop/storage/"+mid+"/java"+filename;
@@ -544,7 +545,7 @@ public class MemoController {
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
 
-
+        // TODO : 경로 수정
 //        String unZipPath = "\\\\10.41.0.153\\storage\\zip\\";
         String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
         String unZipFile = mid+"java"+filename3;
