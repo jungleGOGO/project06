@@ -111,6 +111,7 @@ img {
 }
 
 #saveBtn {
+    width: 76px;
     height: 25px;
     padding: 0 10px;
     font-size: 14px;
@@ -340,12 +341,12 @@ button {
 --------------------------------------------------------------*/
 
 #iconNav {
-    position: fixed;
+    position: absolute;
     background-color: #102770;
     top:3px;
-    right: 20px;
+    right: 45px;
     padding-top: 5px;
-    border-radius: 100px;
+    border-radius: 50px;
     padding-right: 10px;
     padding-left: 10px;
     padding-bottom: 5px;
@@ -469,4 +470,68 @@ button {
     padding-left: 8px;
     font-size: 14px;
     color: #cccccc;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+.modal-backdrop {
+    display: none;
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    background-color: rgb(42, 42, 42);
+    margin: 5% auto;
+    border: 0.1em solid gray;
+    width: 100%;
+}
+
+.modal-dialog{
+    max-width:600px;
+}
+
+/* 모달 닫기 버튼 스타일 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#if {
+    font-size: 22px;
+    color: #fff;
+    background-color: #4a4a4b;
+    padding-bottom: 6px;
+    padding-top: 5px;
+    border-radius: 100px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+span.material-symbols-outlined {
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 30px;
+    color:#FFFFFF;
+    vertical-align: middle;
+}
+.info-content {
+    font-size: 14px;
 }
