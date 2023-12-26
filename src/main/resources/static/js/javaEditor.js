@@ -343,7 +343,8 @@ function saveFile() {
     loadFileList();
     });
 
-
+//드래그 우클릭방지에 필요
+var isLeftMouseDown = false;
     function loadFileList() {
     axios.get('/java/fileList').then(response => {
         const fileList = response.data;
@@ -361,6 +362,43 @@ function saveFile() {
             imageUrlField: 'flagUrl',
             dragAndDrop: true, // 드래그 앤 드롭 활성화
         });
+
+        tree.on('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        tree.on('mousedown', function(e) {
+            if (e.which !== 1) {
+                e.preventDefault();
+            }
+        });
+        tree.on('dragstart', function(e) {
+            e.preventDefault();
+        });
+
+
+        function mouseMoveHandler(e) {
+            // 좌클릭인 경우에만 mousemove 이벤트 처리
+            if (isLeftMouseDown) {
+                // 여기에서 원하는 동작을 수행
+
+                // 좌클릭 드래그 이벤트 처리
+                // 예: 드래그 중 로직 추가
+            }
+        }
+
+        tree.on('mouseup', function(e) {
+            // 여기에서 원하는 동작을 수행
+
+            // 드래그 종료 로직 추가
+
+            // mousemove 이벤트 리스너 해제
+            tree.off('mousemove', mouseMoveHandler);
+
+            // 마우스 상태 초기화
+            isLeftMouseDown = false;
+        });
+
 
         tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
             var data = tree.getDataById(id),
@@ -1290,7 +1328,7 @@ function showFileList() {
     // 모달 열기
     openModal();
 }
-=======
+
 //////////////////////////////////// 폴더 확장 여부에 따른 아이콘 변경 ////////////////////////////////////
 // treeEvent()의 a 태그 이동 막는 부분에서 사용하면 됨
 function updateTreeView() {
