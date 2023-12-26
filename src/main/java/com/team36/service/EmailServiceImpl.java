@@ -13,38 +13,9 @@ import java.util.Random;
 public class EmailServiceImpl implements EmailService {
     @Autowired
     JavaMailSender emailSender;
+    private String ePw;
 
-    public static final String ePw = createKey();
-
-    private MimeMessage createMessage(String to)throws Exception{
-        System.out.println("보내는 대상 : "+ to);
-        System.out.println("인증 번호 : "+ePw);
-        MimeMessage  message = emailSender.createMimeMessage();
-
-        message.addRecipients(MimeMessage.RecipientType.TO, to);//보내는 대상
-        message.setSubject("이메일 인증 테스트");//제목
-
-        String msgg="";
-        msgg+= "<div style='margin:20px;'>";
-        msgg+= "<h1> 안녕하세요 Tcoding입니다. </h1>";
-        msgg+= "<br>";
-        msgg+= "<p>아래 코드를 복사해 입력해주세요<p>";
-        msgg+= "<br>";
-        msgg+= "<p>감사합니다.<p>";
-        msgg+= "<br>";
-        msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg+= "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
-        msgg+= "<div style='font-size:130%'>";
-        msgg+= "CODE : <strong>";
-        msgg+= ePw+"</strong><div><br/> ";
-        msgg+= "</div>";
-        message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("beubeuvv@gmail.com","project06"));//보내는 사람
-
-        return message;
-    }
-
-    public static String createKey() {
+    private String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
@@ -68,17 +39,51 @@ public class EmailServiceImpl implements EmailService {
         }
         return key.toString();
     }
+
+    private MimeMessage createMessage(String to, String ePw) throws Exception {
+        System.out.println("보내는 대상: " + to);
+        System.out.println("인증 번호: " + ePw);
+        MimeMessage message = emailSender.createMimeMessage();
+
+        message.addRecipients(MimeMessage.RecipientType.TO, to);
+        message.setSubject("Tcoding 이메일 인증코드");
+
+        String msgg = "";
+        msgg += "<div style='background-color: #f4f4f4; padding: 20px; text-align: center;'>";
+        msgg += "<h1 style='color: #3498db; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;'>안녕하세요, Tcoding입니다.</h1>";
+        msgg += "<p style='font-size: 16px; color: #555;'>아래 코드를 복사하여 입력해주세요</p>";
+        msgg += "<div style='background-color: #3498db; color: white; padding: 15px; border-radius: 5px; display: inline-block;'>";
+        msgg += "<h3 style='margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;'>회원가입 인증 코드</h3>";
+        msgg += "<p style='font-size: 20px; margin: 10px 0 0;'>" + ePw + "</p>";
+        msgg += "</div>";
+        msgg += "<p style='font-size: 16px; color: #555; margin-top: 20px;'>감사합니다.</p>";
+        msgg += "</div>";
+
+        message.setText(msgg, "utf-8", "html");
+        message.setFrom(new InternetAddress("beubeuvv@gmail.com", "project06"));
+
+        return message;
+    }
+
     @Override
-    public String sendSimpleMessage(String to)throws Exception {
-        // TODO Auto-generated method stub
-        MimeMessage message = createMessage(to);
-        try{//예외처리
+    public String sendSimpleMessage(String to) throws Exception {
+        // 새 키 생성
+        String ePw = createKey();
+
+        MimeMessage message = createMessage(to, ePw);
+
+        try {
             emailSender.send(message);
-        }catch(MailException es){
+        } catch (MailException es) {
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
+
+        // 새 키를 반환
         return ePw;
     }
 
+    public String getVerificationCode() {
+        return ePw;
+    }
 }
