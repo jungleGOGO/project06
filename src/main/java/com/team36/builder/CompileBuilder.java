@@ -15,6 +15,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -40,14 +43,22 @@ public class CompileBuilder {
     //- 에러메시지 경로 표시
 
 
-    private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
+//    private static final Logger logger = LoggerFactory.getLogger(CompileBuilder.class);
+    private static final Logger compileAndRunLogger = LoggerFactory.getLogger(CompileBuilder.class);
 
     //전달받은 코드 컴파일하고 실행 결과 반환
-    public String compileAndRunCode(String code, String fileName) {
+    public String compileAndRunCode(String code, String fileName, String mid) {
 //        System.out.println(code);
 //        System.out.println("fileName"+fileName);
         int dotIndex = fileName.lastIndexOf(".");
         String noExtensionFileName = fileName.substring(0, dotIndex); // 파일 확장자 잘라내기
+
+        // 로깅을 위한 시간 가져오기
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String formattedNow = now.format(formatter);
+
+
 
         // 악의적인 코드 유무 확인
         if (!chkCode(code)) {
@@ -58,11 +69,12 @@ public class CompileBuilder {
         String uuidPath = path + uuid + "/";
         File newFolder = new File(uuidPath);
 
+        compileAndRunLogger.info(formattedNow + " " + mid  + " - 컴파일 및 실행 시작 " + uuidPath); // 로깅
 ///////////////////////////////////////////// 자바 파일 생성 /////////////////////////////////////////////////////
         // 디렉토리 생성 시도
         if (!newFolder.mkdir()) {
             // 디렉토리 생성 실패 시 로그 기록 및 에러 메시지 반환
-            logger.error("디렉토리 생성 오류: " + uuidPath);
+            compileAndRunLogger.error(formattedNow + " " + mid  +" 디렉토리 생성 오류: " + uuidPath);
             return "디렉토리를 생성할 수 없습니다.";
         }
         // 새 Java 소스 파일 생성
@@ -72,7 +84,7 @@ public class CompileBuilder {
             writer.write(code);
         } catch (IOException e) {
             // 파일 쓰기 실패 시 로그 기록 및 에러 메시지 반환
-            logger.error("소스 코드 파일 작성 오류: " + e.getMessage());
+            compileAndRunLogger.error(formattedNow + " " + mid  + " 소스 코드 파일 작성 오류: " + e.getMessage());
             return "소스 코드 파일을 작성할 수 없습니다.";
         }
 
@@ -99,7 +111,8 @@ public class CompileBuilder {
                 // process.waitFor() 메서드는 지정된 시간동안 프로세스의 완료를 기다림
                 // 프로세스가 지정된 시간 내에 완료되지 않으면, if문이 실행
                 if (!process.waitFor(5, TimeUnit.SECONDS)) {
-
+                    //로그 기록하기,           {} 값에                             여기서부터의 값들이 순서대로 대입됨
+                    compileAndRunLogger.error("{} {} - 컴파일 타임아웃: {} - {}", formattedNow, mid, "컴파일 작업이 지정된 시간 내에 완료되지 않음 ", uuidPath);
                     // 타임아웃 발생 시 프로세스 종료 및 예외 발생
                     process.destroy(); //프로세스 강제 종료
                     throw new RuntimeException("컴파일 타임아웃");
@@ -152,14 +165,17 @@ public class CompileBuilder {
 //
 //                 실행 작업에 대한 5초 타임아웃 설정
                 if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                    compileAndRunLogger.error("{} {} - 실행 타임아웃: {} ", formattedNow, mid, uuidPath);
                     // 타임아웃 발생 시 프로세스 종료
                     process.destroy();
                     throw new RuntimeException("실행 타임아웃");
                 }
 
             } catch (IOException e) {
+                compileAndRunLogger.error("{} {} - 프로세스 시작 오류: {} - {}", formattedNow, mid, e.getMessage(), uuidPath, e);
                 throw new RuntimeException("프로세스 시작 오류.", e);
             } catch (InterruptedException e) {
+                compileAndRunLogger.error("{} {} - 프로세스 중단됨: {} - {} ", formattedNow, mid, e.getMessage(), uuidPath, e);
                 if (process != null) {
                     process.destroy();
                 }
@@ -178,9 +194,11 @@ public class CompileBuilder {
 
             return  output.toString()+"\n실행 타임아웃: 코드 실행 시간이 5초를 초과했습니다.\n\n";
         } catch (Exception e) {
+            compileAndRunLogger.error("{} {} - 오류: {} - {}", formattedNow, mid, e.getMessage(), uuidPath, e);
             // 실행 중 발생한 오류 메시지 반환
             return "실행 오류: " + e.getMessage();
         } finally {
+            compileAndRunLogger.info("{} {} - 컴파일 및 실행 완료 - {}", formattedNow, mid, uuidPath);
             // ExecutorService 종료
             executor.shutdownNow();
         }
@@ -207,127 +225,3 @@ public class CompileBuilder {
         return true; //
     }
 }
-
-//    @SuppressWarnings({ "resource", "deprecation" })
-//    public Object compileCode(String body) throws Exception {
-//        String uuid = UUIDUtil.createUUID();
-//        String uuidPath = path + uuid + "/";
-//
-//        // Source를 이용한 java file 생성
-//        File newFolder = new File(uuidPath);
-//        File sourceFile = new File(uuidPath + "Test.java");
-//        File classFile = new File(uuidPath + "Test.class");
-//
-//        Class<?> cls = null;
-//
-//        // compile System err console 조회용 변수
-//        ByteArrayOutputStream err = new ByteArrayOutputStream();
-//        PrintStream origErr = System.err;
-//
-//        System.out.println("sourceFile : "+sourceFile);
-//        try {
-//            newFolder.mkdir();
-//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(sourceFile))) {
-//                writer.write(body);
-//            }
-//            // 만들어진 Java 파일을 컴파일
-//            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-//
-//            // System의 error outputStream을 ByteArrayOutputStream으로 받아오도록 설정
-//            System.setErr(new PrintStream(err));
-//
-//            // compile 진행
-//            int compileResult = compiler.run(null, null, null, sourceFile.getPath());
-//            System.out.println("compileResult : "+compileResult);
-//            // compile 실패인 경우 에러 로그 반환
-//            if(compileResult == 1) {
-//                System.out.println("컴파일 실패");
-//                return err.toString();
-//            }
-//
-//            // 컴파일된 Class를 Load
-//            URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {new File(uuidPath).toURI().toURL()});
-//            cls = Class.forName("Test", true, classLoader);
-//
-//            // Load한 Class의 Instance를 생성
-//            return cls.newInstance();
-//        } catch (Exception e) {
-//            log.error("[CompileBuilder] 소스 컴파일 중 에러 발생 :: {}", e.getMessage());
-//            e.printStackTrace();
-//            return null;
-//        } finally {
-//            // Syetem error stream 원상태로 전환
-//            System.setErr(origErr);
-//
-//            if(sourceFile.exists())
-//                sourceFile.delete();
-//            if(classFile.exists())
-//                classFile.delete();
-//            if(newFolder.exists())
-//                newFolder.delete();
-//        }
-//    }
-//
-//    @SuppressWarnings({ "rawtypes", "unchecked" })
-////    public Map<String, Object> runObject(Object obj, Object[] params) throws Exception {
-//    public Map<String, Object> runObject(Object obj) throws Exception {
-//        Map<String, Object> returnMap = new HashMap<String, Object>();
-//
-//
-//
-//        // 실행할 메소드 명
-//        String methodName = "main";
-////        String methodName = "runMethod";
-////        String className = "Test";
-//        // 파라미터 타입 개수만큼 지정
-////        Class arguments[] = new Class[params.length];
-////        for(int i = 0; i < params.length; i++)
-////            arguments[i] = params[i].getClass();
-//
-//        /*
-//         * reflection method의 console output stream을 받아오기 위한 변수
-//         * reflection method 실행 시 System의 out, error outputStream을 ByteArrayOutputStream으로 받아오도록 설정
-//         * 실행 완료 후 다시 원래 System으로 전환
-//         */
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        ByteArrayOutputStream err = new ByteArrayOutputStream();
-//        PrintStream origOut = System.out;
-//        PrintStream origErr = System.err;
-//        try {
-//            // System의 out, error outputStream을 ByteArrayOutputStream으로 받아오도록 설정
-//            System.setOut(new PrintStream(out));
-//            System.setErr(new PrintStream(err));
-//
-//            // 메소드 timeout을 체크하며 실행(15초 초과 시 강제종료)
-//            Map<String, Object> result = new HashMap<String, Object>();
-//
-//            result = MethodExecutation.timeOutCall(obj, methodName, params, arguments);
-//
-//            // stream 정보 저장
-//            if((Boolean) result.get("result")) {
-//                returnMap.put("result", ApiResponseResult.SUCEESS.getText());
-//                returnMap.put("return", result.get("return"));
-//                if(err.toString() != null && !err.toString().equals("")) {
-//                    returnMap.put("SystemOut", err.toString());
-//                }else {
-//                    returnMap.put("SystemOut", out.toString());
-//                }
-//            }else {
-//                returnMap.put("result", ApiResponseResult.FAIL.getText());
-//                if(err.toString() != null && !err.toString().equals("")) {
-//                    returnMap.put("SystemOut", err.toString());
-//                }else {
-//                    returnMap.put("SystemOut", "제한 시간 초과");
-//                }
-//            }
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }finally {
-//            // Syetem out, error stream 원상태로 전환
-//            System.setOut(origOut);
-//            System.setErr(origErr);
-//        }
-//        System.out.println("returnMap : "+returnMap);
-//        return returnMap;
-//    }
-

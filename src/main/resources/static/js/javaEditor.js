@@ -177,11 +177,25 @@ function saveFile() {
         data: JSON.stringify({ "content": fileContent ,"filename":fileName}),
         contentType: "application/json",
         success: function(response) {
-            alert(response.message + '\n생성일: ' + response.creationTime + '\n수정일: ' + response.lastModifiedTime);
+            // alert(response.message + '\n생성일: ' + response.creationTime + '\n수정일: ' + response.lastModifiedTime);
             console.log(response.message);
             console.log(response.creationTime);
             console.log(response.lastModifiedTime);
             $('#lastSaveTime').text('저장 : '+response.lastModifiedTime);
+            oriContent = fileContent;
+            $("#saveBtn").blur();
+
+            // 버튼 누르면 3초간 비활성화해서 버튼 여러번 계속 누르는 행위 방지
+            const oriSaveBtnInnerHTML = document.getElementById('saveBtn').innerHTML
+            document.getElementById('saveBtn').disabled = true;
+            document.getElementById('saveBtn').innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true" ></span>' +
+                '<span class="visually-hidden" role="status">Loading...</span>';
+            // 3초 후 버튼을 다시 활성화
+            setTimeout(() => {
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('saveBtn').innerHTML = oriSaveBtnInnerHTML
+            }, 3000); // 3000밀리초 = 3초
+
             },
         error: function(error) {
             alert('파일 저장 실패: ' + error.responseText);
@@ -429,6 +443,20 @@ function convertNode(fileNode, treeData, nodeId) {
 
 /////////////////////////////////////// 더블클릭해서 파일 내용 불러오기 ////////////////////////////////////////////
         treeArea.addEventListener('dblclick', function(event) {
+
+            // 에디터의 내용 변경이 있으면, 저장할건지 확인창 띄우기
+            if(document.getElementById('selectedFileName').textContent!=='' && oriContent!==monaco_test.getValue()){
+                var userResponse = confirm("에디터 내용이 수정되었습니다. \n저장하시겠습니까?");
+                if (userResponse) {
+                    // 사용자가 '예'를 클릭한 경우 / 저장 로직 필요
+                    saveFile();
+                    console.log("저장됨")
+                } else {
+                    // 사용자가 '아니오'를 클릭한 경우 / 아래 코드로 바로 진행
+                }
+
+            }
+
             const anchor = event.target.closest('a');
             if (anchor) {
                 const filepath = anchor.getAttribute('href'); // 파일명 추출
@@ -447,6 +475,7 @@ function convertNode(fileNode, treeData, nodeId) {
                         });
                         const fileContent = response.data.fileContent;
                         monaco_test.setValue(fileContent); // 에디터에 내용 설정
+                        oriContent = fileContent; // 에디터 초기 값 저장하기
                         document.getElementById('selectedFileName').textContent = filename;
                         document.getElementById('selectedFileName').title = filepath;
 
@@ -901,7 +930,7 @@ $.contextMenu({
 
 
 
-
+/////////////////////////////////////////////////// 자동 저장 //////////////////////////////////////////////////////////
 const checkbox = document.getElementById("autoSaveCheck");
 let auto; // 변수 선언
 
@@ -920,15 +949,13 @@ checkbox.addEventListener("change", function() {
 
         auto = setInterval(autoSave,10000);
 
-
+        chkModified();
     } else {
         clearInterval(auto);
         console.log("자동저장해제");
         // setInterval(saveToLocalStorage, 4000);
     }
 });
-
-
 function autoSave() {
 
     var fileName = document.getElementById('selectedFileName').title // 파일 경로
@@ -951,9 +978,14 @@ function autoSave() {
             console.log(response.creationTime);
             console.log(response.lastModifiedTime);
             $('#lastSaveTime').text('저장 : '+response.lastModifiedTime);
+            oriContent = fileContent;
         },
         error: function(error) {
             // alert('파일 저장 실패: ' + error.responseText);
         }
     });
 }
+
+///////////////////////////////////// 파일 전환시 저장 여부 확인 /////////////////////////////////////////////
+var oriContent = ""; // 처음 코드 내용 저장할 변수
+// 파일 불러올때, 저장할 때마다 초기화 필요

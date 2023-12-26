@@ -81,6 +81,7 @@ public class MemoController {
 //        String filePath = baseDir + webPath.replace("/", File.separator);
 
 
+        // 파일 폴더 개수 제한
         long count=0;
         try (Stream<Path> files = Files.list(Paths.get(baseDir))) {
             count = files.count();
@@ -95,7 +96,7 @@ public class MemoController {
         }
 
 
-
+        // 파일이나 폴더가 이미 존재할 때 처리
         Path directoryPath;
         System.out.println("(MemoCtrl :76) filePath : "+filePath);
         File file = new File(filePath);
@@ -172,18 +173,20 @@ public class MemoController {
                     .body("파일을 찾을 수 없거나 디렉토리입니다: " + filename2);
         }
 
+        //파일 정보 가져오기
         try {
             BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
             LocalDateTime oriLastModifiedTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
             LocalDateTime oriCreationTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            String lastModifiedTime = oriLastModifiedTime.format(formatter);
-            String creationTime = oriCreationTime.format(formatter);
-            System.out.println("(MemoController:179) 생성일 : "+creationTime);
-            System.out.println("(MemoController:180) 수정일 : "+lastModifiedTime);
+            String lastModifiedTime = oriLastModifiedTime.format(formatter); //파일 최종 수정 시간
+            String creationTime = oriCreationTime.format(formatter); // 파일 생성 시간
+//            System.out.println("(MemoController:179) 생성일 : "+creationTime);
+//            System.out.println("(MemoController:180) 수정일 : "+lastModifiedTime);
+
+            //파일 크기 KB 단위로 변환
             long fileSizeInBytes = attrs.size();
             double fileSizeInKB = fileSizeInBytes / 1024.0;
-
             DecimalFormat df = new DecimalFormat("#.##");
             String fileSizeString = df.format(fileSizeInKB) + " KB";
 
@@ -480,7 +483,8 @@ public class MemoController {
 
         String mid = principal.getName();
         String filename = payload.get("filename");
-        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename;
+//        String unZipFilePath = "\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename;
+        String unZipFilePath = "/Users/juncheol/Desktop/storage/"+mid+"/java"+filename;
 
         // 파일 경로로부터 파일을 읽어와 byte 배열로 변환
         File file = new File(unZipFilePath);
@@ -505,19 +509,23 @@ public class MemoController {
         String filename3 = filename2[filename2.length-1].replace(".java", "");
 
         // 압축을 해제할 위치, 압축할 파일이름, 파일위치+파일명
-        String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
+//        String unZipPath = "\\\\10.41.0.153\\team36\\zip\\";
+        String unZipPath = "/Users/juncheol/Desktop/storage/zip/";
         String unZipFile = mid+"java"+filename3;
-        String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
+//        String unZipFilePath = "\\\\10.41.0.153\\team36\\zip\\"+unZipFile+".zip";
+        String unZipFilePath = "/Users/juncheol/Desktop/storage/zip/"+unZipFile+".zip";
         log.info("파일경로:"+unZipFilePath);
 
 
         log.info("============압축하기==============");
         CompressZip compressZip = new CompressZip();
-        compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile);
+//        compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile);
+        compressZip.compress("/Users/juncheol/Desktop/storage/"+mid+"/java"+filename, unZipPath, unZipFile);
 
 
         try {
-            if (!compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile)) {
+//            if (!compressZip.compress("\\\\10.41.0.153\\team36\\"+mid+"\\java"+filename, unZipPath, unZipFile)) {
+            if (!compressZip.compress("/Users/juncheol/Desktop/storage/"+mid+"/java"+filename, unZipPath, unZipFile)) {
                 System.out.println("압축 실패");
             }
         } catch (Throwable e) {
