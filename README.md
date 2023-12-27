@@ -106,18 +106,23 @@
   
 ## 🗂 연습장(HTML/CSS/JS 코드편집기) 
 ### 1. 파일 및 폴더 생성
+<p align="center"><img alt="파일및폴더생성" src="https://github.com/jungleGOGO/project06/assets/138674233/6889f7b4-f3db-4992-a947-ef4dfe19db84"></p>
+
 ### 2. 컴파일
+<p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/eccb20d6-20db-4662-be8e-8799afb35a6e"></p>
+
 ### 3. 저장 및 자동저장
+<p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/14eeba98-c70d-4328-bd3f-d2a804d1489c"></p>
+
 ### 4. 다운로드 (파일 및 zip)
+<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/a90c9d8d-6e67-4c80-8c02-9b7240553ece"></p>
+
 ### 5. 드래그앤드롭 
+<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/52a79789-d55a-44cd-82c1-366ddec1c5ee"></p>
+
 <br><br>
 
-<p align="center"><img alt="파일및폴더생성" src="https://github.com/jungleGOGO/project06/assets/138674233/6889f7b4-f3db-4992-a947-ef4dfe19db84"></p>
-<p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/eccb20d6-20db-4662-be8e-8799afb35a6e"></p>
-<p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/14eeba98-c70d-4328-bd3f-d2a804d1489c"></p>
-<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/a90c9d8d-6e67-4c80-8c02-9b7240553ece"></p>
-<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/52a79789-d55a-44cd-82c1-366ddec1c5ee"></p>
-  <br><br>
+<br><br>
 
 
 
