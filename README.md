@@ -93,15 +93,18 @@
 
 ## 🗂 프로젝트(JAVA 코드편집기) 
 ### 1. 파일 및 폴더 생성
-### 2. 컴파일
-### 3. 저장 및 자동저장
-### 4. 다운로드 (파일 및 zip)
-
-<br><br>
 <p align="center"><img alt="파일및폴더생성" src="https://github.com/jungleGOGO/project06/assets/138674233/47e913b3-9770-4a74-b755-b6126200e340"></p>
+
+### 2. 컴파일
 <p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/2ddb3e68-cf6e-4e4b-a972-d4b56107165d"></p>
+
+### 3. 저장 및 자동저장
 <p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/6a2c251a-6887-4304-b69a-20475d19efbe"></p>
+
+### 4. 다운로드 (파일 및 zip)
 <p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/74670da5-5542-487c-9bae-385b791c3594"></p>
+
+<br>
 <br><br>
   
 ## 🗂 연습장(HTML/CSS/JS 코드편집기) 
