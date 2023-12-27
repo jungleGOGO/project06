@@ -170,5 +170,5 @@
   <br>
   
 <p align="center"><img alt="관리자페이지" src="https://github.com/jungleGOGO/project06/assets/138674233/7ea1fb27-f0c8-4c6a-b5b2-59eb9f4b6abb"></p>
-<p align="center"><img alt="공지사항" src="https://github.com/jungleGOGO/project06/assets/138674233/90287e11-cd13-49a5-9a23-9fce8fd428eb"></p>
+<p align="center"><img alt="공지사항" src="https://github.com/jungleGOGO/project06/assets/138674233/24899e89-06ea-4c0d-9a23-9446728ce351"></p>
 <br><br>
