@@ -79,7 +79,11 @@ Split(['#left-pane', '#center-pane', '#right-pane'], {
         let filename = document.getElementById("filename").value;
         // let monaco =  monaco_test.getValue();
         // let memo = { 'filename': filename, 'monaco': monaco };
-
+        console.log("새파일생성 "+filename)
+        if (!isValidFilename3(filename)) {
+            alert('사용할 수 없는 파일명입니다.')
+            return false;
+        }
         //
         const selectedElement = document.querySelector('[data-selected="true"]');
 
@@ -252,6 +256,12 @@ function saveFile() {
 /////////////////////////////////////// 지정한 파일명으로 파일 다운로드  ////////////////////////////////////////
     document.getElementById("downloadBtn").addEventListener("click", () => {
 
+    if (document.getElementById('selectedFileName').textContent === '') {
+        alert('선택된 파일이 없습니다.')
+        return false;
+    }
+        console.log(document.getElementById('selectedFileName').textContent)
+
     var viewLinesElements = document.getElementsByClassName("view-line");
     var allTextValues = [];
 
@@ -268,7 +278,7 @@ function saveFile() {
     var a = document.createElement("a");
     a.style.display = "none";
     a.href = window.URL.createObjectURL(blob);
-    a.download = document.getElementById('downloadName').value; // 사용자가 원하는 파일명 지정
+    a.download = document.getElementById('selectedFileName').textContent; // 사용자가 원하는 파일명 지정
 
     document.body.appendChild(a);
     a.click();
@@ -863,6 +873,18 @@ function isValidFilename2(newfilename) {
 
     // 사용자가 입력한 파일 이름을 확인합니다.
     if (!newfilename || invalidChars.test(newfilename) || invalidNames.includes(newfilename.toLowerCase())) {
+        return false;
+    }
+
+    return true;
+}
+function isValidFilename3(newfilename) {
+    // 사용할 수 없는 문자와 규칙을 정의합니다.
+    const invalidChars = /[\/:*?"<>|]/;
+    const invalidNames = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+
+    // 사용자가 입력한 파일 이름을 확인합니다.
+    if (!newfilename || invalidChars.test(newfilename) || invalidNames.includes(newfilename.toLowerCase()) || newfilename.includes('..')) {
         return false;
     }
 
