@@ -47,7 +47,6 @@
 
 #### NOTICE
 <p align="center"><img alt="user" src="https://github.com/jungleGOGO/project06/assets/138674233/2a7a805f-e649-4ac9-9c94-f3ce8d962409"></p>
-
 <br><br>
 
 ### 📂CLASS DIAGRAM
@@ -84,8 +83,6 @@
 #### 공지사항
 <p align="center"><img alt="시퀀스다이아그램5" src="https://github.com/jungleGOGO/project06/assets/138674233/8e2ced12-38a9-4047-bfd7-f28a7802a2bd"></p>
 
-
-
 <br><br>
 
 # 📎기능 구현
@@ -105,7 +102,8 @@
 <p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/2ddb3e68-cf6e-4e4b-a972-d4b56107165d"></p>
 <p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/6a2c251a-6887-4304-b69a-20475d19efbe"></p>
 <p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/74670da5-5542-487c-9bae-385b791c3594"></p>
-
+<br><br>
+  
 ## 🗂 연습장(HTML/CSS/JS 코드편집기) 
 ### 1. 파일 및 폴더 생성
 ### 2. 컴파일
@@ -119,7 +117,7 @@
 <p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/14eeba98-c70d-4328-bd3f-d2a804d1489c"></p>
 <p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/a90c9d8d-6e67-4c80-8c02-9b7240553ece"></p>
 <p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/52a79789-d55a-44cd-82c1-366ddec1c5ee"></p>
-
+  <br><br>
 
 
 
@@ -172,4 +170,5 @@
   <br>
   
 <p align="center"><img alt="관리자페이지" src="https://github.com/jungleGOGO/project06/assets/138674233/7ea1fb27-f0c8-4c6a-b5b2-59eb9f4b6abb"></p>
+<p align="center"><img alt="공지사항" src="https://github.com/jungleGOGO/project06/assets/138674233/90287e11-cd13-49a5-9a23-9fce8fd428eb"></p>
 <br><br>
