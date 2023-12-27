@@ -94,6 +94,35 @@
 <p align="center"><img alt="인덱스" src="https://github.com/jungleGOGO/project06/assets/138674233/1c4c6763-c072-4ae4-bbe0-0bfd069753b1"></p>
 <br><br>
 
+## 🗂 프로젝트(JAVA 코드편집기) 
+### 1. 파일 및 폴더 생성
+### 2. 컴파일
+### 3. 저장 및 자동저장
+### 4. 다운로드 (파일 및 zip)
+
+<br><br>
+<p align="center"><img alt="파일및폴더생성" src="https://github.com/jungleGOGO/project06/assets/138674233/47e913b3-9770-4a74-b755-b6126200e340"></p>
+<p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/2ddb3e68-cf6e-4e4b-a972-d4b56107165d"></p>
+<p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/6a2c251a-6887-4304-b69a-20475d19efbe"></p>
+<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/74670da5-5542-487c-9bae-385b791c3594"></p>
+
+## 🗂 연습장(HTML/CSS/JS 코드편집기) 
+### 1. 파일 및 폴더 생성
+### 2. 컴파일
+### 3. 저장 및 자동저장
+### 4. 다운로드 (파일 및 zip)
+### 5. 드래그앤드롭 
+<br><br>
+
+<p align="center"><img alt="파일및폴더생성" src="https://github.com/jungleGOGO/project06/assets/138674233/6889f7b4-f3db-4992-a947-ef4dfe19db84"></p>
+<p align="center"><img alt="컴파일" src="https://github.com/jungleGOGO/project06/assets/138674233/eccb20d6-20db-4662-be8e-8799afb35a6e"></p>
+<p align="center"><img alt="저장및자동저장" src="https://github.com/jungleGOGO/project06/assets/138674233/14eeba98-c70d-4328-bd3f-d2a804d1489c"></p>
+<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/a90c9d8d-6e67-4c80-8c02-9b7240553ece"></p>
+<p align="center"><img alt="프로젝트우클릭" src="https://github.com/jungleGOGO/project06/assets/138674233/52a79789-d55a-44cd-82c1-366ddec1c5ee"></p>
+
+
+
+
 ## 🗂 회원 기능
 ### 1. 로그인
 - 이메일과 비밀번호 값으로 검증
@@ -117,3 +146,30 @@
 <p align="center"><img alt="로그인" src="https://github.com/jungleGOGO/project06/assets/138674233/3d4127ff-29d0-4866-ab81-f3fbc52ca838"></p>
 <br><br>
 
+## 🗂 마이페이지
+### 1. 정보수정
+- 본인확인
+
+### 2. 회원 정보 수정
+- 회원정보 변경
+- 탈퇴 기능 구현
+ <br>
+ 
+<p align="center"><img alt="마이페이지" src="https://github.com/jungleGOGO/project06/assets/138674233/05bb82ee-7797-443c-aad9-346f0dfb03ab"></p>
+<br><br>
+
+  
+## 🗂 관리자페이지
+### 1. 회원관리
+- 전체 회원목록 출력
+- JPA 페이징 처리 구현
+- AJAX로 회원 상태 변경 
+  <br>
+  <br><br>
+
+### 2. 공지사항 관리
+- 공지사항 CRUD 
+  <br>
+  
+<p align="center"><img alt="관리자페이지" src="https://github.com/jungleGOGO/project06/assets/138674233/7ea1fb27-f0c8-4c6a-b5b2-59eb9f4b6abb"></p>
+<br><br>
